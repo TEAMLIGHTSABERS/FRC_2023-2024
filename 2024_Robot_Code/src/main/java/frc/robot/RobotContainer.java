@@ -95,11 +95,11 @@ public class RobotContainer {
         .onFalse(new RunCommand(() -> m_intake.setPower(0.0, 0.0), m_intake));
 
     // launcher controls (button to pre-spin the launcher and button to launch)
-    new JoystickButton(m_driverController, XboxController.Button.kLeftBumper.value)
-        .whileTrue(new RunCommand(() -> m_launcher.runLauncher(), m_launcher));
+//    new JoystickButton(m_driverController, XboxController.Button.kLeftBumper.value)
+//        .whileTrue(new RunCommand(() -> m_launcher.runLauncher(), m_launcher));
 
     new JoystickButton(m_driverController, XboxController.Button.kA.value)
-        .onTrue(m_intake.feedLauncher(m_launcher));
+        .onTrue(m_launcher.playNote(m_intake));
         
   }
 
