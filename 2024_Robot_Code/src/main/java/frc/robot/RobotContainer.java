@@ -13,7 +13,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
@@ -100,13 +99,19 @@ public class RobotContainer {
     new JoystickButton(m_driverController, XboxController.Button.kA.value)
         .onTrue(m_launcher.launchNote(m_intake));
         
-
-    /* Output the Launcher Wheel power to the dashboard for display. */
-    SmartDashboard.putNumber("Counter", m_launcher.getLeftLauchPower());
-    SmartDashboard.putNumber("Counter", m_launcher.getRightLauchPower());
   }
 
-  /**
+  /* Return the current power on the left Launcher wheel. */
+  public double getContLeftLaunchPower(){
+    return (m_launcher.getLeftLaunchPower());
+  }
+
+  /* Return the current power on the right Launcher wheel. */
+  public double getContRightLaunchPower(){
+    return (m_launcher.getRightLaunchPower());
+  }
+
+ /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
