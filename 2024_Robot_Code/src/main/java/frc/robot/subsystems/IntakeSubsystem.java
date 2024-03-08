@@ -33,11 +33,11 @@ public class IntakeSubsystem extends SubsystemBase {
     feed_power = _fpower;
   }
 
-  public void playMelody(double volumeLevel) {
+  public void moveNote(double volumeLevel) {
     feed_power = volumeLevel;
   }
 
-  public void stopMusic() {
+  public void stopFeeder() {
     feed_power = 0.0;
   }
 

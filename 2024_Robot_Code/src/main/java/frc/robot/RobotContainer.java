@@ -12,8 +12,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
@@ -41,8 +41,8 @@ public class RobotContainer {
   private final LauncherSubsystem m_launcher = new LauncherSubsystem();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final GenericHID m_driverController =
-      new GenericHID(OperatorConstants.kDriverControllerPort);
+  private final XboxController m_driverController =
+      new XboxController(OperatorConstants.kDriverControllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -55,9 +55,9 @@ public class RobotContainer {
         // Turning is controlled by the X axis of the right stick.
         new RunCommand(
             () -> m_robotDrive.drive(
-                -MathUtil.applyDeadband(((XboxController) m_driverController).getLeftY(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(((XboxController) m_driverController).getLeftX(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(((XboxController) m_driverController).getRightX(), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband((m_driverController).getLeftY(), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband((m_driverController).getLeftX(), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband((m_driverController).getRightX(), OIConstants.kDriveDeadband),
                 true, true),
             m_robotDrive));
 
@@ -65,7 +65,6 @@ public class RobotContainer {
 
     // configure the launcher to stop when no other command is running
     m_launcher.setDefaultCommand(new RunCommand(() -> m_launcher.stopLauncher(), m_launcher));
-    
   }
 
   /**
@@ -99,8 +98,12 @@ public class RobotContainer {
 //        .whileTrue(new RunCommand(() -> m_launcher.runLauncher(), m_launcher));
 
     new JoystickButton(m_driverController, XboxController.Button.kA.value)
-        .onTrue(m_launcher.playNote(m_intake));
+        .onTrue(m_launcher.launchNote(m_intake));
         
+
+    /* Output the Launcher Wheel power to the dashboard for display. */
+    SmartDashboard.putNumber("Counter", m_launcher.getLeftLauchPower());
+    SmartDashboard.putNumber("Counter", m_launcher.getRightLauchPower());
   }
 
   /**

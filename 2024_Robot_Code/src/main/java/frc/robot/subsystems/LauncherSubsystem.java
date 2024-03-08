@@ -11,50 +11,53 @@ import frc.robot.Constants;
 
 public class LauncherSubsystem extends SubsystemBase {
 
-  private CANSparkMax lEChord;
-  private CANSparkMax rEChord;
+  private CANSparkMax leftLaunchWheel;
+  private CANSparkMax rightLaunchWheel;
 
   private boolean m_launcherRunning;
 
   /** Creates a new LauncherSubsystem. */
   public LauncherSubsystem() {
     // create two new SPARK MAXs and configure them
-    lEChord =
+    leftLaunchWheel =
         new CANSparkMax(Constants.Launcher.kLTSCanId, CANSparkLowLevel.MotorType.kBrushless);
-        lEChord.setInverted(false);
-        lEChord.setSmartCurrentLimit(Constants.Launcher.kCurrentLimit);
-        lEChord.setIdleMode(IdleMode.kBrake);
+        leftLaunchWheel.setInverted(false);
+        leftLaunchWheel.setSmartCurrentLimit(Constants.Launcher.kCurrentLimit);
+        leftLaunchWheel.setIdleMode(IdleMode.kBrake);
 
-        lEChord.burnFlash();
+        leftLaunchWheel.burnFlash();
 
-        rEChord =
+        rightLaunchWheel =
         new CANSparkMax(Constants.Launcher.kRTSCanId, CANSparkLowLevel.MotorType.kBrushless);
-        rEChord.setInverted(true);
-        rEChord.setSmartCurrentLimit(Constants.Launcher.kCurrentLimit);
-        rEChord.setIdleMode(IdleMode.kBrake);
+        rightLaunchWheel.setInverted(true);
+        rightLaunchWheel.setSmartCurrentLimit(Constants.Launcher.kCurrentLimit);
+        rightLaunchWheel.setIdleMode(IdleMode.kBrake);
 
-        rEChord.burnFlash();
+        rightLaunchWheel.burnFlash();
 
     m_launcherRunning = false;
   }
 
 /**
-* Constructs a command that starts the launcher and plays/feeds a note by running the feed
-* motor of the intake for after a short period of time. This command takes control of the
-* intake subsystem to make sure the feeder keep running during the launch sequence.
+* Constructs a command that starts the launcher and then runs the Intake feeder
+* motor to put the Note up to the spinning launcher wheels. After a few more seconds
+* the command will shutdown the Launcher Wheels and an the Intake feeder. This
+* command takes control of the intake subsystem to make sure the feeder keeps
+* running during the launch sequence.
 *
 * @param _intake The instance of the launcher subsystem
 * @return The launch command
 */
 
-public Command playNote(IntakeSubsystem _Intake) {
-    Command harmony =
+public Command launchNote(IntakeSubsystem _Intake) {
+    Command launching =
         new Command() {
           
           private Timer m_timer;
 
           @Override
           public void initialize() {
+            /* Start the Launcher Wheels and the Launch timer. */
             m_launcherRunning = true;
             m_timer = new Timer();
             m_timer.start();
@@ -62,32 +65,34 @@ public Command playNote(IntakeSubsystem _Intake) {
 
           @Override
           public void execute() {
-            if(m_timer.get() > Constants.Launcher.kPickupToMelody){
-              _Intake.playMelody(Constants.Launcher.mezzoForte);
+            /* Wait until the Launcher Wheels get up to speed,
+             * then start the Intake Feeder to push the Note up
+             * into the Launcher Wheels.
+             */
+            m_launcherRunning = true;
+             if(m_timer.get() > Constants.Launcher.kTimeToLaunch){
+              _Intake.moveNote(Constants.Launcher.kFeederSpeed);
             }
           }
 
           @Override
           public boolean isFinished() {
-            return m_timer.get() > Constants.Launcher.kMelodyOver;
+            /* The Launcher and Intake feeder will stop after an
+             * appropriate delay.
+             */
+            return m_timer.get() > Constants.Launcher.kTimeToStop;
           }
 
           @Override
           public void end(boolean interrupted) {
-            _Intake.stopMusic();
+            /* Stop both the Launcher and the Intake feeder */
             m_launcherRunning = false;
+            _Intake.stopFeeder();
           }
         };
 
-        return harmony;
+        return launching;
   }
-  /**
-   * Turns the launcher on. Can be run once and the launcher will stay running or run continuously
-   * in a {@code RunCommand}.
-   */
-//  public void runLauncher() {
-//    m_launcherRunning = true;
-//  }
 
   /**
    * Turns the launcher off. Can be run once and the launcher will stay running or run continuously
@@ -97,15 +102,25 @@ public Command playNote(IntakeSubsystem _Intake) {
     m_launcherRunning = false;
   }
 
+  /* Return the current power on the left Launcher wheel. */
+  public double getLeftLauchPower(){
+     return (Constants.Launcher.kLeftPower);
+  }
+
+  /* Return the current power on the right Launcher wheel. */
+  public double getRightLauchPower(){
+     return (Constants.Launcher.kRightPower);
+  }
+
   @Override
   public void periodic() { // this method will be called once per scheduler run
     // set the launcher motor powers based on whether the launcher is on or not
     if (m_launcherRunning) {
-      rEChord.set(Constants.Launcher.kRightPower);
-      lEChord.set(Constants.Launcher.kLeftPower);
+      rightLaunchWheel.set(Constants.Launcher.kRightPower);
+      leftLaunchWheel.set(Constants.Launcher.kLeftPower);
     } else {
-      rEChord.set(0.0);
-      lEChord.set(0.0);
+      rightLaunchWheel.set(0.0);
+      leftLaunchWheel.set(0.0);
     }
   }
 }
