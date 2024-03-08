@@ -38,6 +38,9 @@ public final class Constants {
   public static final class Launcher {
     public static double kLeftPower = 1.0;
     public static double kRightPower = 1.0;
+    public static double kTimeToLaunch = 1.0;
+    public static double kTimeToStop = 5.0;
+    public static double kFeederSpeed = 0.5;
 
     public static final int kCurrentLimit = 80;
     
