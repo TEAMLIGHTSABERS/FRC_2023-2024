@@ -105,12 +105,26 @@ public Command launchNote(IntakeSubsystem _Intake) {
 
   /* Return the current power on the left Launcher wheel. */
   public double getLeftLaunchPower(){
+    if(m_launcherRunning)
+    {
      return (Constants.Launcher.kLeftPower);
+    }
+    else
+    {
+     return (0.0);
+    }
   }
 
   /* Return the current power on the right Launcher wheel. */
   public double getRightLaunchPower(){
+    if(m_launcherRunning)
+    {
      return (Constants.Launcher.kRightPower);
+    }
+    else
+    {
+     return (0.0);
+    }
   }
 
   @Override

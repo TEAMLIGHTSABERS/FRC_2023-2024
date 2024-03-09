@@ -48,8 +48,8 @@ public class Robot extends TimedRobot {
 
      
     /* Output the Launcher Wheel power to the dashboard for display. */
-    SmartDashboard.putNumber("Counter", m_robotContainer.getContLeftLaunchPower());
-    SmartDashboard.putNumber("Counter", m_robotContainer.getContRightLaunchPower());
+    SmartDashboard.putNumber("Left Power", m_robotContainer.getContLeftLaunchPower());
+    SmartDashboard.putNumber("Right Power", m_robotContainer.getContRightLaunchPower());
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -80,11 +80,14 @@ public class Robot extends TimedRobot {
         m_autonomousCommand.schedule();
       }
     }
+
+//    SmartDashboard.putData(m_autonomousCommand);
   }
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+  }
 
   @Override
   public void teleopInit() {
