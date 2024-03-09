@@ -1,12 +1,12 @@
-# FRC_2023-24
-2023-24 Season of FRC for the LIGHTSABERS Robots Team
+# FRC_2024
+2024 Season of FRC for the LIGHTSABERS Robots Team
 
 # LIGHTSABERS Getting Started with FRC Robot Code
 
 [![Gradle](https://github.com/wpilibsuite/allwpilib/actions/workflows/gradle.yml/badge.svg?branch=main)](https://github.com/wpilibsuite/allwpilib/actions/workflows/gradle.yml)
 [![Java Documentation](https://img.shields.io/badge/documentation-java-orange)](https://github.wpilib.org/allwpilib/docs/development/java/)
 
-Welcome to the LIGHTSABERS Robot Code Repository for the FRC 2023-24 Season. This Repositiory Contains the steps for installing the Coding Enviroment and loading in last year's FRC Robot Code.
+Welcome to the LIGHTSABERS Robot Code Repository for the FRC 2024 Season. This Repositiory Contains the steps for installing the Coding Enviroment and loading in last year's FRC Robot Code.
 
 - [Preliminaries with Git](#preliminaries-with-git)
 - [Robot Home](#robot-home)
@@ -29,7 +29,7 @@ This will bring up a "branch" page, and on the right side of this page is a gree
 The resulting "Overview" page will then show that there is an Active branch called "{yourname}Dev".  You can click on the "{yourname}Dev" branch and you will see that it has the same files as were in the "main" branch.
 ![image](https://user-images.githubusercontent.com/54441806/205998157-9fa5980c-fed6-4cf2-befc-6f007a0b72eb.png)
   
-At this point, I will assume that you are reading this README.md file from the "{yourname}Dev" branch.  You are now ready to setup your computer to receive your local repository of the FRC_2023-24 Code.  To avoid having this repository proliferate on your computer, it will be stored in common directory.  I recommend the Public User's workspace.  Create a new storage folder on your Windows computer to hold all of your Git projects (ex. GitHub).
+At this point, I will assume that you are reading this README.md file from the "{yourname}Dev" branch.  You are now ready to setup your computer to receive your local repository of the FRC_2024 Code.  To avoid having this repository proliferate on your computer, it will be stored in common directory.  I recommend the Public User's workspace.  Create a new storage folder on your Windows computer to hold all of your Git projects (ex. GitHub).
   
 "{Drive_Letter}:\Users\Public\GitHub"
 
@@ -41,7 +41,7 @@ There is a green button called "Code" on this webpage above the top right-hand c
 
 ![image](https://user-images.githubusercontent.com/54441806/206072601-60adb60e-19bf-4245-85d4-27e3497e33dd.png)
 ---------------------------------------------------------------------------------------------------------------
-If you are using the GetHub Desktop, you will need to select the storage location you created above and make sure that the URL is pointing to the FRC_2023-24 Online Repository before clicking Clone. You can also down load the Repository as a Zip file.  This will detach the Repository from this Online Git account.  Any updates that you make are private and cannot be pushed back to this account, which is where the "competition" code resides.   
+If you are using the GetHub Desktop, you will need to select the storage location you created above and make sure that the URL is pointing to the FRC_2024 Online Repository before clicking Clone. You can also down load the Repository as a Zip file.  This will detach the Repository from this Online Git account.  Any updates that you make are private and cannot be pushed back to this account, which is where the "competition" code resides.   
 
 When GitHub Desktop opens, then it will default to looking at the "main" branch.  Switch it to the "{yourname}Dev" branch.
 
@@ -49,12 +49,12 @@ When GitHub Desktop opens, then it will default to looking at the "main" branch.
 
 This repository now exists locally on your computer at:
 
-"{Drive_Letter}:\Users\Public\GitHub\FRC_2023-24"
+"{Drive_Letter}:\Users\Public\GitHub\FRC_2024"
 
 
 # Robot Home
 
-The FRC_2023-24 folder on your computer (local) has this README file, a license file, a folder called "2023_Robot_Code" and another folder called "2024_Robot_Code".  The 2023_Robot_Code folder is provided as an example and a reference for last years Robot code.  All Robot code projects for this year will created in the folder called "2024_Robot_Code".  Each of these folders represents a WPILib Java project.  
+The FRC_2024 folder on your computer (local) has this README file, a license file, a folder called "2023_Robot_Code" and another folder called "2024_Robot_Code".  The 2023_Robot_Code folder is provided as an example and a reference for last years Robot code.  All Robot code projects for this year will created in the folder called "2024_Robot_Code".  Each of these folders represents a WPILib Java project.  
 
 # Zero to Robot
 
@@ -78,7 +78,7 @@ Continue to the next page in the instructions and select the "Visual Studio Code
 
 # GitHub Revisited
 
-Start WPILib VS Code application and open the folder called "{Drive_Letter}:\Users\Public\GitHub\FRC_2023-24\2024_Robot_Code".  Before doing anything else select the "Source Control" icon on the left-hand wall of the WPILib Application.  This will change the left window pane to show GitHub Source control status and commands.  At the top of this pane, below "Source Control Repositories", you will see your current "local" repository (FRC_2023-24) and the current local "branch" ("main") for that repository.  Click on the branch and, at the bottom of the popup window, you will see your remote (on-line) development branch, which is called "Origin/{username}Dev".  Select your remote development branch and the local branch will then change to be your development branch.  At this point any changes you make to the project are being made to your "development" branch code.  Your changes will not change the "main" branch competition code until you have completed your developement, tested it, and have approved it as ready for competition.
+Start WPILib VS Code application and open the folder called "{Drive_Letter}:\Users\Public\GitHub\FRC_2024\2024_Robot_Code".  Before doing anything else select the "Source Control" icon on the left-hand wall of the WPILib Application.  This will change the left window pane to show GitHub Source control status and commands.  At the top of this pane, below "Source Control Repositories", you will see your current "local" repository (FRC_2024) and the current local "branch" ("main") for that repository.  Click on the branch and, at the bottom of the popup window, you will see your remote (on-line) development branch, which is called "Origin/{username}Dev".  Select your remote development branch and the local branch will then change to be your development branch.  At this point any changes you make to the project are being made to your "development" branch code.  Your changes will not change the "main" branch competition code until you have completed your developement, tested it, and have approved it as ready for competition.
 
 While you can make code changes, test your builds, deploy to, and even run the robot from the code in your 2024_Robot_Code folder; you should save often.  Since you code is also managed byt software source control, you should periodically commit your changes to source control (Git) using the "Commit" button on the Source Control pane.  When you "Commit" the changes, you need to provide a comment above it to be stored as a record of what was was changed in this "Commit" operation.  So you should "Commit" often enough to keep the Comment of what was changed small.
 
@@ -121,7 +121,7 @@ Team Number:  3660.
 
 Then click on the "Generate Project" button.
 
-Visual Studio will now have a project created in the FRC_2023-24 Folder called "{New_Project_Name}".
+Visual Studio will now have a project created in the FRC_2024 Folder called "{New_Project_Name}".
 
 After creating the project in Visual Studio Code, continue reading to the webpage instructions to end of the page and click the "Next" button to continue to "libraries".
 
@@ -161,13 +161,15 @@ Last year's robot code is in the 2023_Robot_Code folder.  If you open the folder
 
 # Git Update
 
-Remember to select your developement branch for Source Control and to save and "Commit" often.  Push the change to the remote repository when finished by clicking on the "Push Origin" button on the top (right side) of the GitHub Desktop window or by sync'ing in the WPILib Source Control pane.
+Remember to select your developement branch for Source Control and to save and "Commit" often.  Push the change to the remote repository when finished by clicking on the "Push Origin" button on the top (right side) of the GitHub Desktop window or by sync'ing in the WPILib Source Control pane. Before "pull"ing new changes into the "main" branch, the Drive Team must be informed that the changes are being added to the competition code.  When informing the Drive Team, be sure to describe how the changes affect the operation of the Robot.
 
-After you have tested your development code and you feel that the code is good enough for competition, the next step is to check for any changes that have been made on the "main" branch while you were devloping your code.  To do this, make a "pull" request in GitHub Web or with GitHub Desktop.  The request is to pull the changes from the "main" branch into your {username}Dev Branch.  If there are no changes identified in the pull request, the you make a "pull" request to pull the changes in your {username}Dev branch into the "main" branch.  After reviewing the changes that will be made to the "main" branch (they should be only your changes made during your development), accept the pull request and have it committed to the "main" branch.
+## Check That "{username}Dev" is Ready to Be Delivered
+After you have tested your development code and you feel that the code is good enough for competition, the next step is to check for any changes that have been made on the "main" branch while you were devloping your code.  To do this, make a "pull" request in GitHub Web.  The request is to pull the changes from the "main" branch into your "{username}Dev" Branch.  If there are no changes identified in this pull request, then "{username}Dev" branch is ready to be delivered.  Skip to [Deliver Code to Main Branch](##Deliver_Code_to_Main_Branch).
 
-Before "pull"ing new changes into the "main" branch, you must brief the Drive Team on the changes and how they affect the operation of the Robot.
+If the "pull" request from the "main" branch to "{username}Dev" branch shows that changes have been made, then another developer has delivered changes to the competition code since "{username}Dev started implementing and testing. To prevent overwriting delivered changes, all of these changes from this request must be accepted into the "{username}Dev" branch.  When these changes are accepted, it is possible that they will conflict with, or break, the code that is currently in the "{username}Dev" branch.  Check that the code in "{username}Dev" still builds and test it before repeating the this process.  Repeat this process until the "{username}Dev" branch ready to be delivered, as described above.
 
-If the "pull" request to pull the changes from the "main" branch into your {username}Dev branch shows that changes have been made in the "main" branch that you did not consider when developing your change, you must accept the changes and modify your development code to work with the "main" branch changes.  Afterwards, you can make the "pull" request to pull your {username}Dev changes into the "main" branch and there should be no conflict.
+## Deliver Code to Main Branch
+After determining that the "{username}Dev" branch is ready to be delivered, a "pull" request to pull the changes from "{username}Dev" branch into the "main" branch can be made and there should be no conflict.
 
 # Git Again
 
