@@ -46,6 +46,8 @@ public class RobotContainer {
 
   private final double leftLaunchSpeed = 1500;
 
+  private final double rightLaunchSpeed = 1500;
+
   // A simple auto routine that drives forward a specified distance, and then stops.
   private final Command m_simpleAuto = Autos.exampleAuto(ExampleSubsystem);
 
@@ -125,6 +127,11 @@ public class RobotContainer {
   /* Return the current power on the left Launcher wheel. */
   public void setContLeftLaunchSpeed(){
     m_launcher.setLeftLaunchSpeed(leftLaunchSpeed);
+  }
+
+    /* Return the current power on the left Launcher wheel. */
+  public void setContRightLaunchSpeed(){
+    m_launcher.setRightLaunchSpeed(rightLaunchSpeed);
   }
 
   /* Return the current power on the left Launcher wheel. */

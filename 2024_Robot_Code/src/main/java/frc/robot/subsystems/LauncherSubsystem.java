@@ -77,6 +77,24 @@ public class LauncherSubsystem extends SubsystemBase {
 
         m_rightlancherpidCtrl = rightLaunchWheel.getPIDController();
 
+        // Encoder object created to display position values
+        m_Rencoder = rightLaunchWheel.getEncoder();
+
+        // PID coefficients
+        kRP = 6e-5; 
+        kRI = 0;
+        kRD = 0; 
+        kRIz = 0; 
+        kRFF = 0.000015; 
+
+        // set PID coefficients
+        m_rightlancherpidCtrl.setP(kRP);
+        m_rightlancherpidCtrl.setI(kRI);
+        m_rightlancherpidCtrl.setD(kRD);
+        m_rightlancherpidCtrl.setIZone(kRIz);
+        m_rightlancherpidCtrl.setFF(kRFF);
+        m_rightlancherpidCtrl.setOutputRange(kMinOutput, kMaxOutput);
+
         rightLaunchWheel.burnFlash();
 
     m_launcherRunning = false;
@@ -198,16 +216,33 @@ public Command launchNote(IntakeSubsystem _Intake) {
     double min = SmartDashboard.getNumber("Min Output", 0);
 
     // if PID coefficients on SmartDashboard have changed, write new values to controller
-    if((lp != kP)) { m_pidController.setP(lp); kP = lp; }
-    if((li != kI)) { m_pidController.setI(li); kI = li; }
-    if((ld != kD)) { m_pidController.setD(ld); kD = ld; }
-    if((liz != kIz)) { m_pidController.setIZone(liz); kIz = liz; }
-    if((lff != kFF)) { m_pidController.setFF(lff); kFF = lff; }
+    if((lp != kLP)) { m_leftlancherpidCtrl.setP(lp); kLP = lp; }
+    if((li != kLI)) { m_leftlancherpidCtrl.setI(li); kLI = li; }
+    if((ld != kLD)) { m_leftlancherpidCtrl.setD(ld); kLD = ld; }
+    if((liz != kLIz)) { m_leftlancherpidCtrl.setIZone(liz); kLIz = liz; }
+    if((lff != kLFF)) { m_leftlancherpidCtrl.setFF(lff); kLFF = lff; }
     if((max != kMaxOutput) || (min != kMinOutput)) { 
-      m_pidController.setOutputRange(min, max); 
+      m_leftlancherpidCtrl.setOutputRange(min, max); 
       kMinOutput = min; kMaxOutput = max; 
     }
 
+    // read PID coefficients from SmartDashboard
+    double rp = SmartDashboard.getNumber("P Gain", 0);
+    double ri = SmartDashboard.getNumber("I Gain", 0);
+    double rd = SmartDashboard.getNumber("D Gain", 0);
+    double riz = SmartDashboard.getNumber("I Zone", 0);
+    double rff = SmartDashboard.getNumber("Feed Forward", 0);
+
+    // if PID coefficients on SmartDashboard have changed, write new values to controller
+    if((rp != kRP)) { m_leftlancherpidCtrl.setP(rp); kRP = rp; }
+    if((ri != kRI)) { m_leftlancherpidCtrl.setI(ri); kRI = ri; }
+    if((rd != kRD)) { m_leftlancherpidCtrl.setD(rd); kRD = rd; }
+    if((riz != kRIz)) { m_leftlancherpidCtrl.setIZone(riz); kRIz = riz; }
+    if((rff != kRFF)) { m_leftlancherpidCtrl.setFF(rff); kRFF = rff; }
+    if((max != kMaxOutput) || (min != kMinOutput)) { 
+      m_rightlancherpidCtrl.setOutputRange(min, max); 
+      kMinOutput = min; kMaxOutput = max; 
+    }
 
     if (m_launcherRunning) {
       m_rightlancherpidCtrl.setReference(rightSetPoint, CANSparkMax.ControlType.kVelocity);
@@ -220,5 +255,11 @@ public Command launchNote(IntakeSubsystem _Intake) {
       rightLaunchWheel.set(0.0);
       leftLaunchWheel.set(0.0);
     }
+    SmartDashboard.putNumber("RightSetPoint", rightSetPoint);
+    SmartDashboard.putNumber("LeftSetPoint", leftSetPoint);
+    SmartDashboard.putNumber("LeftProcessVariable", m_Lencoder.getVelocity());
+    SmartDashboard.putNumber("RightProcessVariable", m_Rencoder.getVelocity());
+
+
   }
 }
