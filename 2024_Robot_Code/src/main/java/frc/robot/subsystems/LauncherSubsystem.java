@@ -1,18 +1,36 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class LauncherSubsystem extends SubsystemBase {
 
+  public double kMaxOutput, kMinOutput, maxRPM;
+
+  private double leftSetPoint; 
+
+  private double rightSetPoint;
+
   private CANSparkMax leftLaunchWheel;
   private CANSparkMax rightLaunchWheel;
+
+  private SparkPIDController m_leftlancherpidCtrl;
+  private RelativeEncoder m_Lencoder;
+  public double kLP, kLI, kLD, kLIz, kLFF ;
+
+
+  private SparkPIDController m_rightlancherpidCtrl;
+  private RelativeEncoder m_Rencoder;
+  public double kRP, kRI, kRD, kRIz, kRFF ;
 
   private boolean m_launcherRunning;
 
@@ -24,6 +42,30 @@ public class LauncherSubsystem extends SubsystemBase {
         leftLaunchWheel.setInverted(false);
         leftLaunchWheel.setSmartCurrentLimit(Constants.Launcher.kCurrentLimit);
         leftLaunchWheel.setIdleMode(IdleMode.kBrake);
+        
+        m_leftlancherpidCtrl = leftLaunchWheel.getPIDController();
+
+        // Encoder object created to display position values
+        m_Lencoder = leftLaunchWheel.getEncoder();
+
+        // PID coefficients
+        kLP = 6e-5; 
+        kLI = 0;
+        kLD = 0; 
+        kLIz = 0; 
+        kLFF = 0.000015; 
+        kMaxOutput = 1; 
+        kMinOutput = -1;
+        maxRPM = 5700;
+
+        // set PID coefficients
+        m_leftlancherpidCtrl.setP(kLP);
+        m_leftlancherpidCtrl.setI(kLI);
+        m_leftlancherpidCtrl.setD(kLD);
+        m_leftlancherpidCtrl.setIZone(kLIz);
+        m_leftlancherpidCtrl.setFF(kLFF);
+        m_leftlancherpidCtrl.setOutputRange(kMinOutput, kMaxOutput);
+
 
         leftLaunchWheel.burnFlash();
 
@@ -33,9 +75,14 @@ public class LauncherSubsystem extends SubsystemBase {
         rightLaunchWheel.setSmartCurrentLimit(Constants.Launcher.kCurrentLimit);
         rightLaunchWheel.setIdleMode(IdleMode.kBrake);
 
+        m_rightlancherpidCtrl = rightLaunchWheel.getPIDController();
+
         rightLaunchWheel.burnFlash();
 
     m_launcherRunning = false;
+
+
+  
   }
 
 /**
@@ -115,6 +162,16 @@ public Command launchNote(IntakeSubsystem _Intake) {
     }
   }
 
+/* Set the right launcher speed */
+  public void setRightLaunchSpeed(double _rightSetPoint){
+    rightSetPoint = _rightSetPoint; //1500  //rpm
+  }
+
+  /* Set the right launcher speed */
+  public void setLeftLaunchSpeed(double _leftSetPoint){
+    leftSetPoint = _leftSetPoint; //1500  //rpm
+  }
+
   /* Return the current power on the right Launcher wheel. */
   public double getRightLaunchPower(){
     if(m_launcherRunning)
@@ -130,9 +187,35 @@ public Command launchNote(IntakeSubsystem _Intake) {
   @Override
   public void periodic() { // this method will be called once per scheduler run
     // set the launcher motor powers based on whether the launcher is on or not
+
+// read PID coefficients from SmartDashboard
+    double lp = SmartDashboard.getNumber("P Gain", 0);
+    double li = SmartDashboard.getNumber("I Gain", 0);
+    double ld = SmartDashboard.getNumber("D Gain", 0);
+    double liz = SmartDashboard.getNumber("I Zone", 0);
+    double lff = SmartDashboard.getNumber("Feed Forward", 0);
+    double max = SmartDashboard.getNumber("Max Output", 0);
+    double min = SmartDashboard.getNumber("Min Output", 0);
+
+    // if PID coefficients on SmartDashboard have changed, write new values to controller
+    if((lp != kP)) { m_pidController.setP(lp); kP = lp; }
+    if((li != kI)) { m_pidController.setI(li); kI = li; }
+    if((ld != kD)) { m_pidController.setD(ld); kD = ld; }
+    if((liz != kIz)) { m_pidController.setIZone(liz); kIz = liz; }
+    if((lff != kFF)) { m_pidController.setFF(lff); kFF = lff; }
+    if((max != kMaxOutput) || (min != kMinOutput)) { 
+      m_pidController.setOutputRange(min, max); 
+      kMinOutput = min; kMaxOutput = max; 
+    }
+
+
     if (m_launcherRunning) {
-      rightLaunchWheel.set(Constants.Launcher.kRightPower);
-      leftLaunchWheel.set(Constants.Launcher.kLeftPower);
+      m_rightlancherpidCtrl.setReference(rightSetPoint, CANSparkMax.ControlType.kVelocity);
+      m_leftlancherpidCtrl.setReference(leftSetPoint, CANSparkMax.ControlType.kVelocity);
+
+      //rightLaunchWheel.set(Constants.Launcher.kRightPower);
+      //leftLaunchWheel.set(Constants.Launcher.kLeftPower);
+
     } else {
       rightLaunchWheel.set(0.0);
       leftLaunchWheel.set(0.0);

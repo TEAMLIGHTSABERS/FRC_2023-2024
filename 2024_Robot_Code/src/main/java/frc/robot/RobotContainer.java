@@ -44,6 +44,8 @@ public class RobotContainer {
   private final LauncherSubsystem m_launcher = new LauncherSubsystem();
   private static final ExampleSubsystem ExampleSubsystem = new ExampleSubsystem();
 
+  private final double leftLaunchSpeed = 1500;
+
   // A simple auto routine that drives forward a specified distance, and then stops.
   private final Command m_simpleAuto = Autos.exampleAuto(ExampleSubsystem);
 
@@ -118,6 +120,11 @@ public class RobotContainer {
     new JoystickButton(m_driverController, XboxController.Button.kA.value)
         .onTrue(m_launcher.launchNote(m_intake));
         
+  }
+
+  /* Return the current power on the left Launcher wheel. */
+  public void setContLeftLaunchSpeed(){
+    m_launcher.setLeftLaunchSpeed(leftLaunchSpeed);
   }
 
   /* Return the current power on the left Launcher wheel. */
