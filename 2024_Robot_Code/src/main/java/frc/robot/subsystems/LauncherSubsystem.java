@@ -57,7 +57,7 @@ public class LauncherSubsystem extends SubsystemBase {
     kLI = 0;
     kLD = 0; 
     kLIz = 0; 
-    kLFF = 0.000015; 
+    kLFF = 0.0004; 
     kMaxOutput = 1; 
     kMinOutput = -1;
     maxRPM = 5700;
@@ -93,7 +93,7 @@ public class LauncherSubsystem extends SubsystemBase {
     kRI = 0;
     kRD = 0; 
     kRIz = 0; 
-    kRFF = 0.000015; 
+    kRFF = 0.0004; 
 
     // set PID coefficients
     m_rightlancherpidCtrl.setP(kRP);
