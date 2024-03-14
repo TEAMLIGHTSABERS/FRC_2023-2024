@@ -39,63 +39,65 @@ public class LauncherSubsystem extends SubsystemBase {
     // create two new SPARK MAXs and configure them
     leftLaunchWheel =
         new CANSparkMax(Constants.Launcher.kLTSCanId, CANSparkLowLevel.MotorType.kBrushless);
-        leftLaunchWheel.setInverted(false);
-        leftLaunchWheel.setSmartCurrentLimit(Constants.Launcher.kCurrentLimit);
-        leftLaunchWheel.setIdleMode(IdleMode.kBrake);
-        
-        m_leftlancherpidCtrl = leftLaunchWheel.getPIDController();
 
-        // Encoder object created to display position values
-        m_Lencoder = leftLaunchWheel.getEncoder();
+    leftLaunchWheel.setInverted(false);
+    leftLaunchWheel.setSmartCurrentLimit(Constants.Launcher.kCurrentLimit);
+    leftLaunchWheel.setIdleMode(IdleMode.kBrake);
+    
+    m_leftlancherpidCtrl = leftLaunchWheel.getPIDController();
 
-        // PID coefficients
-        kLP = 6e-5; 
-        kLI = 0;
-        kLD = 0; 
-        kLIz = 0; 
-        kLFF = 0.000015; 
-        kMaxOutput = 1; 
-        kMinOutput = -1;
-        maxRPM = 5700;
+    // Encoder object created to display position values
+    m_Lencoder = leftLaunchWheel.getEncoder();
 
-        // set PID coefficients
-        m_leftlancherpidCtrl.setP(kLP);
-        m_leftlancherpidCtrl.setI(kLI);
-        m_leftlancherpidCtrl.setD(kLD);
-        m_leftlancherpidCtrl.setIZone(kLIz);
-        m_leftlancherpidCtrl.setFF(kLFF);
-        m_leftlancherpidCtrl.setOutputRange(kMinOutput, kMaxOutput);
+    // PID coefficients
+    kLP = 6e-5; 
+    kLI = 0;
+    kLD = 0; 
+    kLIz = 0; 
+    kLFF = 0.0004; 
+    kMaxOutput = 1; 
+    kMinOutput = -1;
+    maxRPM = 5700;
+
+    // set PID coefficients
+    m_leftlancherpidCtrl.setP(kLP);
+    m_leftlancherpidCtrl.setI(kLI);
+    m_leftlancherpidCtrl.setD(kLD);
+    m_leftlancherpidCtrl.setIZone(kLIz);
+    m_leftlancherpidCtrl.setFF(kLFF);
+    m_leftlancherpidCtrl.setOutputRange(kMinOutput, kMaxOutput);
 
 
-        leftLaunchWheel.burnFlash();
+    leftLaunchWheel.burnFlash();
 
-        rightLaunchWheel =
-        new CANSparkMax(Constants.Launcher.kRTSCanId, CANSparkLowLevel.MotorType.kBrushless);
-        rightLaunchWheel.setInverted(true);
-        rightLaunchWheel.setSmartCurrentLimit(Constants.Launcher.kCurrentLimit);
-        rightLaunchWheel.setIdleMode(IdleMode.kBrake);
+    rightLaunchWheel =
+    new CANSparkMax(Constants.Launcher.kRTSCanId, CANSparkLowLevel.MotorType.kBrushless);
 
-        m_rightlancherpidCtrl = rightLaunchWheel.getPIDController();
+    rightLaunchWheel.setInverted(true);
+    rightLaunchWheel.setSmartCurrentLimit(Constants.Launcher.kCurrentLimit);
+    rightLaunchWheel.setIdleMode(IdleMode.kBrake);
 
-        // Encoder object created to display position values
-        m_Rencoder = rightLaunchWheel.getEncoder();
+    m_rightlancherpidCtrl = rightLaunchWheel.getPIDController();
 
-        // PID coefficients
-        kRP = 6e-5; 
-        kRI = 0;
-        kRD = 0; 
-        kRIz = 0; 
-        kRFF = 0.000015; 
+    // Encoder object created to display position values
+    m_Rencoder = rightLaunchWheel.getEncoder();
 
-        // set PID coefficients
-        m_rightlancherpidCtrl.setP(kRP);
-        m_rightlancherpidCtrl.setI(kRI);
-        m_rightlancherpidCtrl.setD(kRD);
-        m_rightlancherpidCtrl.setIZone(kRIz);
-        m_rightlancherpidCtrl.setFF(kRFF);
-        m_rightlancherpidCtrl.setOutputRange(kMinOutput, kMaxOutput);
+    // PID coefficients
+    kRP = 6e-5; 
+    kRI = 0;
+    kRD = 0; 
+    kRIz = 0; 
+    kRFF = 0.0004; 
 
-        rightLaunchWheel.burnFlash();
+    // set PID coefficients
+    m_rightlancherpidCtrl.setP(kRP);
+    m_rightlancherpidCtrl.setI(kRI);
+    m_rightlancherpidCtrl.setD(kRD);
+    m_rightlancherpidCtrl.setIZone(kRIz);
+    m_rightlancherpidCtrl.setFF(kRFF);
+    m_rightlancherpidCtrl.setOutputRange(kMinOutput, kMaxOutput);
+
+    rightLaunchWheel.burnFlash();
 
     m_launcherRunning = false;
 
@@ -126,6 +128,7 @@ public Command launchNote(IntakeSubsystem _Intake) {
             m_launcherRunning = true;
             m_timer = new Timer();
             m_timer.start();
+
           }
 
           @Override
@@ -248,17 +251,24 @@ public Command launchNote(IntakeSubsystem _Intake) {
       m_rightlancherpidCtrl.setReference(rightSetPoint, CANSparkMax.ControlType.kVelocity);
       m_leftlancherpidCtrl.setReference(leftSetPoint, CANSparkMax.ControlType.kVelocity);
 
-      //rightLaunchWheel.set(Constants.Launcher.kRightPower);
-      //leftLaunchWheel.set(Constants.Launcher.kLeftPower);
+      SmartDashboard.putNumber("RightSetPoint", rightSetPoint);
+      SmartDashboard.putNumber("LeftSetPoint", leftSetPoint);
+      SmartDashboard.putNumber("LeftProcessVariable", m_Lencoder.getVelocity());
+      SmartDashboard.putNumber("RightProcessVariable", m_Rencoder.getVelocity());
+
+      rightLaunchWheel.set(Constants.Launcher.kRightPower);
+      leftLaunchWheel.set(Constants.Launcher.kLeftPower);
 
     } else {
       rightLaunchWheel.set(0.0);
       leftLaunchWheel.set(0.0);
+
+      SmartDashboard.putNumber("RightSetPoint", 0.0);
+      SmartDashboard.putNumber("LeftSetPoint", 0.0);
+      SmartDashboard.putNumber("LeftProcessVariable", m_Lencoder.getVelocity());
+      SmartDashboard.putNumber("RightProcessVariable", m_Rencoder.getVelocity());
+
     }
-    SmartDashboard.putNumber("RightSetPoint", rightSetPoint);
-    SmartDashboard.putNumber("LeftSetPoint", leftSetPoint);
-    SmartDashboard.putNumber("LeftProcessVariable", m_Lencoder.getVelocity());
-    SmartDashboard.putNumber("RightProcessVariable", m_Rencoder.getVelocity());
 
 
   }
