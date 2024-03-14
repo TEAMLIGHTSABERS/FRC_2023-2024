@@ -40,9 +40,6 @@ public class LauncherSubsystem extends SubsystemBase {
     leftLaunchWheel =
         new CANSparkMax(Constants.Launcher.kLTSCanId, CANSparkLowLevel.MotorType.kBrushless);
 
-    // Add Left Launch Wheel motor to the LiveWindow.
-    addChild("Left Launch Wheel", leftLaunchWheel);
-        
     leftLaunchWheel.setInverted(false);
     leftLaunchWheel.setSmartCurrentLimit(Constants.Launcher.kCurrentLimit);
     leftLaunchWheel.setIdleMode(IdleMode.kBrake);
@@ -76,9 +73,6 @@ public class LauncherSubsystem extends SubsystemBase {
     rightLaunchWheel =
     new CANSparkMax(Constants.Launcher.kRTSCanId, CANSparkLowLevel.MotorType.kBrushless);
 
-    // Add Right Launch Wheel motor to the LiveWindow.
-    addChild("Right Launch Wheel", rightLaunchWheel);
-
     rightLaunchWheel.setInverted(true);
     rightLaunchWheel.setSmartCurrentLimit(Constants.Launcher.kCurrentLimit);
     rightLaunchWheel.setIdleMode(IdleMode.kBrake);
@@ -111,11 +105,6 @@ public class LauncherSubsystem extends SubsystemBase {
   
   }
 
-private void addChild(String name, CANSparkMax leftLaunchWheel2) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'addChild'");
-  }
-
 /**
 * Constructs a command that starts the launcher and then runs the Intake feeder
 * motor to put the Note up to the spinning launcher wheels. After a few more seconds
@@ -139,6 +128,7 @@ public Command launchNote(IntakeSubsystem _Intake) {
             m_launcherRunning = true;
             m_timer = new Timer();
             m_timer.start();
+
           }
 
           @Override
@@ -261,17 +251,24 @@ public Command launchNote(IntakeSubsystem _Intake) {
       m_rightlancherpidCtrl.setReference(rightSetPoint, CANSparkMax.ControlType.kVelocity);
       m_leftlancherpidCtrl.setReference(leftSetPoint, CANSparkMax.ControlType.kVelocity);
 
-      //rightLaunchWheel.set(Constants.Launcher.kRightPower);
-      //leftLaunchWheel.set(Constants.Launcher.kLeftPower);
+      SmartDashboard.putNumber("RightSetPoint", rightSetPoint);
+      SmartDashboard.putNumber("LeftSetPoint", leftSetPoint);
+      SmartDashboard.putNumber("LeftProcessVariable", m_Lencoder.getVelocity());
+      SmartDashboard.putNumber("RightProcessVariable", m_Rencoder.getVelocity());
+
+      rightLaunchWheel.set(Constants.Launcher.kRightPower);
+      leftLaunchWheel.set(Constants.Launcher.kLeftPower);
 
     } else {
       rightLaunchWheel.set(0.0);
       leftLaunchWheel.set(0.0);
+
+      SmartDashboard.putNumber("RightSetPoint", 0.0);
+      SmartDashboard.putNumber("LeftSetPoint", 0.0);
+      SmartDashboard.putNumber("LeftProcessVariable", m_Lencoder.getVelocity());
+      SmartDashboard.putNumber("RightProcessVariable", m_Rencoder.getVelocity());
+
     }
-    SmartDashboard.putNumber("RightSetPoint", rightSetPoint);
-    SmartDashboard.putNumber("LeftSetPoint", leftSetPoint);
-    SmartDashboard.putNumber("LeftProcessVariable", m_Lencoder.getVelocity());
-    SmartDashboard.putNumber("RightProcessVariable", m_Rencoder.getVelocity());
 
 
   }
