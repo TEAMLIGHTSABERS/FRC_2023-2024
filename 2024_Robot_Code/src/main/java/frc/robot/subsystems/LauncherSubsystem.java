@@ -14,7 +14,9 @@ import frc.robot.Constants;
 
 public class LauncherSubsystem extends SubsystemBase {
 
-  public double kMaxOutput, kMinOutput, maxRPM;
+  private double kMaxOutput, kMinOutput, maxRPM;
+  private double m_leftWheelPower, m_rightWheelPower;
+  private boolean m_launcherRunning;
 
   private double leftSetPoint; 
 
@@ -27,16 +29,19 @@ public class LauncherSubsystem extends SubsystemBase {
   private RelativeEncoder m_Lencoder;
   public double kLP, kLI, kLD, kLIz, kLFF ;
 
-
   private SparkPIDController m_rightlancherpidCtrl;
   private RelativeEncoder m_Rencoder;
   public double kRP, kRI, kRD, kRIz, kRFF ;
-
-  private boolean m_launcherRunning;
-
+  
   /** Creates a new LauncherSubsystem. */
   public LauncherSubsystem() {
-    // create two new SPARK MAXs and configure them
+    // Set private holding variables: -----------------------------------------------------|
+    m_leftWheelPower =0.0;
+    m_rightWheelPower =0.0;
+    m_launcherRunning = false;
+
+    // create two new SPARK MAXs and configure them ---------------------------------------|
+    // 1 motor for the left launcher wheel: -------------------------------------------||
     leftLaunchWheel =
         new CANSparkMax(Constants.Launcher.kLTSCanId, CANSparkLowLevel.MotorType.kBrushless);
 
@@ -44,12 +49,13 @@ public class LauncherSubsystem extends SubsystemBase {
     leftLaunchWheel.setSmartCurrentLimit(Constants.Launcher.kCurrentLimit);
     leftLaunchWheel.setIdleMode(IdleMode.kBrake);
     
+    // create a PID controller for the left launcher motor 
     m_leftlancherpidCtrl = leftLaunchWheel.getPIDController();
 
-    // Encoder object created to display position values
+    // encoder object created to display position and velocity values for the left motor
     m_Lencoder = leftLaunchWheel.getEncoder();
 
-    // PID coefficients
+    // initialize the left motor PID coefficients
     kLP = 6e-5; 
     kLI = 0;
     kLD = 0; 
@@ -59,7 +65,7 @@ public class LauncherSubsystem extends SubsystemBase {
     kMinOutput = -1;
     maxRPM = 5700;
 
-    // set PID coefficients
+    // configure the left motor PID controller
     m_leftlancherpidCtrl.setP(kLP);
     m_leftlancherpidCtrl.setI(kLI);
     m_leftlancherpidCtrl.setD(kLD);
@@ -67,9 +73,10 @@ public class LauncherSubsystem extends SubsystemBase {
     m_leftlancherpidCtrl.setFF(kLFF);
     m_leftlancherpidCtrl.setOutputRange(kMinOutput, kMaxOutput);
 
-
+    // Push left motor configuration to the left motor flash memory.
     leftLaunchWheel.burnFlash();
 
+    // 1 motor for the right launcher wheel: -------------------------------------------||
     rightLaunchWheel =
     new CANSparkMax(Constants.Launcher.kRTSCanId, CANSparkLowLevel.MotorType.kBrushless);
 
@@ -77,19 +84,20 @@ public class LauncherSubsystem extends SubsystemBase {
     rightLaunchWheel.setSmartCurrentLimit(Constants.Launcher.kCurrentLimit);
     rightLaunchWheel.setIdleMode(IdleMode.kBrake);
 
+    // create a PID controller for the left launcher motor 
     m_rightlancherpidCtrl = rightLaunchWheel.getPIDController();
 
-    // Encoder object created to display position values
+    // encoder object created to display position and velocity values for the right motor
     m_Rencoder = rightLaunchWheel.getEncoder();
 
-    // PID coefficients
+    // initialize the right motor PID coefficients
     kRP = 6e-5; 
     kRI = 0;
     kRD = 0; 
     kRIz = 0; 
     kRFF = 0.0004; 
 
-    // set PID coefficients
+    // configure the left motor PID controller
     m_rightlancherpidCtrl.setP(kRP);
     m_rightlancherpidCtrl.setI(kRI);
     m_rightlancherpidCtrl.setD(kRD);
@@ -97,12 +105,8 @@ public class LauncherSubsystem extends SubsystemBase {
     m_rightlancherpidCtrl.setFF(kRFF);
     m_rightlancherpidCtrl.setOutputRange(kMinOutput, kMaxOutput);
 
+    // push left motor configuration to the left motor flash memory.
     rightLaunchWheel.burnFlash();
-
-    m_launcherRunning = false;
-
-
-  
   }
 
 /**
@@ -261,31 +265,21 @@ public Command launchNote(IntakeSubsystem _Intake) {
       m_rightlancherpidCtrl.setReference(rightSetPoint, CANSparkMax.ControlType.kVelocity);
       m_leftlancherpidCtrl.setReference(leftSetPoint, CANSparkMax.ControlType.kVelocity);
 
-      SmartDashboard.putNumber("RightSetPoint", rightSetPoint);
-      SmartDashboard.putNumber("LeftSetPoint", leftSetPoint);
-      SmartDashboard.putNumber("Left Velocity", m_Lencoder.getVelocity());
-      SmartDashboard.putNumber("Right Velocity", m_Rencoder.getVelocity());
-
-
 //      rightLaunchWheel.set(m_rightlancherpidCtrl.output());
 //      leftLaunchWheel.set(m_leftlancherpidCtrl.getOutputMax());
-      SmartDashboard.putNumber("Right PID Output", m_rightlancherpidCtrl.getSmartMotionAllowedClosedLoopError(0));
-      SmartDashboard.putNumber("Left PID Output", m_leftlancherpidCtrl.getOutputMax());
 
       rightLaunchWheel.set(Constants.Launcher.kRightPower);
       leftLaunchWheel.set(Constants.Launcher.kLeftPower);
 
-   } else {
+    } else {
       rightLaunchWheel.set(0.0);
       leftLaunchWheel.set(0.0);
-
-      SmartDashboard.putNumber("RightSetPoint", 0.0);
-      SmartDashboard.putNumber("LeftSetPoint", 0.0);
-      SmartDashboard.putNumber("Left Velocity", m_Lencoder.getVelocity());
-      SmartDashboard.putNumber("Right Velocity", m_Rencoder.getVelocity());
-
     }
 
-
+    SmartDashboard.putBoolean("Launcher Running", m_launcherRunning);
+    SmartDashboard.putNumber("RightSetPoint", rightSetPoint);
+    SmartDashboard.putNumber("LeftSetPoint", leftSetPoint);
+    SmartDashboard.putNumber("Left Velocity", m_Lencoder.getVelocity());
+    SmartDashboard.putNumber("Right Velocity", m_Rencoder.getVelocity());
   }
 }
