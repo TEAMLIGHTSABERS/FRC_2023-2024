@@ -67,6 +67,8 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureButtonBindings();
 
+    SmartDashboard.putData("Launcher Wheel Test", m_launcher.testFlyWheels());
+        
     // Configure default commands
     m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
@@ -89,7 +91,6 @@ public class RobotContainer {
     m_chooser.addOption("Complex Auto", m_complexAuto);
     SmartDashboard.putData("Auto Selection", m_chooser);
     SmartDashboard.putData(m_launcher);
-    SmartDashboard.putData("Launcher Wheel Test", m_launcher.testFlyWheels());
   }
 
   /**
@@ -127,7 +128,7 @@ public class RobotContainer {
         
     new JoystickButton(m_driverController, XboxController.Button.kX.value)
         .onTrue(m_launcher.testFlyWheels());
-        
+
   }
 
   /* Return the current power on the left Launcher wheel. */

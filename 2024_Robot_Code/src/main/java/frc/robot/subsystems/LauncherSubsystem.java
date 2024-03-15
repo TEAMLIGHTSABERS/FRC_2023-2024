@@ -42,8 +42,8 @@ public class LauncherSubsystem extends SubsystemBase {
     // current running power
     m_leftWheelPower = 0.0; // Nominal -1 to 1
     m_rightWheelPower = 0.0;
-    leftSetPoint = 1.8; // RPM
-    rightSetPoint = 1.8;
+    leftSetPoint = 2; // RPM
+    rightSetPoint = 2;
 
     // Set SparkMax motor limits
     kMaxOutput = 1; 
