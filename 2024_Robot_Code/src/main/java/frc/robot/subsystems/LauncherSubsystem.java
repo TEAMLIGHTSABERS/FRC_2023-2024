@@ -210,13 +210,21 @@ public Command launchNote(IntakeSubsystem _Intake) {
     // set the launcher motor powers based on whether the launcher is on or not
 
 // read PID coefficients from SmartDashboard
-    double lp = SmartDashboard.getNumber("P Gain", 0);
-    double li = SmartDashboard.getNumber("I Gain", 0);
-    double ld = SmartDashboard.getNumber("D Gain", 0);
-    double liz = SmartDashboard.getNumber("I Zone", 0);
-    double lff = SmartDashboard.getNumber("Feed Forward", 0);
-    double max = SmartDashboard.getNumber("Max Output", 0);
-    double min = SmartDashboard.getNumber("Min Output", 0);
+//    double lp = SmartDashboard.getNumber("P Gain", 0);
+//    double li = SmartDashboard.getNumber("I Gain", 0);
+//    double ld = SmartDashboard.getNumber("D Gain", 0);
+//    double liz = SmartDashboard.getNumber("I Zone", 0);
+//    double lff = SmartDashboard.getNumber("Feed Forward", 0);
+//    double max = SmartDashboard.getNumber("Max Output", 0);
+//    double min = SmartDashboard.getNumber("Min Output", 0);
+
+    double lp = 0; //SmartDashboard.getNumber("P Gain", 0);
+    double li = 0; //SmartDashboard.getNumber("I Gain", 0);
+    double ld = 0; //SmartDashboard.getNumber("D Gain", 0);
+    double liz = 0; //SmartDashboard.getNumber("I Zone", 0);
+    double lff = 0.5; //SmartDashboard.getNumber("Feed Forward", 0);
+    double max = 1.0; //SmartDashboard.getNumber("Max Output", 0);
+    double min = -1.0; //SmartDashboard.getNumber("Min Output", 0);
 
     // if PID coefficients on SmartDashboard have changed, write new values to controller
     if((lp != kLP)) { m_leftlancherpidCtrl.setP(lp); kLP = lp; }
@@ -230,11 +238,13 @@ public Command launchNote(IntakeSubsystem _Intake) {
     }
 
     // read PID coefficients from SmartDashboard
-    double rp = SmartDashboard.getNumber("P Gain", 0);
-    double ri = SmartDashboard.getNumber("I Gain", 0);
-    double rd = SmartDashboard.getNumber("D Gain", 0);
-    double riz = SmartDashboard.getNumber("I Zone", 0);
-    double rff = SmartDashboard.getNumber("Feed Forward", 0);
+    double rp = 0; //double rp = SmartDashboard.getNumber("P Gain", 0);
+    double ri = 0; //double ri = SmartDashboard.getNumber("I Gain", 0);
+    double rd = 0; //double rd = SmartDashboard.getNumber("D Gain", 0);
+    double riz = 0; //double riz = SmartDashboard.getNumber("I Zone", 0);
+    double rff = 0.5;
+    //double rff = SmartDashboard.getNumber("R Feed Forward", .2);
+    SmartDashboard.putNumber("R Feed Forward", rff);
 
     // if PID coefficients on SmartDashboard have changed, write new values to controller
     if((rp != kRP)) { m_leftlancherpidCtrl.setP(rp); kRP = rp; }
@@ -253,20 +263,26 @@ public Command launchNote(IntakeSubsystem _Intake) {
 
       SmartDashboard.putNumber("RightSetPoint", rightSetPoint);
       SmartDashboard.putNumber("LeftSetPoint", leftSetPoint);
-      SmartDashboard.putNumber("LeftProcessVariable", m_Lencoder.getVelocity());
-      SmartDashboard.putNumber("RightProcessVariable", m_Rencoder.getVelocity());
+      SmartDashboard.putNumber("Left Velocity", m_Lencoder.getVelocity());
+      SmartDashboard.putNumber("Right Velocity", m_Rencoder.getVelocity());
+
+
+//      rightLaunchWheel.set(m_rightlancherpidCtrl.output());
+//      leftLaunchWheel.set(m_leftlancherpidCtrl.getOutputMax());
+      SmartDashboard.putNumber("Right PID Output", m_rightlancherpidCtrl.getSmartMotionAllowedClosedLoopError(0));
+      SmartDashboard.putNumber("Left PID Output", m_leftlancherpidCtrl.getOutputMax());
 
       rightLaunchWheel.set(Constants.Launcher.kRightPower);
       leftLaunchWheel.set(Constants.Launcher.kLeftPower);
 
-    } else {
+   } else {
       rightLaunchWheel.set(0.0);
       leftLaunchWheel.set(0.0);
 
       SmartDashboard.putNumber("RightSetPoint", 0.0);
       SmartDashboard.putNumber("LeftSetPoint", 0.0);
-      SmartDashboard.putNumber("LeftProcessVariable", m_Lencoder.getVelocity());
-      SmartDashboard.putNumber("RightProcessVariable", m_Rencoder.getVelocity());
+      SmartDashboard.putNumber("Left Velocity", m_Lencoder.getVelocity());
+      SmartDashboard.putNumber("Right Velocity", m_Rencoder.getVelocity());
 
     }
 
