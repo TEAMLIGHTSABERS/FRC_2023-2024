@@ -42,8 +42,8 @@ public class LauncherSubsystem extends SubsystemBase {
     // current running power
     m_leftWheelPower = 0.0; // Nominal -1 to 1
     m_rightWheelPower = 0.0;
-    leftSetPoint = 2000; // RPM
-    rightSetPoint = 2000;
+    leftSetPoint = 1.8; // RPM
+    rightSetPoint = 1.8;
 
     // Set SparkMax motor limits
     kMaxOutput = 1; 
@@ -312,6 +312,7 @@ public Command testFlyWheels() {
     double riz = 0; //double riz = SmartDashboard.getNumber("I Zone", 0);
     double rff = 0.5;
     //double rff = SmartDashboard.getNumber("R Feed Forward", .2);
+//    leftSetPoint = SmartDashboard.getNumber("Left Command Velocity", 0);
 
     // if PID coefficients on SmartDashboard have changed, write new values to controller
     if((rp != kRP)) { m_leftlancherpidCtrl.setP(rp); kRP = rp; }
