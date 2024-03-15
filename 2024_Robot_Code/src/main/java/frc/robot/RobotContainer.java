@@ -89,7 +89,7 @@ public class RobotContainer {
     m_chooser.addOption("Complex Auto", m_complexAuto);
     SmartDashboard.putData("Auto Selection", m_chooser);
     SmartDashboard.putData(m_launcher);
-    SmartDashboard.putData("Launch", m_launcher.launchNote(m_intake));
+    SmartDashboard.putData("Launcher Wheel Test", m_launcher.testFlyWheels());
   }
 
   /**
@@ -124,6 +124,9 @@ public class RobotContainer {
 
     new JoystickButton(m_driverController, XboxController.Button.kA.value)
         .onTrue(m_launcher.launchNote(m_intake));
+        
+    new JoystickButton(m_driverController, XboxController.Button.kX.value)
+        .onTrue(m_launcher.testFlyWheels());
         
   }
 

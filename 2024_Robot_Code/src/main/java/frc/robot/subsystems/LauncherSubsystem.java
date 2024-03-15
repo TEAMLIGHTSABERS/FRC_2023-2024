@@ -36,9 +36,33 @@ public class LauncherSubsystem extends SubsystemBase {
   /** Creates a new LauncherSubsystem. */
   public LauncherSubsystem() {
     // Set private holding variables: -----------------------------------------------------|
-    m_leftWheelPower =0.0;
-    m_rightWheelPower =0.0;
+    // launcher status
     m_launcherRunning = false;
+
+    // current running power
+    m_leftWheelPower = 0.0; // Nominal -1 to 1
+    m_rightWheelPower = 0.0;
+    leftSetPoint = 2000; // RPM
+    rightSetPoint = 2000;
+
+    // Set SparkMax motor limits
+    kMaxOutput = 1; 
+    kMinOutput = -1;
+    maxRPM = 5700;
+
+    // initialize the left motor PID coefficients
+    kLP = 6e-5; 
+    kLI = 0;
+    kLD = 0; 
+    kLIz = 0; 
+    kLFF = 0.0004; 
+
+    // initialize the right motor PID coefficients
+    kRP = 6e-5; 
+    kRI = 0;
+    kRD = 0; 
+    kRIz = 0; 
+    kRFF = 0.0004; 
 
     // create two new SPARK MAXs and configure them ---------------------------------------|
     // 1 motor for the left launcher wheel: -------------------------------------------||
@@ -54,16 +78,6 @@ public class LauncherSubsystem extends SubsystemBase {
 
     // encoder object created to display position and velocity values for the left motor
     m_Lencoder = leftLaunchWheel.getEncoder();
-
-    // initialize the left motor PID coefficients
-    kLP = 6e-5; 
-    kLI = 0;
-    kLD = 0; 
-    kLIz = 0; 
-    kLFF = 0.0004; 
-    kMaxOutput = 1; 
-    kMinOutput = -1;
-    maxRPM = 5700;
 
     // configure the left motor PID controller
     m_leftlancherpidCtrl.setP(kLP);
@@ -90,13 +104,6 @@ public class LauncherSubsystem extends SubsystemBase {
     // encoder object created to display position and velocity values for the right motor
     m_Rencoder = rightLaunchWheel.getEncoder();
 
-    // initialize the right motor PID coefficients
-    kRP = 6e-5; 
-    kRI = 0;
-    kRD = 0; 
-    kRIz = 0; 
-    kRFF = 0.0004; 
-
     // configure the left motor PID controller
     m_rightlancherpidCtrl.setP(kRP);
     m_rightlancherpidCtrl.setI(kRI);
@@ -116,7 +123,7 @@ public class LauncherSubsystem extends SubsystemBase {
 * command takes control of the intake subsystem to make sure the feeder keeps
 * running during the launch sequence.
 *
-* @param _intake The instance of the launcher subsystem
+* @param _intake The instance of the intake subsystem
 * @return The launch command
 */
 
@@ -167,6 +174,58 @@ public Command launchNote(IntakeSubsystem _Intake) {
         return launching;
   }
 
+/**
+* Constructs a command that starts the launcher and then runs the Intake feeder
+* motor to put the Note up to the spinning launcher wheels. After a few more seconds
+* the command will shutdown the Launcher Wheels and an the Intake feeder. This
+* command takes control of the intake subsystem to make sure the feeder keeps
+* running during the launch sequence.
+*
+* @return The launch command
+*/
+
+public Command testFlyWheels() {
+    Command startTest =
+        new Command() {
+          
+          private Timer m_timer;
+
+          @Override
+          public void initialize() {
+            /* Start the Launcher Wheels and the Launch timer. */
+            m_launcherRunning = true;
+            m_timer = new Timer();
+            m_timer.start();
+
+          }
+
+          @Override
+          public void execute() {
+            /* Wait until the Launcher Wheels get up to speed,
+             * then start the Intake Feeder to push the Note up
+             * into the Launcher Wheels.
+             */
+            m_launcherRunning = true;
+          }
+
+          @Override
+          public boolean isFinished() {
+            /* The Launcher and Intake feeder will stop after an
+             * appropriate delay.
+             */
+            return m_timer.get() > Constants.Launcher.kFlyWheelStopTime;
+          }
+
+          @Override
+          public void end(boolean interrupted) {
+            /* Stop both the Launcher and the Intake feeder */
+            m_launcherRunning = false;
+          }
+        };
+
+        return startTest;
+  }
+
   /**
    * Turns the launcher off. Can be run once and the launcher will stay running or run continuously
    * in a {@code RunCommand}.
@@ -213,22 +272,27 @@ public Command launchNote(IntakeSubsystem _Intake) {
   public void periodic() { // this method will be called once per scheduler run
     // set the launcher motor powers based on whether the launcher is on or not
 
-// read PID coefficients from SmartDashboard
-//    double lp = SmartDashboard.getNumber("P Gain", 0);
-//    double li = SmartDashboard.getNumber("I Gain", 0);
-//    double ld = SmartDashboard.getNumber("D Gain", 0);
-//    double liz = SmartDashboard.getNumber("I Zone", 0);
-//    double lff = SmartDashboard.getNumber("Feed Forward", 0);
-//    double max = SmartDashboard.getNumber("Max Output", 0);
-//    double min = SmartDashboard.getNumber("Min Output", 0);
+    double max = 1.0; //SmartDashboard.getNumber("Max Output", 0);
+    double min = -1.0; //SmartDashboard.getNumber("Min Output", 0);
+    // read PID coefficients from SmartDashboard
+    //    double lp = SmartDashboard.getNumber("P Gain", 0);
+    //    double li = SmartDashboard.getNumber("I Gain", 0);
+    //    double ld = SmartDashboard.getNumber("D Gain", 0);
+    //    double liz = SmartDashboard.getNumber("I Zone", 0);
+    //    double lff = SmartDashboard.getNumber("Feed Forward", 0);
+    //    double max = SmartDashboard.getNumber("Max Output", 0);
+    //    double min = SmartDashboard.getNumber("Min Output", 0);
 
     double lp = 0; //SmartDashboard.getNumber("P Gain", 0);
     double li = 0; //SmartDashboard.getNumber("I Gain", 0);
     double ld = 0; //SmartDashboard.getNumber("D Gain", 0);
     double liz = 0; //SmartDashboard.getNumber("I Zone", 0);
     double lff = 0.5; //SmartDashboard.getNumber("Feed Forward", 0);
-    double max = 1.0; //SmartDashboard.getNumber("Max Output", 0);
-    double min = -1.0; //SmartDashboard.getNumber("Min Output", 0);
+    SmartDashboard.putNumber("L P Gain", lp);
+    SmartDashboard.putNumber("L I Gain", li);
+    SmartDashboard.putNumber("L D Gain", ld);
+    SmartDashboard.putNumber("L I Zone", liz);
+    SmartDashboard.putNumber("L Feed Forward", lff);
 
     // if PID coefficients on SmartDashboard have changed, write new values to controller
     if((lp != kLP)) { m_leftlancherpidCtrl.setP(lp); kLP = lp; }
@@ -248,7 +312,6 @@ public Command launchNote(IntakeSubsystem _Intake) {
     double riz = 0; //double riz = SmartDashboard.getNumber("I Zone", 0);
     double rff = 0.5;
     //double rff = SmartDashboard.getNumber("R Feed Forward", .2);
-    SmartDashboard.putNumber("R Feed Forward", rff);
 
     // if PID coefficients on SmartDashboard have changed, write new values to controller
     if((rp != kRP)) { m_leftlancherpidCtrl.setP(rp); kRP = rp; }
@@ -268,8 +331,8 @@ public Command launchNote(IntakeSubsystem _Intake) {
 //      rightLaunchWheel.set(m_rightlancherpidCtrl.output());
 //      leftLaunchWheel.set(m_leftlancherpidCtrl.getOutputMax());
 
-      rightLaunchWheel.set(Constants.Launcher.kRightPower);
-      leftLaunchWheel.set(Constants.Launcher.kLeftPower);
+//      rightLaunchWheel.set(Constants.Launcher.kRightPower);
+//      leftLaunchWheel.set(Constants.Launcher.kLeftPower);
 
     } else {
       rightLaunchWheel.set(0.0);
@@ -277,9 +340,9 @@ public Command launchNote(IntakeSubsystem _Intake) {
     }
 
     SmartDashboard.putBoolean("Launcher Running", m_launcherRunning);
-    SmartDashboard.putNumber("RightSetPoint", rightSetPoint);
-    SmartDashboard.putNumber("LeftSetPoint", leftSetPoint);
+    SmartDashboard.putNumber("Left Command Velocity", leftSetPoint);
+//    SmartDashboard.putNumber("RightSetPoint", rightSetPoint);
     SmartDashboard.putNumber("Left Velocity", m_Lencoder.getVelocity());
-    SmartDashboard.putNumber("Right Velocity", m_Rencoder.getVelocity());
+//    SmartDashboard.putNumber("Right Velocity", m_Rencoder.getVelocity());
   }
 }
