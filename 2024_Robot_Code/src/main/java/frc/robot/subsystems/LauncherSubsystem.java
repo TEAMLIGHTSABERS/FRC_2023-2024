@@ -7,6 +7,7 @@ import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -14,13 +15,12 @@ import frc.robot.Constants;
 
 public class LauncherSubsystem extends SubsystemBase {
 
-  private double kMaxOutput, kMinOutput, maxRPM;
-  private double m_leftWheelPower, m_rightWheelPower;
+  private double kMaxOutput, kMinOutput;
   private boolean m_launcherRunning;
 
-  private double leftSetPoint; 
-
-  private double rightSetPoint;
+  private double maxMotorRPM;
+  private double leftCmdWheelRate;
+  private double rightCmdWheelRate; 
 
   private CANSparkMax leftLaunchWheel;
   private CANSparkMax rightLaunchWheel;
@@ -40,15 +40,19 @@ public class LauncherSubsystem extends SubsystemBase {
     m_launcherRunning = false;
 
     // current running power
-    m_leftWheelPower = 0.0; // Nominal -1 to 1
-    m_rightWheelPower = 0.0;
-    leftSetPoint = 2; // RPM
-    rightSetPoint = 2;
+    leftCmdWheelRate = 1; // RPM
+    rightCmdWheelRate = 1;
 
     // Set SparkMax motor limits
     kMaxOutput = 1; 
     kMinOutput = -1;
-    maxRPM = 5700;
+
+    // The "Unit Max Commanded Velocity" is 1.0. When this commanded
+    // velocity as the setpoint velocity of a Feed-Forward Only PID
+    // with a Feed-Forward Coefficient of 1.0, the the maximum achieved
+    // velocity is 4.3. An arbitrary factor of 1000 is used as the 
+    // conversion from "Unit Max Commanded Velocity" to RPM.
+    maxMotorRPM = 4300;
 
     // initialize the left motor PID coefficients
     kLP = 6e-5; 
@@ -234,43 +238,12 @@ public Command testFlyWheels() {
     m_launcherRunning = false;
   }
 
-  /* Return the current power on the left Launcher wheel. */
-  public double getLeftLaunchPower(){
-    if(m_launcherRunning)
-    {
-     return (Constants.Launcher.kLeftPower);
-    }
-    else
-    {
-     return (0.0);
-    }
-  }
-
-/* Set the right launcher speed */
-  public void setRightLaunchSpeed(double _rightSetPoint){
-    rightSetPoint = _rightSetPoint; //1500  //rpm
-  }
-
-  /* Set the right launcher speed */
-  public void setLeftLaunchSpeed(double _leftSetPoint){
-    leftSetPoint = _leftSetPoint; //1500  //rpm
-  }
-
-  /* Return the current power on the right Launcher wheel. */
-  public double getRightLaunchPower(){
-    if(m_launcherRunning)
-    {
-     return (Constants.Launcher.kRightPower);
-    }
-    else
-    {
-     return (0.0);
-    }
-  }
-
   @Override
   public void periodic() { // this method will be called once per scheduler run
     // set the launcher motor powers based on whether the launcher is on or not
+
+    double leftSetPoint;
+    double rightSetPoint;
 
     double max = 1.0; //SmartDashboard.getNumber("Max Output", 0);
     double min = -1.0; //SmartDashboard.getNumber("Min Output", 0);
@@ -288,7 +261,8 @@ public Command testFlyWheels() {
     double ld = 0; //SmartDashboard.getNumber("D Gain", 0);
     double liz = 0; //SmartDashboard.getNumber("I Zone", 0);
     double lff = 0.5; //SmartDashboard.getNumber("Feed Forward", 0);
-    SmartDashboard.putNumber("L P Gain", lp);
+    Shuffleboard.getTab("Launcher Subsystem").add("L P Gain", lp);
+//    SmartDashboard.putNumber("L P Gain", lp);
     SmartDashboard.putNumber("L I Gain", li);
     SmartDashboard.putNumber("L D Gain", ld);
     SmartDashboard.putNumber("L I Zone", liz);
@@ -325,10 +299,11 @@ public Command testFlyWheels() {
       kMinOutput = min; kMaxOutput = max; 
     }
 
+    
     if (m_launcherRunning) {
-      m_rightlancherpidCtrl.setReference(rightSetPoint, CANSparkMax.ControlType.kVelocity);
-      m_leftlancherpidCtrl.setReference(leftSetPoint, CANSparkMax.ControlType.kVelocity);
 
+      leftSetPoint = leftCmdWheelRate; // leftCmdWheelRate/maxMotorRPM;
+      rightSetPoint = rightCmdWheelRate; // rightCmdWheelRate/maxMotorRPM;
 //      rightLaunchWheel.set(m_rightlancherpidCtrl.output());
 //      leftLaunchWheel.set(m_leftlancherpidCtrl.getOutputMax());
 
@@ -336,9 +311,15 @@ public Command testFlyWheels() {
 //      leftLaunchWheel.set(Constants.Launcher.kLeftPower);
 
     } else {
-      rightLaunchWheel.set(0.0);
-      leftLaunchWheel.set(0.0);
+      leftSetPoint = 0;
+      rightSetPoint = 0;
+
+//      rightLaunchWheel.set(0.0);
+//      leftLaunchWheel.set(0.0);
     }
+
+    m_leftlancherpidCtrl.setReference(leftSetPoint, CANSparkMax.ControlType.kVelocity);
+    m_rightlancherpidCtrl.setReference(rightSetPoint, CANSparkMax.ControlType.kVelocity);
 
     SmartDashboard.putBoolean("Launcher Running", m_launcherRunning);
     SmartDashboard.putNumber("Left Command Velocity", leftSetPoint);

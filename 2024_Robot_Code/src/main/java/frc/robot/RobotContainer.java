@@ -12,8 +12,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.AutoConstants;
@@ -44,10 +44,6 @@ public class RobotContainer {
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final LauncherSubsystem m_launcher = new LauncherSubsystem();
   private static final ExampleSubsystem ExampleSubsystem = new ExampleSubsystem();
-
-  private final double leftLaunchSpeed = 1500;
-
-  private final double rightLaunchSpeed = 1500;
 
   // A simple auto routine that drives forward a specified distance, and then stops.
   private final Command m_simpleAuto = Autos.exampleAuto(ExampleSubsystem);
@@ -91,6 +87,15 @@ public class RobotContainer {
     m_chooser.addOption("Complex Auto", m_complexAuto);
     SmartDashboard.putData("Auto Selection", m_chooser);
     SmartDashboard.putData(m_launcher);
+
+    // Put the chooser on the dashboard
+    Shuffleboard.getTab("Autonomous").add(m_chooser);
+
+    // Put subsystems to dashboard.
+    Shuffleboard.getTab("Drivetrain").add("Commands", m_robotDrive);
+    Shuffleboard.getTab("Intake Subsystem").add("Commands", m_intake);
+    Shuffleboard.getTab("Launcher Subsystem").add("Commands", m_launcher);
+
   }
 
   /**
@@ -119,36 +124,12 @@ public class RobotContainer {
         .whileTrue(new RunCommand(() -> m_intake.setPower(0.0, -0.2), m_intake))
         .onFalse(new RunCommand(() -> m_intake.setPower(0.0, 0.0), m_intake));
 
-    // launcher controls (button to pre-spin the launcher and button to launch)
-//    new JoystickButton(m_driverController, XboxController.Button.kLeftBumper.value)
-//        .whileTrue(new RunCommand(() -> m_launcher.runLauncher(), m_launcher));
-
     new JoystickButton(m_driverController, XboxController.Button.kA.value)
         .onTrue(m_launcher.launchNote(m_intake));
         
     new JoystickButton(m_driverController, XboxController.Button.kX.value)
         .onTrue(m_launcher.testFlyWheels());
 
-  }
-
-  /* Return the current power on the left Launcher wheel. */
-  public void setContLeftLaunchSpeed(){
-    m_launcher.setLeftLaunchSpeed(leftLaunchSpeed);
-  }
-
-    /* Return the current power on the left Launcher wheel. */
-  public void setContRightLaunchSpeed(){
-    m_launcher.setRightLaunchSpeed(rightLaunchSpeed);
-  }
-
-  /* Return the current power on the left Launcher wheel. */
-  public double getContLeftLaunchPower(){
-    return (m_launcher.getLeftLaunchPower());
-  }
-
-  /* Return the current power on the right Launcher wheel. */
-  public double getContRightLaunchPower(){
-    return (m_launcher.getRightLaunchPower());
   }
 
  /**
