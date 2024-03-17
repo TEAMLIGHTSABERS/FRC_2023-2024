@@ -6,6 +6,7 @@ import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkBase.IdleMode;
 
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,8 +20,8 @@ public class LauncherSubsystem extends SubsystemBase {
   private boolean m_launcherRunning;
 
   private double maxMotorRPM;
-  private double leftCmdWheelRate;
-  private double rightCmdWheelRate; 
+  private static double leftCmdWheelRate;
+  private static double rightCmdWheelRate; 
 
   private CANSparkMax leftLaunchWheel;
   private CANSparkMax rightLaunchWheel;
@@ -326,5 +327,21 @@ public Command testFlyWheels() {
 //    SmartDashboard.putNumber("RightSetPoint", rightSetPoint);
     SmartDashboard.putNumber("Left Velocity", m_Lencoder.getVelocity());
 //    SmartDashboard.putNumber("Right Velocity", m_Rencoder.getVelocity());
+  }
+
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    super.initSendable(builder);
+    // Publish encoder distances to telemetry.
+    builder.addDoubleProperty("leftWheelRate", LauncherSubsystem::getLeftWheelRate, null);
+    builder.addDoubleProperty("RightWheelRate", LauncherSubsystem::getRightWheelRate, null);
+  }
+
+  static public double getLeftWheelRate(){
+    return leftCmdWheelRate;
+  }
+
+  public static double getRightWheelRate(){
+    return rightCmdWheelRate;
   }
 }
