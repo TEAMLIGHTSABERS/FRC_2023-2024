@@ -99,7 +99,7 @@ public class RobotContainer {
     Shuffleboard.getTab("Drivetrain").add("Commands", m_robotDrive);
     Shuffleboard.getTab("Intake Subsystem").add("Commands", m_intake);
     Shuffleboard.getTab("Launcher Subsystem").add("Commands", m_launcher);
-    SendableRegistry.setName(lastThetaController, "Drive Subsystem", "Heading");
+    SendableRegistry.setName(lastThetaController, "Drive Subsystem", "Turret Azimuth");
     SendableRegistry.setName(lastXAxisController, "Drive Subsystem", "X Axis");
     SendableRegistry.setName(lastYAxisController, "Drive Subsystem", "Y Axis");
   }

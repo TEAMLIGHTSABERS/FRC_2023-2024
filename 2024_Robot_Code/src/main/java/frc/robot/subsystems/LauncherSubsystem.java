@@ -25,12 +25,12 @@ public class LauncherSubsystem extends SubsystemBase {
   private CANSparkMax leftLaunchWheel;
   private CANSparkMax rightLaunchWheel;
 
-  private SparkPIDController m_leftlancherpidCtrl;
-  private RelativeEncoder m_Lencoder;
+  private SparkPIDController m_leftLancherPIDCtrl;
+  private RelativeEncoder m_LeftEncoder;
   public static double kLP, kLI, kLD, kLIz, kLFF ;
 
-  private SparkPIDController m_rightlancherpidCtrl;
-  private RelativeEncoder m_Rencoder;
+  private SparkPIDController m_rightLancherPIDCtrl;
+  private RelativeEncoder m_rightEncoder;
   public double kRP, kRI, kRD, kRIz, kRFF ;
   
   /** Creates a new LauncherSubsystem. */
@@ -78,18 +78,21 @@ public class LauncherSubsystem extends SubsystemBase {
     leftLaunchWheel.setIdleMode(IdleMode.kBrake);
     
     // create a PID controller for the left launcher motor 
-    m_leftlancherpidCtrl = leftLaunchWheel.getPIDController();
+    m_leftLancherPIDCtrl = leftLaunchWheel.getPIDController();
 
     // encoder object created to display position and velocity values for the left motor
-    m_Lencoder = leftLaunchWheel.getEncoder();
+    m_LeftEncoder = leftLaunchWheel.getEncoder();
+    m_leftLancherPIDCtrl.setFeedbackDevice(m_LeftEncoder);
+    m_LeftEncoder.setPositionConversionFactor(1.0); // rotations
+    m_LeftEncoder.setVelocityConversionFactor(1.0); // rpm
 
     // configure the left motor PID controller
-    m_leftlancherpidCtrl.setP(kLP);
-    m_leftlancherpidCtrl.setI(kLI);
-    m_leftlancherpidCtrl.setD(kLD);
-    m_leftlancherpidCtrl.setIZone(kLIz);
-    m_leftlancherpidCtrl.setFF(kLFF);
-    m_leftlancherpidCtrl.setOutputRange(kMinOutput, kMaxOutput);
+    m_leftLancherPIDCtrl.setP(kLP);
+    m_leftLancherPIDCtrl.setI(kLI);
+    m_leftLancherPIDCtrl.setD(kLD);
+    m_leftLancherPIDCtrl.setIZone(kLIz);
+    m_leftLancherPIDCtrl.setFF(kLFF);
+    m_leftLancherPIDCtrl.setOutputRange(kMinOutput, kMaxOutput);
 
     // Push left motor configuration to the left motor flash memory.
     leftLaunchWheel.burnFlash();
@@ -103,18 +106,21 @@ public class LauncherSubsystem extends SubsystemBase {
     rightLaunchWheel.setIdleMode(IdleMode.kBrake);
 
     // create a PID controller for the left launcher motor 
-    m_rightlancherpidCtrl = rightLaunchWheel.getPIDController();
+    m_rightLancherPIDCtrl = rightLaunchWheel.getPIDController();
 
     // encoder object created to display position and velocity values for the right motor
-    m_Rencoder = rightLaunchWheel.getEncoder();
+    m_rightEncoder = rightLaunchWheel.getEncoder();
+    m_rightLancherPIDCtrl.setFeedbackDevice(m_rightEncoder);
+    m_LeftEncoder.setPositionConversionFactor(1.0); // rotations
+    m_LeftEncoder.setVelocityConversionFactor(1.0); // rpm
 
     // configure the left motor PID controller
-    m_rightlancherpidCtrl.setP(kRP);
-    m_rightlancherpidCtrl.setI(kRI);
-    m_rightlancherpidCtrl.setD(kRD);
-    m_rightlancherpidCtrl.setIZone(kRIz);
-    m_rightlancherpidCtrl.setFF(kRFF);
-    m_rightlancherpidCtrl.setOutputRange(kMinOutput, kMaxOutput);
+    m_rightLancherPIDCtrl.setP(kRP);
+    m_rightLancherPIDCtrl.setI(kRI);
+    m_rightLancherPIDCtrl.setD(kRD);
+    m_rightLancherPIDCtrl.setIZone(kRIz);
+    m_rightLancherPIDCtrl.setFF(kRFF);
+    m_rightLancherPIDCtrl.setOutputRange(kMinOutput, kMaxOutput);
 
     // push left motor configuration to the left motor flash memory.
     rightLaunchWheel.burnFlash();
@@ -268,13 +274,13 @@ public Command testFlyWheels() {
     SmartDashboard.putNumber("L Feed Forward", lff);
 
     // if PID coefficients on SmartDashboard have changed, write new values to controller
-    if((lp != kLP)) { m_leftlancherpidCtrl.setP(lp); kLP = lp; }
-    if((li != kLI)) { m_leftlancherpidCtrl.setI(li); kLI = li; }
-    if((ld != kLD)) { m_leftlancherpidCtrl.setD(ld); kLD = ld; }
-    if((liz != kLIz)) { m_leftlancherpidCtrl.setIZone(liz); kLIz = liz; }
-    if((lff != kLFF)) { m_leftlancherpidCtrl.setFF(lff); kLFF = lff; }
+    if((lp != kLP)) { m_leftLancherPIDCtrl.setP(lp); kLP = lp; }
+    if((li != kLI)) { m_leftLancherPIDCtrl.setI(li); kLI = li; }
+    if((ld != kLD)) { m_leftLancherPIDCtrl.setD(ld); kLD = ld; }
+    if((liz != kLIz)) { m_leftLancherPIDCtrl.setIZone(liz); kLIz = liz; }
+    if((lff != kLFF)) { m_leftLancherPIDCtrl.setFF(lff); kLFF = lff; }
     if((max != kMaxOutput) || (min != kMinOutput)) { 
-      m_leftlancherpidCtrl.setOutputRange(min, max); 
+      m_leftLancherPIDCtrl.setOutputRange(min, max); 
       kMinOutput = min; kMaxOutput = max; 
     }
 
@@ -288,13 +294,13 @@ public Command testFlyWheels() {
 //    leftSetPoint = SmartDashboard.getNumber("Left Command Velocity", 0);
 
     // if PID coefficients on SmartDashboard have changed, write new values to controller
-    if((rp != kRP)) { m_leftlancherpidCtrl.setP(rp); kRP = rp; }
-    if((ri != kRI)) { m_leftlancherpidCtrl.setI(ri); kRI = ri; }
-    if((rd != kRD)) { m_leftlancherpidCtrl.setD(rd); kRD = rd; }
-    if((riz != kRIz)) { m_leftlancherpidCtrl.setIZone(riz); kRIz = riz; }
-    if((rff != kRFF)) { m_leftlancherpidCtrl.setFF(rff); kRFF = rff; }
+    if((rp != kRP)) { m_leftLancherPIDCtrl.setP(rp); kRP = rp; }
+    if((ri != kRI)) { m_leftLancherPIDCtrl.setI(ri); kRI = ri; }
+    if((rd != kRD)) { m_leftLancherPIDCtrl.setD(rd); kRD = rd; }
+    if((riz != kRIz)) { m_leftLancherPIDCtrl.setIZone(riz); kRIz = riz; }
+    if((rff != kRFF)) { m_leftLancherPIDCtrl.setFF(rff); kRFF = rff; }
     if((max != kMaxOutput) || (min != kMinOutput)) { 
-      m_rightlancherpidCtrl.setOutputRange(min, max); 
+      m_rightLancherPIDCtrl.setOutputRange(min, max); 
       kMinOutput = min; kMaxOutput = max; 
     }
 
@@ -317,13 +323,13 @@ public Command testFlyWheels() {
 //      leftLaunchWheel.set(0.0);
     }
 
-    m_leftlancherpidCtrl.setReference(leftSetPoint, CANSparkMax.ControlType.kVelocity);
-    m_rightlancherpidCtrl.setReference(rightSetPoint, CANSparkMax.ControlType.kVelocity);
+    m_leftLancherPIDCtrl.setReference(leftSetPoint, CANSparkMax.ControlType.kVelocity);
+    m_rightLancherPIDCtrl.setReference(rightSetPoint, CANSparkMax.ControlType.kVelocity);
 
     SmartDashboard.putBoolean("Fly Wheels Running", flyWheelsRunning);
     SmartDashboard.putNumber("Left Command Velocity", leftSetPoint);
 //    SmartDashboard.putNumber("RightSetPoint", rightSetPoint);
-    SmartDashboard.putNumber("Left Velocity", m_Lencoder.getVelocity());
+    SmartDashboard.putNumber("Left Velocity", m_LeftEncoder.getVelocity());
 //    SmartDashboard.putNumber("Right Velocity", m_Rencoder.getVelocity());
   }
 
