@@ -40,7 +40,7 @@ public class LauncherSubsystem extends SubsystemBase {
     flyWheelsRunning = false;
 
     // current running power
-    leftCmdWheelRate = 1; // RPM
+    leftCmdWheelRate = 4000; // RPM
     rightCmdWheelRate = 1;
 
     // Set SparkMax motor limits
@@ -59,7 +59,7 @@ public class LauncherSubsystem extends SubsystemBase {
     kLI = 0;
     kLD = 0; 
     kLIz = 0; 
-    kLFF = 0.0004; 
+    kLFF = 1.0; 
 
     // initialize the right motor PID coefficients
     kRP = 6e-5; 
@@ -266,7 +266,7 @@ public Command testFlyWheels() {
     double li = 0; //SmartDashboard.getNumber("I Gain", 0);
     double ld = 0; //SmartDashboard.getNumber("D Gain", 0);
     double liz = 0; //SmartDashboard.getNumber("I Zone", 0);
-    double lff = 0.5; //SmartDashboard.getNumber("Feed Forward", 0);
+    double lff = .000175; //SmartDashboard.getNumber("Feed Forward", 0);
     SmartDashboard.putNumber("L P Gain", lp);
     SmartDashboard.putNumber("L I Gain", li);
     SmartDashboard.putNumber("L D Gain", ld);
@@ -289,16 +289,16 @@ public Command testFlyWheels() {
     double ri = 0; //double ri = SmartDashboard.getNumber("I Gain", 0);
     double rd = 0; //double rd = SmartDashboard.getNumber("D Gain", 0);
     double riz = 0; //double riz = SmartDashboard.getNumber("I Zone", 0);
-    double rff = 0.5;
+    double rff = 0.0;
     //double rff = SmartDashboard.getNumber("R Feed Forward", .2);
 //    leftSetPoint = SmartDashboard.getNumber("Left Command Velocity", 0);
 
     // if PID coefficients on SmartDashboard have changed, write new values to controller
-    if((rp != kRP)) { m_leftLancherPIDCtrl.setP(rp); kRP = rp; }
-    if((ri != kRI)) { m_leftLancherPIDCtrl.setI(ri); kRI = ri; }
-    if((rd != kRD)) { m_leftLancherPIDCtrl.setD(rd); kRD = rd; }
-    if((riz != kRIz)) { m_leftLancherPIDCtrl.setIZone(riz); kRIz = riz; }
-    if((rff != kRFF)) { m_leftLancherPIDCtrl.setFF(rff); kRFF = rff; }
+    if((rp != kRP)) { m_rightLancherPIDCtrl.setP(rp); kRP = rp; }
+    if((ri != kRI)) { m_rightLancherPIDCtrl.setI(ri); kRI = ri; }
+    if((rd != kRD)) { m_rightLancherPIDCtrl.setD(rd); kRD = rd; }
+    if((riz != kRIz)) { m_rightLancherPIDCtrl.setIZone(riz); kRIz = riz; }
+    if((rff != kRFF)) { m_rightLancherPIDCtrl.setFF(rff); kRFF = rff; }
     if((max != kMaxOutput) || (min != kMinOutput)) { 
       m_rightLancherPIDCtrl.setOutputRange(min, max); 
       kMinOutput = min; kMaxOutput = max; 
@@ -308,7 +308,7 @@ public Command testFlyWheels() {
     if (flyWheelsRunning) {
 
       leftSetPoint = leftCmdWheelRate; // leftCmdWheelRate/maxMotorRPM;
-      rightSetPoint = rightCmdWheelRate; // rightCmdWheelRate/maxMotorRPM;
+      rightSetPoint = rightCmdWheelRate; //Constants.NeoMotorConstants.kFreeSpeedRpm; // rightCmdWheelRate/maxMotorRPM;
 //      rightLaunchWheel.set(m_rightlancherpidCtrl.output());
 //      leftLaunchWheel.set(m_leftlancherpidCtrl.getOutputMax());
 

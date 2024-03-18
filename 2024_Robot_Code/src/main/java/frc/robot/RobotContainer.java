@@ -45,9 +45,9 @@ public class RobotContainer {
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final LauncherSubsystem m_launcher = new LauncherSubsystem();
   private static final ExampleSubsystem ExampleSubsystem = new ExampleSubsystem();
-  private ProfiledPIDController lastThetaController;
-  private PIDController lastXAxisController;
-  private PIDController lastYAxisController;
+//  private ProfiledPIDController lastThetaController;
+//  private PIDController lastXAxisController;
+//  private PIDController lastYAxisController;
 
   // A simple auto routine that drives forward a specified distance, and then stops.
   private final Command m_simpleAuto = Autos.exampleAuto(ExampleSubsystem);
@@ -99,9 +99,6 @@ public class RobotContainer {
     Shuffleboard.getTab("Drivetrain").add("Commands", m_robotDrive);
     Shuffleboard.getTab("Intake Subsystem").add("Commands", m_intake);
     Shuffleboard.getTab("Launcher Subsystem").add("Commands", m_launcher);
-    SendableRegistry.setName(lastThetaController, "Drive Subsystem", "Turret Azimuth");
-    SendableRegistry.setName(lastXAxisController, "Drive Subsystem", "X Axis");
-    SendableRegistry.setName(lastYAxisController, "Drive Subsystem", "Y Axis");
   }
 
   /**
@@ -172,6 +169,10 @@ public class RobotContainer {
     PIDController xAxisController = new PIDController(AutoConstants.kPXController, 0, 0);
     PIDController yAxisController = new PIDController(AutoConstants.kPYController, 0, 0);
 
+    SendableRegistry.setName(thetaController, "Drive Subsystem", "Turret Azimuth");
+    SendableRegistry.setName(xAxisController, "Drive Subsystem", "X Axis");
+    SendableRegistry.setName(yAxisController, "Drive Subsystem", "Y Axis");
+
     SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
     sTurnTrajectory,
     m_robotDrive::getPose, // Functional interface to feed supplier
@@ -184,9 +185,9 @@ public class RobotContainer {
     m_robotDrive::setModuleStates,
     m_robotDrive);
 
-    lastThetaController.equals(thetaController); 
-    lastXAxisController.equals(xAxisController); 
-    lastYAxisController.equals(yAxisController); 
+//    lastThetaController.equals(thetaController); 
+//    lastXAxisController.equals(xAxisController); 
+//    lastYAxisController.equals(yAxisController); 
 
     // Reset odometry to the starting pose of the trajectory.
     m_robotDrive.resetOdometry(sTurnTrajectory.getInitialPose());
