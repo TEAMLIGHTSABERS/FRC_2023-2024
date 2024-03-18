@@ -4,10 +4,10 @@
 
 package frc.robot;
 
+import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 /**
@@ -41,7 +41,7 @@ public class Robot extends TimedRobot {
     // Enable Test Mode and Live Window Diagnostics
     enableLiveWindowInTest(true);
 
-    SmartDashboard.putData(CommandScheduler.getInstance());
+//    SmartDashboard.putData(CommandScheduler.getInstance());
   }
 
   /**
@@ -117,6 +117,7 @@ public class Robot extends TimedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
+
   }
 
   /** This function is called periodically during test mode. */
@@ -132,4 +133,5 @@ public class Robot extends TimedRobot {
   /** This function is called periodically whilst in simulation. */
 //  @Override
 //  public void simulationPeriodic() {}
+
 }

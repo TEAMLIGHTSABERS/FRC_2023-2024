@@ -8,7 +8,6 @@ import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -17,7 +16,7 @@ import frc.robot.Constants;
 public class LauncherSubsystem extends SubsystemBase {
 
   private double kMaxOutput, kMinOutput;
-  private boolean m_launcherRunning;
+  public boolean flyWheelsRunning;
 
   private double maxMotorRPM;
   private static double leftCmdWheelRate;
@@ -28,7 +27,7 @@ public class LauncherSubsystem extends SubsystemBase {
 
   private SparkPIDController m_leftlancherpidCtrl;
   private RelativeEncoder m_Lencoder;
-  public double kLP, kLI, kLD, kLIz, kLFF ;
+  public static double kLP, kLI, kLD, kLIz, kLFF ;
 
   private SparkPIDController m_rightlancherpidCtrl;
   private RelativeEncoder m_Rencoder;
@@ -38,7 +37,7 @@ public class LauncherSubsystem extends SubsystemBase {
   public LauncherSubsystem() {
     // Set private holding variables: -----------------------------------------------------|
     // launcher status
-    m_launcherRunning = false;
+    flyWheelsRunning = false;
 
     // current running power
     leftCmdWheelRate = 1; // RPM
@@ -141,7 +140,7 @@ public Command launchNote(IntakeSubsystem _Intake) {
           @Override
           public void initialize() {
             /* Start the Launcher Wheels and the Launch timer. */
-            m_launcherRunning = true;
+            flyWheelsRunning = true;
             m_timer = new Timer();
             m_timer.start();
 
@@ -153,7 +152,7 @@ public Command launchNote(IntakeSubsystem _Intake) {
              * then start the Intake Feeder to push the Note up
              * into the Launcher Wheels.
              */
-            m_launcherRunning = true;
+            flyWheelsRunning = true;
 
              if(m_timer.get() > Constants.Launcher.kTimeToLaunch){
               _Intake.moveNote(Constants.Launcher.kFeederSpeed);
@@ -171,7 +170,7 @@ public Command launchNote(IntakeSubsystem _Intake) {
           @Override
           public void end(boolean interrupted) {
             /* Stop both the Launcher and the Intake feeder */
-            m_launcherRunning = false;
+            flyWheelsRunning = false;
             _Intake.stopFeeder();
           }
         };
@@ -198,7 +197,7 @@ public Command testFlyWheels() {
           @Override
           public void initialize() {
             /* Start the Launcher Wheels and the Launch timer. */
-            m_launcherRunning = true;
+            flyWheelsRunning = true;
             m_timer = new Timer();
             m_timer.start();
 
@@ -210,7 +209,7 @@ public Command testFlyWheels() {
              * then start the Intake Feeder to push the Note up
              * into the Launcher Wheels.
              */
-            m_launcherRunning = true;
+            flyWheelsRunning = true;
           }
 
           @Override
@@ -224,7 +223,7 @@ public Command testFlyWheels() {
           @Override
           public void end(boolean interrupted) {
             /* Stop both the Launcher and the Intake feeder */
-            m_launcherRunning = false;
+            flyWheelsRunning = false;
           }
         };
 
@@ -236,7 +235,7 @@ public Command testFlyWheels() {
    * in a {@code RunCommand}.
    */
   public void stopLauncher() {
-    m_launcherRunning = false;
+    flyWheelsRunning = false;
   }
 
   @Override
@@ -262,8 +261,7 @@ public Command testFlyWheels() {
     double ld = 0; //SmartDashboard.getNumber("D Gain", 0);
     double liz = 0; //SmartDashboard.getNumber("I Zone", 0);
     double lff = 0.5; //SmartDashboard.getNumber("Feed Forward", 0);
-    Shuffleboard.getTab("Launcher Subsystem").add("L P Gain", lp);
-//    SmartDashboard.putNumber("L P Gain", lp);
+    SmartDashboard.putNumber("L P Gain", lp);
     SmartDashboard.putNumber("L I Gain", li);
     SmartDashboard.putNumber("L D Gain", ld);
     SmartDashboard.putNumber("L I Zone", liz);
@@ -301,7 +299,7 @@ public Command testFlyWheels() {
     }
 
     
-    if (m_launcherRunning) {
+    if (flyWheelsRunning) {
 
       leftSetPoint = leftCmdWheelRate; // leftCmdWheelRate/maxMotorRPM;
       rightSetPoint = rightCmdWheelRate; // rightCmdWheelRate/maxMotorRPM;
@@ -322,7 +320,7 @@ public Command testFlyWheels() {
     m_leftlancherpidCtrl.setReference(leftSetPoint, CANSparkMax.ControlType.kVelocity);
     m_rightlancherpidCtrl.setReference(rightSetPoint, CANSparkMax.ControlType.kVelocity);
 
-    SmartDashboard.putBoolean("Launcher Running", m_launcherRunning);
+    SmartDashboard.putBoolean("Fly Wheels Running", flyWheelsRunning);
     SmartDashboard.putNumber("Left Command Velocity", leftSetPoint);
 //    SmartDashboard.putNumber("RightSetPoint", rightSetPoint);
     SmartDashboard.putNumber("Left Velocity", m_Lencoder.getVelocity());
@@ -333,12 +331,36 @@ public Command testFlyWheels() {
   public void initSendable(SendableBuilder builder) {
     super.initSendable(builder);
     // Publish encoder distances to telemetry.
-    builder.addDoubleProperty("leftWheelRate", LauncherSubsystem::getLeftWheelRate, null);
+    builder.addBooleanProperty("Running", this::getRunning, this::setRunning);
+
+    builder.addDoubleProperty("L_P_Gain", this::getLPGain, this::setLPGain);
+     
+    builder.addDoubleProperty("leftWheelRate", this::getLeftWheelRate, this::setLeftWheelRate);
     builder.addDoubleProperty("RightWheelRate", LauncherSubsystem::getRightWheelRate, null);
   }
 
-  static public double getLeftWheelRate(){
+  public boolean getRunning(){
+    return flyWheelsRunning;
+  }
+
+  public void setRunning(Boolean _running){
+    flyWheelsRunning = _running;
+  }
+
+  public double getLPGain(){
+    return kLP;
+  }
+
+  public void setLPGain(double _kLP){
+    kLP = _kLP;
+  }
+
+  public double getLeftWheelRate(){
     return leftCmdWheelRate;
+  }
+
+  public void setLeftWheelRate(double _leftCmdWheelRate){
+    leftCmdWheelRate = _leftCmdWheelRate;
   }
 
   public static double getRightWheelRate(){
