@@ -12,7 +12,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.AutoConstants;
@@ -43,12 +45,15 @@ public class RobotContainer {
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final LauncherSubsystem m_launcher = new LauncherSubsystem();
   private static final ExampleSubsystem ExampleSubsystem = new ExampleSubsystem();
+//  private ProfiledPIDController lastThetaController;
+//  private PIDController lastXAxisController;
+//  private PIDController lastYAxisController;
 
   // A simple auto routine that drives forward a specified distance, and then stops.
   private final Command m_simpleAuto = Autos.exampleAuto(ExampleSubsystem);
 
   // A complex auto routine that drives forward, drops a hatch, and then drives backward.
-  private final Command m_complexAuto = complexAutoCommand();
+  private final Command m_complexAuto = sTurnAutoCommand();
 
   // A chooser for autonomous commands
   SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -62,6 +67,8 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureButtonBindings();
 
+    SmartDashboard.putData("Launcher Wheel Test", m_launcher.testFlyWheels());
+        
     // Configure default commands
     m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
@@ -83,6 +90,15 @@ public class RobotContainer {
     m_chooser.setDefaultOption("Simple Auto", m_simpleAuto);
     m_chooser.addOption("Complex Auto", m_complexAuto);
     SmartDashboard.putData("Auto Selection", m_chooser);
+//    SmartDashboard.putData(m_launcher);
+
+    // Put the chooser on the dashboard
+    Shuffleboard.getTab("Autonomous").add(m_chooser);
+
+    // Put subsystems to dashboard.
+    Shuffleboard.getTab("Drivetrain").add("Commands", m_robotDrive);
+    Shuffleboard.getTab("Intake Subsystem").add("Commands", m_intake);
+    Shuffleboard.getTab("Launcher Subsystem").add("Commands", m_launcher);
   }
 
   /**
@@ -111,23 +127,12 @@ public class RobotContainer {
         .whileTrue(new RunCommand(() -> m_intake.setPower(0.0, -0.2), m_intake))
         .onFalse(new RunCommand(() -> m_intake.setPower(0.0, 0.0), m_intake));
 
-    // launcher controls (button to pre-spin the launcher and button to launch)
-//    new JoystickButton(m_driverController, XboxController.Button.kLeftBumper.value)
-//        .whileTrue(new RunCommand(() -> m_launcher.runLauncher(), m_launcher));
-
     new JoystickButton(m_driverController, XboxController.Button.kA.value)
         .onTrue(m_launcher.launchNote(m_intake));
         
-  }
+    new JoystickButton(m_driverController, XboxController.Button.kX.value)
+        .onTrue(m_launcher.testFlyWheels());
 
-  /* Return the current power on the left Launcher wheel. */
-  public double getContLeftLaunchPower(){
-    return (m_launcher.getLeftLaunchPower());
-  }
-
-  /* Return the current power on the right Launcher wheel. */
-  public double getContRightLaunchPower(){
-    return (m_launcher.getRightLaunchPower());
   }
 
  /**
@@ -139,7 +144,7 @@ public class RobotContainer {
     return m_chooser.getSelected();
   }
 
-  public Command complexAutoCommand() {
+  public Command sTurnAutoCommand() {
     // Create config for trajectory
     TrajectoryConfig config = new TrajectoryConfig(
         AutoConstants.kMaxSpeedMetersPerSecond,
@@ -148,7 +153,7 @@ public class RobotContainer {
         .setKinematics(DriveConstants.kDriveKinematics);
 
     // An example trajectory to follow. All units in meters.
-    edu.wpi.first.math.trajectory.Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+    edu.wpi.first.math.trajectory.Trajectory sTurnTrajectory = TrajectoryGenerator.generateTrajectory(
         // Start at the origin facing the +X direction
         new Pose2d(0, 0, new Rotation2d(0)),
         // Pass through these two interior waypoints, making an 's' curve path
@@ -157,26 +162,38 @@ public class RobotContainer {
         new Pose2d(3, 0, new Rotation2d(0)),
         config);
 
-    var thetaController = new ProfiledPIDController(
+    ProfiledPIDController thetaController = new ProfiledPIDController(
         AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-        exampleTrajectory,
-        m_robotDrive::getPose, // Functional interface to feed supplier
-        DriveConstants.kDriveKinematics,
+    PIDController xAxisController = new PIDController(AutoConstants.kPXController, 0, 0);
+    PIDController yAxisController = new PIDController(AutoConstants.kPYController, 0, 0);
 
-        // Position controllers
-        new PIDController(AutoConstants.kPXController, 0, 0),
-        new PIDController(AutoConstants.kPYController, 0, 0),
-        thetaController,
-        m_robotDrive::setModuleStates,
-        m_robotDrive);
+    SendableRegistry.setName(thetaController, "Drive Subsystem", "Turret Azimuth");
+    SendableRegistry.setName(xAxisController, "Drive Subsystem", "X Axis");
+    SendableRegistry.setName(yAxisController, "Drive Subsystem", "Y Axis");
+
+    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+    sTurnTrajectory,
+    m_robotDrive::getPose, // Functional interface to feed supplier
+    DriveConstants.kDriveKinematics,
+
+    // Position controllers
+    xAxisController,
+    yAxisController,
+    thetaController,
+    m_robotDrive::setModuleStates,
+    m_robotDrive);
+
+//    lastThetaController.equals(thetaController); 
+//    lastXAxisController.equals(xAxisController); 
+//    lastYAxisController.equals(yAxisController); 
 
     // Reset odometry to the starting pose of the trajectory.
-    m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
+    m_robotDrive.resetOdometry(sTurnTrajectory.getInitialPose());
 
     // Run path following command, then stop at the end.
     return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false, false));
   }
+
 }
