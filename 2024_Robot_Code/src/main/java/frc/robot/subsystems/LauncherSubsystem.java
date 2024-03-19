@@ -17,8 +17,7 @@ public class LauncherSubsystem extends SubsystemBase {
 
   private double kMaxOutput, kMinOutput;
   public boolean flyWheelsRunning;
-
-  private double maxMotorRPM;
+  
   private static double leftCmdWheelRate;
   private static double rightCmdWheelRate; 
 
@@ -41,18 +40,11 @@ public class LauncherSubsystem extends SubsystemBase {
 
     // current running power
     leftCmdWheelRate = 4000; // RPM
-    rightCmdWheelRate = 1;
+    rightCmdWheelRate = 5000;
 
     // Set SparkMax motor limits
     kMaxOutput = 1; 
     kMinOutput = -1;
-
-    // The "Unit Max Commanded Velocity" is 1.0. When this commanded
-    // velocity as the setpoint velocity of a Feed-Forward Only PID
-    // with a Feed-Forward Coefficient of 1.0, the the maximum achieved
-    // velocity is 4.3. An arbitrary factor of 1000 is used as the 
-    // conversion from "Unit Max Commanded Velocity" to RPM.
-    maxMotorRPM = 4300;
 
     // initialize the left motor PID coefficients
     kLP = 6e-5; 
@@ -111,8 +103,8 @@ public class LauncherSubsystem extends SubsystemBase {
     // encoder object created to display position and velocity values for the right motor
     m_rightEncoder = rightLaunchWheel.getEncoder();
     m_rightLancherPIDCtrl.setFeedbackDevice(m_rightEncoder);
-    m_LeftEncoder.setPositionConversionFactor(1.0); // rotations
-    m_LeftEncoder.setVelocityConversionFactor(1.0); // rpm
+    m_rightEncoder.setPositionConversionFactor(1.0); // rotations
+    m_rightEncoder.setVelocityConversionFactor(1.0); // rpm
 
     // configure the left motor PID controller
     m_rightLancherPIDCtrl.setP(kRP);
@@ -262,11 +254,11 @@ public Command testFlyWheels() {
     //    double max = SmartDashboard.getNumber("Max Output", 0);
     //    double min = SmartDashboard.getNumber("Min Output", 0);
 
-    double lp = 0; //SmartDashboard.getNumber("P Gain", 0);
-    double li = 0; //SmartDashboard.getNumber("I Gain", 0);
+    double lp = 0.00007; //SmartDashboard.getNumber("P Gain", 0);
+    double li = 0.0000007; //SmartDashboard.getNumber("I Gain", 0);
     double ld = 0; //SmartDashboard.getNumber("D Gain", 0);
     double liz = 0; //SmartDashboard.getNumber("I Zone", 0);
-    double lff = .000175; //SmartDashboard.getNumber("Feed Forward", 0);
+    double lff = 0.000007; //SmartDashboard.getNumber("Feed Forward", 0);
     SmartDashboard.putNumber("L P Gain", lp);
     SmartDashboard.putNumber("L I Gain", li);
     SmartDashboard.putNumber("L D Gain", ld);
@@ -285,11 +277,11 @@ public Command testFlyWheels() {
     }
 
     // read PID coefficients from SmartDashboard
-    double rp = 0; //double rp = SmartDashboard.getNumber("P Gain", 0);
-    double ri = 0; //double ri = SmartDashboard.getNumber("I Gain", 0);
+    double rp = 0.00007; //double rp = SmartDashboard.getNumber("P Gain", 0);
+    double ri = 0.0000007; //double ri = SmartDashboard.getNumber("I Gain", 0);
     double rd = 0; //double rd = SmartDashboard.getNumber("D Gain", 0);
     double riz = 0; //double riz = SmartDashboard.getNumber("I Zone", 0);
-    double rff = 0.0;
+    double rff = 0.000007;
     //double rff = SmartDashboard.getNumber("R Feed Forward", .2);
 //    leftSetPoint = SmartDashboard.getNumber("Left Command Velocity", 0);
 
