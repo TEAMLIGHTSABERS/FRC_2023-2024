@@ -15,6 +15,7 @@ import frc.robot.Constants;
 
 public class LauncherSubsystem extends SubsystemBase {
 
+  private int inputDelayCtr;
   private double kMaxOutput, kMinOutput;
   public boolean flyWheelsRunning;
   
@@ -25,7 +26,7 @@ public class LauncherSubsystem extends SubsystemBase {
   private CANSparkMax rightLaunchWheel;
 
   private SparkPIDController m_leftLancherPIDCtrl;
-  private RelativeEncoder m_LeftEncoder;
+  private RelativeEncoder m_leftEncoder;
   public static double kLP, kLI, kLD, kLIz, kLFF ;
 
   private SparkPIDController m_rightLancherPIDCtrl;
@@ -37,6 +38,7 @@ public class LauncherSubsystem extends SubsystemBase {
     // Set private holding variables: -----------------------------------------------------|
     // launcher status
     flyWheelsRunning = false;
+    inputDelayCtr = 0;
 
     // current running power
     leftCmdWheelRate = 4000; // RPM
@@ -73,10 +75,10 @@ public class LauncherSubsystem extends SubsystemBase {
     m_leftLancherPIDCtrl = leftLaunchWheel.getPIDController();
 
     // encoder object created to display position and velocity values for the left motor
-    m_LeftEncoder = leftLaunchWheel.getEncoder();
-    m_leftLancherPIDCtrl.setFeedbackDevice(m_LeftEncoder);
-    m_LeftEncoder.setPositionConversionFactor(1.0); // rotations
-    m_LeftEncoder.setVelocityConversionFactor(1.0); // rpm
+    m_leftEncoder = leftLaunchWheel.getEncoder();
+    m_leftLancherPIDCtrl.setFeedbackDevice(m_leftEncoder);
+    m_leftEncoder.setPositionConversionFactor(1.0); // rotations
+    m_leftEncoder.setVelocityConversionFactor(1.0); // rpm
 
     // configure the left motor PID controller
     m_leftLancherPIDCtrl.setP(kLP);
@@ -177,14 +179,196 @@ public Command launchNote(IntakeSubsystem _Intake) {
   }
 
 /**
-* Constructs a command that starts the launcher and then runs the Intake feeder
-* motor to put the Note up to the spinning launcher wheels. After a few more seconds
-* the command will shutdown the Launcher Wheels and an the Intake feeder. This
-* command takes control of the intake subsystem to make sure the feeder keeps
-* running during the launch sequence.
+* Constructs a command that raises the commanded set point for 
+* the left flywheel motor by 1000 rpm.
 *
-* @return The launch command
+* @return The riseUp1000 command
 */
+public Command raiseLCR1000(){
+  Command riseUp1000 = 
+    new Command() {
+      @Override
+      public void initialize() {
+        /* Start the Launcher Wheels and the Launch timer. */
+        leftCmdWheelRate += 1000; 
+       }
+
+      @Override
+      public boolean isFinished() {
+        return true;
+      }
+    };
+
+    return riseUp1000;
+};
+
+/**
+* Constructs a command that raises the commanded set point for 
+* the left flywheel motor by 100 rpm.
+*
+* @return The riseUp1000 command
+*/
+public Command raiseLCR100(){
+  Command riseUp100 = 
+    new Command() {
+      @Override
+      public void initialize() {
+        /* Start the Launcher Wheels and the Launch timer. */
+        leftCmdWheelRate += 100; 
+       }
+
+      @Override
+      public boolean isFinished() {
+        return true;
+      }
+    };
+
+    return riseUp100;
+};
+
+/**
+* Constructs a command that lowers the commanded set point for 
+* the left flywheel motor by 1000 rpm.
+*
+* @return The riseUp1000 command
+*/
+public Command downLC1000(){
+  Command downL1000 = 
+    new Command() {
+      @Override
+      public void initialize() {
+        /* Start the Launcher Wheels and the Launch timer. */
+        leftCmdWheelRate -= 1000; 
+       }
+
+      @Override
+      public boolean isFinished() {
+        return true;
+      }
+    };
+
+    return downL1000;
+};
+
+/**
+* Constructs a command that lowers the commanded set point for 
+* the left flywheel motor by 100 rpm.
+*
+* @return The down1000 command
+*/
+public Command downLC100(){
+  Command down100 = 
+    new Command() {
+      @Override
+      public void initialize() {
+        /* Start the Launcher Wheels and the Launch timer. */
+        leftCmdWheelRate -= 100; 
+       }
+
+      @Override
+      public boolean isFinished() {
+        return true;
+      }
+    };
+
+    return down100;
+};
+
+/**
+* Constructs a command that raises the commanded set point for 
+* the Right flywheel motor by 1000 rpm.
+*
+* @return The riseUp1000 command
+*/
+public Command raiseRC1000(){
+  Command riseUp1000 = 
+    new Command() {
+      @Override
+      public void initialize() {
+        /* Start the Launcher Wheels and the Launch timer. */
+        rightCmdWheelRate += 1000; 
+       }
+
+      @Override
+      public boolean isFinished() {
+        return true;
+      }
+    };
+
+    return riseUp1000;
+};
+
+/**
+* Constructs a command that raises the commanded set point for 
+* the Right flywheel motor by 100 rpm.
+*
+* @return The riseUp100 command
+*/
+public Command raiseRC100(){
+  Command riseUp100 = 
+    new Command() {
+      @Override
+      public void initialize() {
+        /* Start the Launcher Wheels and the Launch timer. */
+        rightCmdWheelRate += 100; 
+       }
+
+      @Override
+      public boolean isFinished() {
+        return true;
+      }
+    };
+
+    return riseUp100;
+};
+
+/**
+* Constructs a command that lowers the commanded set point for 
+* the right flywheel motor by 1000 rpm.
+*
+* @return The down1000 command
+*/
+public Command downRC1000(){
+  Command down1000 = 
+    new Command() {
+      @Override
+      public void initialize() {
+        /* Start the Launcher Wheels and the Launch timer. */
+        rightCmdWheelRate -= 1000; 
+       }
+
+      @Override
+      public boolean isFinished() {
+        return true;
+      }
+    };
+
+    return down1000;
+};
+
+/**
+* Constructs a command that lowers the commanded set point for 
+* the right flywheel motor by 100 rpm.
+*
+* @return The down1000 command
+*/
+public Command downRC100(){
+  Command down100 = 
+    new Command() {
+      @Override
+      public void initialize() {
+        /* Start the Launcher Wheels and the Launch timer. */
+        rightCmdWheelRate -= 100; 
+       }
+
+      @Override
+      public boolean isFinished() {
+        return true;
+      }
+    };
+
+    return down100;
+};
 
 public Command testFlyWheels() {
     Command startTest =
@@ -240,7 +424,7 @@ public Command testFlyWheels() {
   public void periodic() { // this method will be called once per scheduler run
     // set the launcher motor powers based on whether the launcher is on or not
 
-    double leftSetPoint;
+    double leftSetPoint = leftCmdWheelRate;
     double rightSetPoint;
 
     double max = 1.0; //SmartDashboard.getNumber("Max Output", 0);
@@ -301,27 +485,20 @@ public Command testFlyWheels() {
 
       leftSetPoint = leftCmdWheelRate; // leftCmdWheelRate/maxMotorRPM;
       rightSetPoint = rightCmdWheelRate; //Constants.NeoMotorConstants.kFreeSpeedRpm; // rightCmdWheelRate/maxMotorRPM;
-//      rightLaunchWheel.set(m_rightlancherpidCtrl.output());
-//      leftLaunchWheel.set(m_leftlancherpidCtrl.getOutputMax());
-
-//      rightLaunchWheel.set(Constants.Launcher.kRightPower);
-//      leftLaunchWheel.set(Constants.Launcher.kLeftPower);
 
     } else {
       leftSetPoint = 0;
       rightSetPoint = 0;
-
-//      rightLaunchWheel.set(0.0);
-//      leftLaunchWheel.set(0.0);
     }
 
     m_leftLancherPIDCtrl.setReference(leftSetPoint, CANSparkMax.ControlType.kVelocity);
     m_rightLancherPIDCtrl.setReference(rightSetPoint, CANSparkMax.ControlType.kVelocity);
 
     SmartDashboard.putBoolean("Fly Wheels Running", flyWheelsRunning);
-    SmartDashboard.putNumber("Left Command Velocity", leftSetPoint);
-//    SmartDashboard.putNumber("RightSetPoint", rightSetPoint);
-    SmartDashboard.putNumber("Left Velocity", m_LeftEncoder.getVelocity());
+    SmartDashboard.putNumber("Left RPM", leftCmdWheelRate);
+    SmartDashboard.putNumber("Right RPM", rightCmdWheelRate);
+    SmartDashboard.putNumber("Left Current RPM", m_leftEncoder.getVelocity());
+    SmartDashboard.putNumber("Right Current RPM", m_rightEncoder.getVelocity());
 //    SmartDashboard.putNumber("Right Velocity", m_Rencoder.getVelocity());
   }
 

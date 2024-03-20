@@ -68,7 +68,15 @@ public class RobotContainer {
     configureButtonBindings();
 
     SmartDashboard.putData("Launcher Wheel Test", m_launcher.testFlyWheels());
-        
+    SmartDashboard.putData("LUp-1000", m_launcher.raiseLCR1000());
+    SmartDashboard.putData("LUp-100", m_launcher.raiseLCR100());
+    SmartDashboard.putData("LDn-1000", m_launcher.downLC1000());
+    SmartDashboard.putData("LDn-100", m_launcher.downLC100());
+    SmartDashboard.putData("RUp-1000", m_launcher.raiseRC1000());
+    SmartDashboard.putData("RDn-1000", m_launcher.downRC1000());
+    SmartDashboard.putData("RUp-100", m_launcher.raiseRC100());
+    SmartDashboard.putData("RDn-100", m_launcher.downRC100());
+    
     // Configure default commands
     m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
