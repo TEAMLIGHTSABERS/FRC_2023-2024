@@ -58,7 +58,8 @@ public class TurretSubsystem extends SubsystemBase {
             
         commandedWenchPosition = getSelPos(SelectedPosition);
   
-        elevationPIDCtrl.setReference(commandedWenchPosition, ControlType.kPosition);
+        elevationMotor.set(.01);
+        //        elevationPIDCtrl.setReference(commandedWenchPosition, ControlType.kPosition);
 
         currentWenchPosition = elevationAbsEncoder.getPosition();
         SmartDashboard.putNumber("Commanded Wench Position", commandedWenchPosition);
