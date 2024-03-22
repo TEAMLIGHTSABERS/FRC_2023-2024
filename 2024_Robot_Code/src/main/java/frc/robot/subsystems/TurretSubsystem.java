@@ -25,7 +25,7 @@ public class TurretSubsystem extends SubsystemBase {
 
     // Class Constructor
     public TurretSubsystem(){
-        SelectedPosition = 0; // Hanging Position
+        SelectedPosition = 2; // Hanging Position
         currentWenchPosition = getSelPos(SelectedPosition);
         commandedWenchPosition = currentWenchPosition;
         inputDelayCtr = 0;
@@ -40,7 +40,7 @@ public class TurretSubsystem extends SubsystemBase {
         elevationRelEncoder = elevationMotor.getEncoder();
         elevationRelEncoder.setPositionConversionFactor(22.0); // Degrees/Shaft
         elevationRelEncoder.setVelocityConversionFactor(22.0); // dpm/Shaft
-//        elevationAbsEncoder.setZeroOffset(currentWenchPosition);
+        elevationRelEncoder.setPosition(currentWenchPosition);
     
 
         elevationPIDCtrl = elevationMotor.getPIDController();

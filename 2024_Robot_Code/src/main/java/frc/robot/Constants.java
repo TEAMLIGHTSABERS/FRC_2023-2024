@@ -35,10 +35,10 @@ public final class Constants {
     public static final double kPEController = 0.0;
     public static final double kIEController = 0.0;
     public static final double kDEController = 0.0;
-    public static final double kVEController = 1e-3;
-    public static final double kHangingPosition = 0; // Degrees
-    public static final double kAmpPosition = 60; // Degrees
-    public static final double kSpeakerPosition = 140; // Degrees
+    public static final double kVEController = 2.5e-3;
+    public static final double kHangingPosition = -10; // Degrees
+    public static final double kAmpPosition = 100; // Degrees
+    public static final double kSpeakerPosition = 120; // Degrees
   }
 
   public static final class Intake {
