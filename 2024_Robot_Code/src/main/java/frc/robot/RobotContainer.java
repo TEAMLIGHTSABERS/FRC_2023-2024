@@ -26,6 +26,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LauncherSubsystem;
+import frc.robot.subsystems.TurretSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
@@ -44,6 +45,7 @@ public class RobotContainer {
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final LauncherSubsystem m_launcher = new LauncherSubsystem();
+  private final TurretSubsystem m_turret = new TurretSubsystem();
   private static final ExampleSubsystem ExampleSubsystem = new ExampleSubsystem();
 //  private ProfiledPIDController lastThetaController;
 //  private PIDController lastXAxisController;
@@ -86,6 +88,11 @@ public class RobotContainer {
     // configure the launcher to stop when no other command is running
     m_launcher.setDefaultCommand(new RunCommand(() -> m_launcher.stopLauncher(), m_launcher));
 
+    m_turret.setDefaultCommand(new RunCommand(() -> m_turret.driveWench(
+        ((m_driverController).getRightTriggerAxis() > Constants.OIConstants.kTriggerButtonThreshold),
+        (m_driverController).getRightBumperPressed()),
+        m_turret));
+
     // Add commands to the autonomous command chooser
     m_chooser.setDefaultOption("Simple Auto", m_simpleAuto);
     m_chooser.addOption("Complex Auto", m_complexAuto);
@@ -115,7 +122,19 @@ public class RobotContainer {
     new JoystickButton(m_driverController, XboxController.Button.kLeftStick.value)
         .whileTrue(new RunCommand(() -> m_robotDrive.setX(), m_robotDrive));
 
-    // intake controls
+    // Turret Controls ----------------------------------------------------------
+    // Right Trigger will Raise the Launcher elevation.    
+//    new Trigger(
+//            () -> ((XboxController) m_driverController).getRightTriggerAxis()
+//            > Constants.OIConstants.kTriggerButtonThreshold)
+///        .onTrue(new RunCommand(() -> m_turret.reducePOS()));
+
+    // Right Bumper will Lower the Launcher elevation
+//    new JoystickButton(m_driverController, XboxController.Button.kRightBumper.value)
+//        .onTrue(new RunCommand(() -> m_turret.advancePOS()));
+
+    // Intake Controls ----------------------------------------------------------
+    // Left Trigger will start the Intake and pickup a Note
     new Trigger(
             () ->
                 ((XboxController) m_driverController).getLeftTriggerAxis()
@@ -123,16 +142,19 @@ public class RobotContainer {
         .whileTrue(new RunCommand(() -> m_intake.setPower(Constants.Intake.kTopPower, Constants.Intake.kFeedPower), m_intake))
         .onFalse(new RunCommand(() -> m_intake.setPower(0.0, 0.0), m_intake));
 
+    // "B" Button will slowly "Backup" a Note in the Intake
     new JoystickButton(m_driverController, XboxController.Button.kB.value)
         .whileTrue(new RunCommand(() -> m_intake.setPower(0.0, -0.2), m_intake))
         .onFalse(new RunCommand(() -> m_intake.setPower(0.0, 0.0), m_intake));
 
+    // Launcher Controls -------------------------------------------------------
+    // "A" Button will launch a Note toward the Target
     new JoystickButton(m_driverController, XboxController.Button.kA.value)
         .onTrue(m_launcher.launchNote(m_intake));
-        
+    
+    // "X" Button will run the Launcher Flywheels for 5 seconds
     new JoystickButton(m_driverController, XboxController.Button.kX.value)
         .onTrue(m_launcher.testFlyWheels());
-
   }
 
  /**
@@ -184,10 +206,6 @@ public class RobotContainer {
     thetaController,
     m_robotDrive::setModuleStates,
     m_robotDrive);
-
-//    lastThetaController.equals(thetaController); 
-//    lastXAxisController.equals(xAxisController); 
-//    lastYAxisController.equals(yAxisController); 
 
     // Reset odometry to the starting pose of the trajectory.
     m_robotDrive.resetOdometry(sTurnTrajectory.getInitialPose());
