@@ -36,13 +36,19 @@ public class TurretSubsystem extends SubsystemBase {
         elevationMotor.setIdleMode(IdleMode.kBrake);
 
         elevationAbsEncoder = elevationMotor.getAbsoluteEncoder();
+        elevationAbsEncoder.setPositionConversionFactor(1.0); // rotations
+        elevationAbsEncoder.setVelocityConversionFactor(1.0); // rpm
         elevationAbsEncoder.setZeroOffset(currentWenchPosition);
+    
 
         elevationPIDCtrl = elevationMotor.getPIDController();
         elevationPIDCtrl.setP(Constants.Turret.kPEController);
         elevationPIDCtrl.setI(Constants.Turret.kIEController);
         elevationPIDCtrl.setD(Constants.Turret.kDEController);
+        elevationPIDCtrl.setFF(Constants.Turret.kVEController);
         elevationPIDCtrl.setFeedbackDevice(elevationAbsEncoder);
+        elevationPIDCtrl.setOutputRange(0, 1); 
+
     }
 
     /**
