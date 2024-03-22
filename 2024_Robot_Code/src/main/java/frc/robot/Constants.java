@@ -29,6 +29,19 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
 
+  public static final class Turret {
+    public static final int kTurCanId = 6;
+    public static final int kTurCurrentLimit = 20;
+    public static final double kTurElSpeedCmded = 1.0;
+    public static final double kElevDeadband = 0.05;
+    public static final double kPEController = 1e-6;
+    public static final double kIEController = 0.0;
+    public static final double kDEController = 0.0;
+    public static final double kCenterStandPosition = 0; // Rotations
+    public static final double kAmpPosition = 200; // Rotations
+    public static final double kSpeakerPosition = 500; // Rotations
+  }
+
   public static final class Intake {
     public static double kTopPower = 1.0;
     public static double kFeedPower = 0.5;
