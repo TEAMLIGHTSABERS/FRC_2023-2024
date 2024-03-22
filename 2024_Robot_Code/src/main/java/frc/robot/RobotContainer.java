@@ -88,7 +88,7 @@ public class RobotContainer {
     // configure the launcher to stop when no other command is running
     m_launcher.setDefaultCommand(new RunCommand(() -> m_launcher.stopLauncher(), m_launcher));
 
-    m_turret.setDefaultCommand(new RunCommand(()->m_turret.driveWench()));
+    m_turret.setDefaultCommand(new RunCommand(() -> m_turret.driveWench(), m_turret));
 
     // Add commands to the autonomous command chooser
     m_chooser.setDefaultOption("Simple Auto", m_simpleAuto);
