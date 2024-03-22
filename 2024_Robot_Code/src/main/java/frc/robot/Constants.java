@@ -30,7 +30,7 @@ public final class Constants {
   }
 
   public static final class Turret {
-    public static final int kTurCanId = 6;
+    public static final int kTurCanId = 5;
     public static final int kTurCurrentLimit = 20;
     public static final double kTurElSpeedCmded = 1.0;
     public static final double kElevDeadband = 0.05;
