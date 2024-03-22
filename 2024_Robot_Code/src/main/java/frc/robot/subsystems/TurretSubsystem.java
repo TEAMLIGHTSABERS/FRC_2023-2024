@@ -58,7 +58,7 @@ public class TurretSubsystem extends SubsystemBase {
             
         commandedWenchPosition = getSelPos(SelectedPosition);
   
-        elevationMotor.set(.01);
+        elevationMotor.set(.1);
         //        elevationPIDCtrl.setReference(commandedWenchPosition, ControlType.kPosition);
 
         currentWenchPosition = elevationAbsEncoder.getPosition();
