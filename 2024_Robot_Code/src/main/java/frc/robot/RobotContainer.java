@@ -119,6 +119,17 @@ public class RobotContainer {
     new JoystickButton(m_driverController, XboxController.Button.kLeftStick.value)
         .whileTrue(new RunCommand(() -> m_robotDrive.setX(), m_robotDrive));
 
+    new Trigger(
+            () ->
+                ((XboxController) m_driverController).getRightTriggerAxis()
+                    > Constants.OIConstants.kTriggerButtonThreshold)
+        .whileTrue(new RunCommand(() -> m_turret.advancePOS()));
+
+    //new JoystickButton(( m_driverController).getRightBumperPressed()).onTrue(m_turret.reducePOS());
+        
+    new JoystickButton(m_driverController, XboxController.Button.kRightBumper.value)
+        .onTrue(new RunCommand(() -> m_turret.reducePOS()));
+
     // intake controls
     new Trigger(
             () ->

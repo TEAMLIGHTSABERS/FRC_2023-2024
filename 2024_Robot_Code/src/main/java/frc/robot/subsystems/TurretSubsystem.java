@@ -92,4 +92,17 @@ public class TurretSubsystem extends SubsystemBase {
 
       return wenchPosition;
     }
+
+    public void advancePOS(){
+        if (SelectedPosition < 3){
+            SelectedPosition++;
+        }
+    }
+
+    public void reducePOS(){
+        if (SelectedPosition > -1){
+            SelectedPosition--;
+        }
+    }
+
 }
