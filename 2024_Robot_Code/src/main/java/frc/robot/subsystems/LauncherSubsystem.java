@@ -141,7 +141,6 @@ public Command launchNote(IntakeSubsystem _Intake) {
             flyWheelsRunning = true;
             m_timer = new Timer();
             m_timer.start();
-
           }
 
           @Override

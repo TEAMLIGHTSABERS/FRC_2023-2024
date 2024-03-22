@@ -2,9 +2,9 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -17,28 +17,30 @@ public class TurretSubsystem extends SubsystemBase {
     private static double commandedWenchPosition;
     private static double currentWenchPosition;
     private SparkPIDController elevationPIDCtrl;
+    private static int inputDelayCtr;
 
     // Class Hardware
     private CANSparkMax elevationMotor;
-    private AbsoluteEncoder elevationAbsEncoder;
+    private RelativeEncoder elevationRelEncoder;
 
     // Class Constructor
     public TurretSubsystem(){
         SelectedPosition = 0; // Hanging Position
         currentWenchPosition = getSelPos(SelectedPosition);
         commandedWenchPosition = currentWenchPosition;
+        inputDelayCtr = 0;
 
         elevationMotor =
         new CANSparkMax(Constants.Turret.kTurCanId, CANSparkLowLevel.MotorType.kBrushless);
 
-        elevationMotor.setInverted(false);
+        elevationMotor.setInverted(true);
         elevationMotor.setSmartCurrentLimit(Constants.Turret.kTurCurrentLimit);
         elevationMotor.setIdleMode(IdleMode.kBrake);
 
-        elevationAbsEncoder = elevationMotor.getAbsoluteEncoder();
-        elevationAbsEncoder.setPositionConversionFactor(1.0); // rotations
-        elevationAbsEncoder.setVelocityConversionFactor(1.0); // rpm
-        elevationAbsEncoder.setZeroOffset(currentWenchPosition);
+        elevationRelEncoder = elevationMotor.getEncoder();
+        elevationRelEncoder.setPositionConversionFactor(22.0); // Degrees/Shaft
+        elevationRelEncoder.setVelocityConversionFactor(22.0); // dpm/Shaft
+//        elevationAbsEncoder.setZeroOffset(currentWenchPosition);
     
 
         elevationPIDCtrl = elevationMotor.getPIDController();
@@ -46,8 +48,8 @@ public class TurretSubsystem extends SubsystemBase {
         elevationPIDCtrl.setI(Constants.Turret.kIEController);
         elevationPIDCtrl.setD(Constants.Turret.kDEController);
         elevationPIDCtrl.setFF(Constants.Turret.kVEController);
-        elevationPIDCtrl.setFeedbackDevice(elevationAbsEncoder);
-        elevationPIDCtrl.setOutputRange(0, 1); 
+        elevationPIDCtrl.setFeedbackDevice(elevationRelEncoder);
+        elevationPIDCtrl.setOutputRange(-1, 1); 
 
     }
 
@@ -59,32 +61,57 @@ public class TurretSubsystem extends SubsystemBase {
     *                         Right is Amp position, and
     *                         Down is Center Stand Positon.
     */
-    public void driveWench() {
+    public void driveWench(Boolean upCommand, Boolean downCommand) {
 
-            
+        if(upCommand){
+            if (inputDelayCtr == Constants.OIConstants.kInputDelayTimedOut){
+                advancePOS();
+                inputDelayCtr = 0;
+            }
+        } else if (downCommand){
+            reducePOS();
+        }
+    };
+
+    @Override
+    public void periodic() { // this method will be called once per scheduler run
+      // set the launcher motor powers based on whether the launcher is on or not
+        double posError;
+
+        if (inputDelayCtr < Constants.OIConstants.kInputDelayTimedOut){
+            inputDelayCtr++;
+        }
+
         commandedWenchPosition = getSelPos(SelectedPosition);
-  
-//        elevationMotor.set(.1);
-        elevationPIDCtrl.setReference(commandedWenchPosition, ControlType.kPosition);
+        currentWenchPosition = elevationRelEncoder.getPosition();
 
-        currentWenchPosition = elevationAbsEncoder.getPosition();
+//        if (currentWenchPosition < commandedWenchPosition){
+//            elevationMotor.set(.5);
+//        } else if (currentWenchPosition > commandedWenchPosition){
+//            elevationMotor.set(-.5);
+//        };
+        posError = commandedWenchPosition - currentWenchPosition;
+        elevationPIDCtrl.setReference(posError, ControlType.kPosition);
+
         SmartDashboard.putNumber("Commanded Wench Position", commandedWenchPosition);
         SmartDashboard.putNumber("Current Wench Position", currentWenchPosition);
-    };
+
+    }
+
 
     private double getSelPos (int _SelectedPos) {
       double wenchPosition;
 
       switch (_SelectedPos) {
-        case 0: // Speaker Position
-            wenchPosition = Constants.Turret.kSpeakerPosition;  // Rotations
+        case 0: // Hanging Position
+            wenchPosition = Constants.Turret.kHangingPosition;  // Rotations
             break;
         case 1: // Amplifier Position
             wenchPosition = Constants.Turret.kAmpPosition;   // Rotations
             break;
-        case 2: // Hanging Position
+        case 2: // Speaker Position
         default:
-            wenchPosition = Constants.Turret.kHangingPosition;    // Rotations
+            wenchPosition = Constants.Turret.kSpeakerPosition;    // Rotations
             break;
       };
 
@@ -94,12 +121,14 @@ public class TurretSubsystem extends SubsystemBase {
     public void advancePOS(){
         if (SelectedPosition < 2){
             SelectedPosition++;
+            SmartDashboard.putNumber("Selected Position", SelectedPosition);
         }
     }
 
     public void reducePOS(){
         if (SelectedPosition > 0){
             SelectedPosition--;
+            SmartDashboard.putNumber("Selected Position", SelectedPosition);
         }
     }
 

@@ -35,10 +35,10 @@ public final class Constants {
     public static final double kPEController = 0.0;
     public static final double kIEController = 0.0;
     public static final double kDEController = 0.0;
-    public static final double kVEController = 2e-3;
-    public static final double kHangingPosition = 0; // Rotations
-    public static final double kAmpPosition = 200; // Rotations
-    public static final double kSpeakerPosition = 500; // Rotations
+    public static final double kVEController = 1e-3;
+    public static final double kHangingPosition = 0; // Degrees
+    public static final double kAmpPosition = 60; // Degrees
+    public static final double kSpeakerPosition = 140; // Degrees
   }
 
   public static final class Intake {
@@ -169,6 +169,7 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
     public static final double kDriveDeadband = 0.05;
     public static final double kTriggerButtonThreshold = 0.25;
+    public static final double kInputDelayTimedOut = 25; // Cycle Counts -> 0.5 sec
   }
 
   public static final class AutoConstants {

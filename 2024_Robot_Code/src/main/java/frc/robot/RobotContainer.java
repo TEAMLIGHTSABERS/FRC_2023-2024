@@ -88,7 +88,10 @@ public class RobotContainer {
     // configure the launcher to stop when no other command is running
     m_launcher.setDefaultCommand(new RunCommand(() -> m_launcher.stopLauncher(), m_launcher));
 
-    m_turret.setDefaultCommand(new RunCommand(() -> m_turret.driveWench(), m_turret));
+    m_turret.setDefaultCommand(new RunCommand(() -> m_turret.driveWench(
+        ((m_driverController).getRightTriggerAxis() > Constants.OIConstants.kTriggerButtonThreshold),
+        (m_driverController).getRightBumperPressed()),
+        m_turret));
 
     // Add commands to the autonomous command chooser
     m_chooser.setDefaultOption("Simple Auto", m_simpleAuto);
@@ -121,14 +124,14 @@ public class RobotContainer {
 
     // Turret Controls ----------------------------------------------------------
     // Right Trigger will Raise the Launcher elevation.    
-    new Trigger(
-            () -> ((XboxController) m_driverController).getRightTriggerAxis()
-            > Constants.OIConstants.kTriggerButtonThreshold)
-        .whileTrue(new RunCommand(() -> m_turret.reducePOS()));
+//    new Trigger(
+//            () -> ((XboxController) m_driverController).getRightTriggerAxis()
+//            > Constants.OIConstants.kTriggerButtonThreshold)
+///        .onTrue(new RunCommand(() -> m_turret.reducePOS()));
 
     // Right Bumper will Lower the Launcher elevation
-    new JoystickButton(m_driverController, XboxController.Button.kRightBumper.value)
-        .onTrue(new RunCommand(() -> m_turret.advancePOS()));
+//    new JoystickButton(m_driverController, XboxController.Button.kRightBumper.value)
+//        .onTrue(new RunCommand(() -> m_turret.advancePOS()));
 
     // Intake Controls ----------------------------------------------------------
     // Left Trigger will start the Intake and pickup a Note
