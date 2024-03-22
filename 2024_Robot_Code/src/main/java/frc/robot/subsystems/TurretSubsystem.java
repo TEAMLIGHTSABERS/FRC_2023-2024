@@ -92,13 +92,13 @@ public class TurretSubsystem extends SubsystemBase {
     }
 
     public void advancePOS(){
-        if (SelectedPosition < 3){
+        if (SelectedPosition < 2){
             SelectedPosition++;
         }
     }
 
     public void reducePOS(){
-        if (SelectedPosition > -1){
+        if (SelectedPosition > 0){
             SelectedPosition--;
         }
     }
