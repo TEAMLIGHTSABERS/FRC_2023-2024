@@ -53,17 +53,8 @@ public class TurretSubsystem extends SubsystemBase {
     *                         Right is Amp position, and
     *                         Down is Center Stand Positon.
     */
-    public void driveWench(double _povPos) {
+    public void driveWench() {
 
-        if ((_povPos > 315) && (_povPos <= 45)){
-            SelectedPosition = 0;
-        } else if ((_povPos > 45) && (_povPos <= 135)){
-            SelectedPosition = 1;
-        } else if ((_povPos > 135) && (_povPos <= 225)){
-            SelectedPosition = 2;
-        } else {
-            // SelectedPosition does not change
-        }
             
         commandedWenchPosition = getSelPos(SelectedPosition);
   
