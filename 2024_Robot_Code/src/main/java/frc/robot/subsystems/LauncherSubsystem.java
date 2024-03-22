@@ -6,8 +6,11 @@ import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkBase.IdleMode;
 
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -37,6 +40,9 @@ public class LauncherSubsystem extends SubsystemBase {
   public LauncherSubsystem() {
     // Set private holding variables: -----------------------------------------------------|
     // launcher status
+    ShuffleboardTab LaunchTab = Shuffleboard.getTab("Launch Subsystem");
+    GenericEntry FWRuningEntry = LaunchTab.add("Fly Wheels Running", false).getEntry();
+
     flyWheelsRunning = false;
     inputDelayCtr = 0;
 
@@ -143,7 +149,6 @@ public Command launchNote(IntakeSubsystem _Intake) {
             flyWheelsRunning = true;
             m_timer = new Timer();
             m_timer.start();
-
           }
 
           @Override
@@ -443,11 +448,11 @@ public Command testFlyWheels() {
     double ld = 0; //SmartDashboard.getNumber("D Gain", 0);
     double liz = 0; //SmartDashboard.getNumber("I Zone", 0);
     double lff = 0.000007; //SmartDashboard.getNumber("Feed Forward", 0);
-    SmartDashboard.putNumber("L P Gain", lp);
-    SmartDashboard.putNumber("L I Gain", li);
-    SmartDashboard.putNumber("L D Gain", ld);
-    SmartDashboard.putNumber("L I Zone", liz);
-    SmartDashboard.putNumber("L Feed Forward", lff);
+//    SmartDashboard.putNumber("L P Gain", lp);
+//    SmartDashboard.putNumber("L I Gain", li);
+//    SmartDashboard.putNumber("L D Gain", ld);
+//    SmartDashboard.putNumber("L I Zone", liz);
+//    SmartDashboard.putNumber("L Feed Forward", lff);
 
     // if PID coefficients on SmartDashboard have changed, write new values to controller
     if((lp != kLP)) { m_leftLancherPIDCtrl.setP(lp); kLP = lp; }
@@ -494,12 +499,14 @@ public Command testFlyWheels() {
     m_leftLancherPIDCtrl.setReference(leftSetPoint, CANSparkMax.ControlType.kVelocity);
     m_rightLancherPIDCtrl.setReference(rightSetPoint, CANSparkMax.ControlType.kVelocity);
 
-    SmartDashboard.putBoolean("Fly Wheels Running", flyWheelsRunning);
+    ShuffleboardTab LaunchTab = Shuffleboard.getTab("Launcher Subsystem");
+    
+//    Shuffleboard.getTab("Launcher Subsystem").add("Left RPM Setting", leftCmdWheelRate);
     SmartDashboard.putNumber("Left RPM", leftCmdWheelRate);
     SmartDashboard.putNumber("Right RPM", rightCmdWheelRate);
+//    Shuffleboard.getTab("Launcher Subsystem").add("Left Current RPM", m_leftEncoder.getVelocity());
     SmartDashboard.putNumber("Left Current RPM", m_leftEncoder.getVelocity());
     SmartDashboard.putNumber("Right Current RPM", m_rightEncoder.getVelocity());
-//    SmartDashboard.putNumber("Right Velocity", m_Rencoder.getVelocity());
   }
 
   @Override
