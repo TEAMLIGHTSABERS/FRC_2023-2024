@@ -119,18 +119,19 @@ public class RobotContainer {
     new JoystickButton(m_driverController, XboxController.Button.kLeftStick.value)
         .whileTrue(new RunCommand(() -> m_robotDrive.setX(), m_robotDrive));
 
+    // Turret Controls ----------------------------------------------------------
+    // Right Trigger will Raise the Launcher elevation.    
     new Trigger(
-            () ->
-                ((XboxController) m_driverController).getRightTriggerAxis()
-                    > Constants.OIConstants.kTriggerButtonThreshold)
-        .whileTrue(new RunCommand(() -> m_turret.advancePOS()));
+            () -> ((XboxController) m_driverController).getRightTriggerAxis()
+            > Constants.OIConstants.kTriggerButtonThreshold)
+        .whileTrue(new RunCommand(() -> m_turret.reducePOS()));
 
-    //new JoystickButton(( m_driverController).getRightBumperPressed()).onTrue(m_turret.reducePOS());
-        
+    // Right Bumper will Lower the Launcher elevation
     new JoystickButton(m_driverController, XboxController.Button.kRightBumper.value)
-        .onTrue(new RunCommand(() -> m_turret.reducePOS()));
+        .onTrue(new RunCommand(() -> m_turret.advancePOS()));
 
-    // intake controls
+    // Intake Controls ----------------------------------------------------------
+    // Left Trigger will start the Intake and pickup a Note
     new Trigger(
             () ->
                 ((XboxController) m_driverController).getLeftTriggerAxis()
@@ -138,13 +139,17 @@ public class RobotContainer {
         .whileTrue(new RunCommand(() -> m_intake.setPower(Constants.Intake.kTopPower, Constants.Intake.kFeedPower), m_intake))
         .onFalse(new RunCommand(() -> m_intake.setPower(0.0, 0.0), m_intake));
 
+    // "B" Button will slowly "Backup" a Note in the Intake
     new JoystickButton(m_driverController, XboxController.Button.kB.value)
         .whileTrue(new RunCommand(() -> m_intake.setPower(0.0, -0.2), m_intake))
         .onFalse(new RunCommand(() -> m_intake.setPower(0.0, 0.0), m_intake));
 
+    // Launcher Controls -------------------------------------------------------
+    // "A" Button will launch a Note toward the Target
     new JoystickButton(m_driverController, XboxController.Button.kA.value)
         .onTrue(m_launcher.launchNote(m_intake));
-        
+    
+    // "X" Button will run the Launcher Flywheels for 5 seconds
     new JoystickButton(m_driverController, XboxController.Button.kX.value)
         .onTrue(m_launcher.testFlyWheels());
   }
@@ -198,10 +203,6 @@ public class RobotContainer {
     thetaController,
     m_robotDrive::setModuleStates,
     m_robotDrive);
-
-//    lastThetaController.equals(thetaController); 
-//    lastXAxisController.equals(xAxisController); 
-//    lastYAxisController.equals(yAxisController); 
 
     // Reset odometry to the starting pose of the trajectory.
     m_robotDrive.resetOdometry(sTurnTrajectory.getInitialPose());

@@ -32,12 +32,10 @@ public final class Constants {
   public static final class Turret {
     public static final int kTurCanId = 5;
     public static final int kTurCurrentLimit = 20;
-//    public static final double kTurElSpeedCmded = 1.0;
-//    public static final double kElevDeadband = 0.05;
-    public static final double kPEController = 1e-6;
+    public static final double kPEController = 0.0;
     public static final double kIEController = 0.0;
     public static final double kDEController = 0.0;
-    public static final double kVEController = 0.0;
+    public static final double kVEController = 2e-3;
     public static final double kHangingPosition = 0; // Rotations
     public static final double kAmpPosition = 200; // Rotations
     public static final double kSpeakerPosition = 500; // Rotations
@@ -52,9 +50,9 @@ public final class Constants {
   public static final class Launcher {
     public static double kLeftPower = 1.0;
     public static double kRightPower = 1.0;
-    public static double kTimeToLaunch = 1.0;
-    public static double kTimeToStop = 5.0;
-    public static double kFlyWheelStopTime = 5; // Seconds
+    public static double kTimeToLaunch = 0.0;
+    public static double kTimeToStop = 5.0; // seconds when Launching
+    public static double kFlyWheelStopTime = 5; // Seconds when Spinning Up
     public static double kFeederSpeed = 0.5;
 
     public static final int kCurrentLimit = 80;
