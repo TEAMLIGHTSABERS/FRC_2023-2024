@@ -26,6 +26,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LauncherSubsystem;
+import frc.robot.subsystems.TurretSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
@@ -44,6 +45,7 @@ public class RobotContainer {
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final LauncherSubsystem m_launcher = new LauncherSubsystem();
+  private final TurretSubsystem m_turret = new TurretSubsystem();
   private static final ExampleSubsystem ExampleSubsystem = new ExampleSubsystem();
 //  private ProfiledPIDController lastThetaController;
 //  private PIDController lastXAxisController;
@@ -85,6 +87,8 @@ public class RobotContainer {
 
     // configure the launcher to stop when no other command is running
     m_launcher.setDefaultCommand(new RunCommand(() -> m_launcher.stopLauncher(), m_launcher));
+
+    m_turret.setDefaultCommand(new RunCommand(()->m_turret.driveWench(m_driverController.getPOV())));
 
     // Add commands to the autonomous command chooser
     m_chooser.setDefaultOption("Simple Auto", m_simpleAuto);
@@ -132,7 +136,6 @@ public class RobotContainer {
         
     new JoystickButton(m_driverController, XboxController.Button.kX.value)
         .onTrue(m_launcher.testFlyWheels());
-
   }
 
  /**
