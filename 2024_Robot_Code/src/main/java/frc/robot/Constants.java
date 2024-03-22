@@ -29,6 +29,18 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
 
+  public static final class Turret {
+    public static final int kTurCanId = 5;
+    public static final int kTurCurrentLimit = 20;
+    public static final double kPEController = 0.0;
+    public static final double kIEController = 0.0;
+    public static final double kDEController = 0.0;
+    public static final double kVEController = 2.5e-3;
+    public static final double kHangingPosition = -10; // Degrees
+    public static final double kAmpPosition = 100; // Degrees
+    public static final double kSpeakerPosition = 120; // Degrees
+  }
+
   public static final class Intake {
     public static double kTopPower = 1.0;
     public static double kFeedPower = 0.5;
@@ -36,11 +48,12 @@ public final class Constants {
   }
 
   public static final class Launcher {
+    public static double kInputDelaySec = 5;
     public static double kLeftPower = 1.0;
     public static double kRightPower = 1.0;
-    public static double kTimeToLaunch = 1.0;
-    public static double kTimeToStop = 5.0;
-    public static double kFlyWheelStopTime = 5; // Seconds
+    public static double kTimeToLaunch = 0.0;
+    public static double kTimeToStop = 5.0; // seconds when Launching
+    public static double kFlyWheelStopTime = 5; // Seconds when Spinning Up
     public static double kFeederSpeed = 0.5;
 
     public static final int kCurrentLimit = 80;
@@ -157,6 +170,7 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
     public static final double kDriveDeadband = 0.05;
     public static final double kTriggerButtonThreshold = 0.25;
+    public static final double kInputDelayTimedOut = 25; // Cycle Counts -> 0.5 sec
   }
 
   public static final class AutoConstants {
