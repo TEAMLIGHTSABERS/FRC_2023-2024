@@ -55,6 +55,8 @@ public final class Constants {
     public static double kTimeToStop = 3.0; // seconds when Launching
     public static double kFlyWheelStopTime = 5; // Seconds when Spinning Up
     public static double kFeederSpeed = 0.5;
+    public static double kRightCmdRate = 5050;
+    public static double kLeftCmdRate = 4050;
 
     public static final int kCurrentLimit = 80;
     
