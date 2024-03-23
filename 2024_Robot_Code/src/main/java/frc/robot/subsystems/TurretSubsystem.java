@@ -98,7 +98,7 @@ public class TurretSubsystem extends SubsystemBase {
 
     }
 
-    public double getSelPosition (){
+    public int getSelPosition (){
         return (SelectedPosition);
     }
 

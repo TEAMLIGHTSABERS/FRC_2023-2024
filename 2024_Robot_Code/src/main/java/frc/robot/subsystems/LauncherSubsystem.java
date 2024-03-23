@@ -142,7 +142,7 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
         new Command() {
           
           private Timer m_timer;
-          private double CurrentTurretPosition;
+          private int CurrentTurretPosition;
           private double saveRightCmdRPM;
           private double saveLeftCmdRPM;
 
@@ -150,6 +150,7 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
           public void initialize() {
             /* Start the Launcher Wheels and the Launch timer. */
             CurrentTurretPosition = _Turret.getSelPosition();
+
             if (CurrentTurretPosition == Constants.Turret.kHangingPosition) {
               saveLeftCmdRPM = leftCmdWheelRate;
               saveRightCmdRPM = rightCmdWheelRate;
