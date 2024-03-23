@@ -149,9 +149,6 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
           @Override
           public void initialize() {
             /* Start the Launcher Wheels and the Launch timer. */
-            flyWheelsRunning = true;
-            m_timer = new Timer();
-            m_timer.start();
             CurrentTurretPosition = _Turret.getSelPosition();
             if (CurrentTurretPosition == Constants.Turret.kHangingPosition) {
               saveLeftCmdRPM = leftCmdWheelRate;
@@ -159,6 +156,9 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
               leftCmdWheelRate = 250;
               rightCmdWheelRate = 250;
             }
+            flyWheelsRunning = true;
+            m_timer = new Timer();
+            m_timer.start();
           }
 
           @Override
