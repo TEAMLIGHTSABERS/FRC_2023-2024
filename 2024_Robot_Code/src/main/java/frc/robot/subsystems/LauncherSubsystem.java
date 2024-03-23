@@ -154,7 +154,10 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
             m_timer.start();
             CurrentTurretPosition = _Turret.getSelPosition();
             if (CurrentTurretPosition == Constants.Turret.kHangingPosition) {
-
+              saveLeftCmdRPM = leftCmdWheelRate;
+              saveRightCmdRPM = rightCmdWheelRate;
+              leftCmdWheelRate = 500;
+              rightCmdWheelRate = 500;
             }
           }
 
@@ -184,6 +187,10 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
             /* Stop both the Launcher and the Intake feeder */
             flyWheelsRunning = false;
             _Intake.stopFeeder();
+            if (CurrentTurretPosition == Constants.Turret.kHangingPosition) {
+              leftCmdWheelRate = saveLeftCmdRPM;
+              rightCmdWheelRate = saveRightCmdRPM;
+            }
           }
         };
 
