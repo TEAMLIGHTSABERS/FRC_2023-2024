@@ -51,7 +51,7 @@ public final class Constants {
     public static double kInputDelaySec = 5;
     public static double kLeftPower = 1.0;
     public static double kRightPower = 1.0;
-    public static double kTimeToLaunch = 0.0;
+    public static double kTimeToLaunch = 1.0;
     public static double kTimeToStop = 3.0; // seconds when Launching
     public static double kFlyWheelStopTime = 5; // Seconds when Spinning Up
     public static double kFeederSpeed = 0.5;

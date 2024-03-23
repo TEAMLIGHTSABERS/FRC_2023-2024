@@ -156,8 +156,8 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
             if (CurrentTurretPosition == Constants.Turret.kHangingPosition) {
               saveLeftCmdRPM = leftCmdWheelRate;
               saveRightCmdRPM = rightCmdWheelRate;
-              leftCmdWheelRate = 500;
-              rightCmdWheelRate = 500;
+              leftCmdWheelRate = 250;
+              rightCmdWheelRate = 250;
             }
           }
 
