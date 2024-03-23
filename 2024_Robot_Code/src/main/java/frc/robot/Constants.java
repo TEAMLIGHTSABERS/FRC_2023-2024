@@ -36,8 +36,8 @@ public final class Constants {
     public static final double kIEController = 0.0;
     public static final double kDEController = 0.0;
     public static final double kVEController = 2.5e-3;
-    public static final double kHangingPosition = -10; // Degrees
-    public static final double kAmpPosition = 100; // Degrees
+    public static final double kHangingPosition = -20; // Degrees
+    public static final double kAmpPosition = 90; // Degrees
     public static final double kSpeakerPosition = 120; // Degrees
   }
 
@@ -52,7 +52,7 @@ public final class Constants {
     public static double kLeftPower = 1.0;
     public static double kRightPower = 1.0;
     public static double kTimeToLaunch = 0.0;
-    public static double kTimeToStop = 5.0; // seconds when Launching
+    public static double kTimeToStop = 3.0; // seconds when Launching
     public static double kFlyWheelStopTime = 5; // Seconds when Spinning Up
     public static double kFeederSpeed = 0.5;
 
