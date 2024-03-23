@@ -36,7 +36,7 @@ public final class Constants {
     public static final double kIEController = 0.0;
     public static final double kDEController = 0.0;
     public static final double kVEController = 2.5e-3;
-    public static final double kHangingPosition = -20; // Degrees
+    public static final double kHangingPosition = -50; // Degrees
     public static final double kAmpPosition = 90; // Degrees
     public static final double kSpeakerPosition = 120; // Degrees
   }
