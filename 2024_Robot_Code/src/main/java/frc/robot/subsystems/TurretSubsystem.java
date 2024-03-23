@@ -25,7 +25,7 @@ public class TurretSubsystem extends SubsystemBase {
 
     // Class Constructor
     public TurretSubsystem(){
-        SelectedPosition = 2; // Hanging Position
+        SelectedPosition = 0; // Hanging Position
         currentWenchPosition = convertSelPosToWench(SelectedPosition);
         commandedWenchPosition = currentWenchPosition;
         inputDelayCtr = 0;
@@ -33,7 +33,7 @@ public class TurretSubsystem extends SubsystemBase {
         elevationMotor =
         new CANSparkMax(Constants.Turret.kTurCanId, CANSparkLowLevel.MotorType.kBrushless);
 
-        elevationMotor.setInverted(true);
+        elevationMotor.setInverted(false);
         elevationMotor.setSmartCurrentLimit(Constants.Turret.kTurCurrentLimit);
         elevationMotor.setIdleMode(IdleMode.kBrake);
 
@@ -106,15 +106,15 @@ public class TurretSubsystem extends SubsystemBase {
       double wenchPosition;
 
       switch (_SelectedPos) {
-        case 0: // Hanging Position
-            wenchPosition = Constants.Turret.kHangingPosition;  // Rotations
+        case 0: // Start Position
+            wenchPosition = Constants.Turret.kStartPosition;    // Rotations
             break;
-        case 1: // Amplifier Position
-            wenchPosition = Constants.Turret.kAmpPosition;   // Rotations
+        case 1: // Speaker Position
+            wenchPosition = Constants.Turret.kSpeakerPosition;   // Rotations
             break;
-        case 2: // Speaker Position
+        case 2: // Amp Position
         default:
-            wenchPosition = Constants.Turret.kSpeakerPosition;    // Rotations
+            wenchPosition = Constants.Turret.kAmpPosition;  // Rotations
             break;
       };
 

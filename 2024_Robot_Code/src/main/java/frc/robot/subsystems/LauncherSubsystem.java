@@ -151,7 +151,7 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
             /* Start the Launcher Wheels and the Launch timer. */
             CurrentTurretPosition = _Turret.getSelPosition();
 
-            if (CurrentTurretPosition == Constants.Turret.kHangingPosition) {
+            if (CurrentTurretPosition == Constants.Turret.kAmpPosition) {
               saveLeftCmdRPM = leftCmdWheelRate;
               saveRightCmdRPM = rightCmdWheelRate;
               leftCmdWheelRate = 250;
@@ -188,7 +188,7 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
             /* Stop both the Launcher and the Intake feeder */
             flyWheelsRunning = false;
             _Intake.stopFeeder();
-            if (CurrentTurretPosition == Constants.Turret.kHangingPosition) {
+            if (CurrentTurretPosition == Constants.Turret.kAmpPosition) {
               leftCmdWheelRate = saveLeftCmdRPM;
               rightCmdWheelRate = saveRightCmdRPM;
             }
