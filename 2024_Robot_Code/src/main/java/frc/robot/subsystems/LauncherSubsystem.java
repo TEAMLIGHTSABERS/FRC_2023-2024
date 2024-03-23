@@ -47,8 +47,8 @@ public class LauncherSubsystem extends SubsystemBase {
     inputDelayCtr = 0;
 
     // current running power
-    leftCmdWheelRate = 4000; // RPM
-    rightCmdWheelRate = 5000;
+    leftCmdWheelRate = Constants.Launcher.kLeftCmdRate; // RPM
+    rightCmdWheelRate = Constants.Launcher.kRightCmdRate;
 
     // Set SparkMax motor limits
     kMaxOutput = 1; 
