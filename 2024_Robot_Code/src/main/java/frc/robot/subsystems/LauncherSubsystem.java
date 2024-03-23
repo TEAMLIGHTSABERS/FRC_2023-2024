@@ -137,11 +137,14 @@ public class LauncherSubsystem extends SubsystemBase {
 * @return The launch command
 */
 
-public Command launchNote(IntakeSubsystem _Intake) {
+public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
     Command launching =
         new Command() {
           
           private Timer m_timer;
+          private double CurrentTurretPosition;
+          private double saveRightCmdRPM;
+          private double saveLeftCmdRPM;
 
           @Override
           public void initialize() {
@@ -149,6 +152,10 @@ public Command launchNote(IntakeSubsystem _Intake) {
             flyWheelsRunning = true;
             m_timer = new Timer();
             m_timer.start();
+            CurrentTurretPosition = _Turret.getSelPosition();
+            if (CurrentTurretPosition == Constants.Turret.kHangingPosition) {
+
+            }
           }
 
           @Override

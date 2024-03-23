@@ -158,7 +158,7 @@ public class RobotContainer {
     // Launcher Controls -------------------------------------------------------
     // "A" Button will launch a Note toward the Target
     new JoystickButton(m_driverController, XboxController.Button.kA.value)
-        .onTrue(m_launcher.launchNote(m_intake));
+        .onTrue(m_launcher.launchNote(m_intake, m_turret));
     
     // "X" Button will run the Launcher Flywheels for 5 seconds
     new JoystickButton(m_driverController, XboxController.Button.kX.value)

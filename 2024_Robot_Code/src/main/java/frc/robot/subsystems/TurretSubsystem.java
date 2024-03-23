@@ -26,7 +26,7 @@ public class TurretSubsystem extends SubsystemBase {
     // Class Constructor
     public TurretSubsystem(){
         SelectedPosition = 2; // Hanging Position
-        currentWenchPosition = getSelPos(SelectedPosition);
+        currentWenchPosition = convertSelPosToWench(SelectedPosition);
         commandedWenchPosition = currentWenchPosition;
         inputDelayCtr = 0;
 
@@ -82,7 +82,7 @@ public class TurretSubsystem extends SubsystemBase {
             inputDelayCtr++;
         }
 
-        commandedWenchPosition = getSelPos(SelectedPosition);
+        commandedWenchPosition = convertSelPosToWench(SelectedPosition);
         currentWenchPosition = elevationRelEncoder.getPosition();
 
 //        if (currentWenchPosition < commandedWenchPosition){
@@ -98,11 +98,11 @@ public class TurretSubsystem extends SubsystemBase {
 
     }
 
-    public double getPosition (){
-        return (20);
+    public double getSelPosition (){
+        return (SelectedPosition);
     }
 
-    private double getSelPos (int _SelectedPos) {
+    private double convertSelPosToWench (int _SelectedPos) {
       double wenchPosition;
 
       switch (_SelectedPos) {
