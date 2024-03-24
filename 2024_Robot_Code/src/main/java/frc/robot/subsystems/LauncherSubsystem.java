@@ -264,24 +264,12 @@ public Command acceptCommandedRightWheelRate(){
 *
 * @return The riseUp1000 command
 */
-public Command raiseLCR1000(){
-  Command riseUp1000 = 
-    new Command() {
-      @Override
-      public void initialize() {
-        /* Start the Launcher Wheels and the Launch timer. */
-        leftCmdWheelRate += 1000; 
+public void raiseLCR1000(){
+  // Increase the Left Wheel Rate by 1000 RPM
+  leftCmdWheelRate += 1000; 
 
-        LCmdWhlRtEntry.setDouble(leftCmdWheelRate);
-      }
-
-      @Override
-      public boolean isFinished() {
-        return true;
-      }
-    };
-
-    return riseUp1000;
+  // Update the Left Wheel Rate in the Launcher Network Table (Launcher Tab).
+  LCmdWhlRtEntry.setDouble(leftCmdWheelRate);
 };
 
 /**
