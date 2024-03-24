@@ -15,6 +15,7 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.AutoConstants;
@@ -51,7 +52,9 @@ public class RobotContainer {
 //  private PIDController lastXAxisController;
 //  private PIDController lastYAxisController;
 
-  // A simple auto routine that drives forward a specified distance, and then stops.
+  private static ShuffleboardTab launchTab; 
+
+    // A simple auto routine that drives forward a specified distance, and then stops.
   private final Command m_simpleAuto = Autos.exampleAuto(ExampleSubsystem);
 
   // A complex auto routine that drives forward, drops a hatch, and then drives backward.
@@ -66,7 +69,12 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    // Configure the trigger bindings
+
+    launchTab = Shuffleboard.getTab("Launch Subsystem");
+    launchTab.add("Accept LCWR", m_launcher.acceptCommandedLeftWheelRate());
+    launchTab.add("Accept RCWR", m_launcher.acceptCommandedRightWheelRate());
+
+  // Configure the trigger bindings
     configureButtonBindings();
 
     SmartDashboard.putData("Launcher Wheel Test", m_launcher.testFlyWheels());
