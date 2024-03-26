@@ -6,11 +6,8 @@ import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkBase.IdleMode;
 
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -18,12 +15,15 @@ import frc.robot.Constants;
 
 public class LauncherSubsystem extends SubsystemBase {
 
-  private int inputDelayCtr;
+  
   private double kMaxOutput, kMinOutput;
   public boolean flyWheelsRunning;
   
   private static double leftCmdWheelRate;
   private static double rightCmdWheelRate; 
+
+  private static double preLeftCmdWheelRate;
+  private static double preRightCmdWheelRate;
 
   private CANSparkMax leftLaunchWheel;
   private CANSparkMax rightLaunchWheel;
@@ -35,16 +35,22 @@ public class LauncherSubsystem extends SubsystemBase {
   private SparkPIDController m_rightLancherPIDCtrl;
   private RelativeEncoder m_rightEncoder;
   public double kRP, kRI, kRD, kRIz, kRFF ;
+
+  private CANSparkMax preLeftLaunchWheel;
+  private CANSparkMax preRightLaunchWheel;
   
+  private SparkPIDController m_preLeftLancherPIDCtrl;
+  private RelativeEncoder m_preLeftEncoder;
+
+  private SparkPIDController m_preRightLancherPIDCtrl;
+  private RelativeEncoder m_preRightEncoder;
+
   /** Creates a new LauncherSubsystem. */
   public LauncherSubsystem() {
     // Set private holding variables: -----------------------------------------------------|
     // launcher status
-    ShuffleboardTab LaunchTab = Shuffleboard.getTab("Launch Subsystem");
-    GenericEntry FWRuningEntry = LaunchTab.add("Fly Wheels Running", false).getEntry();
 
     flyWheelsRunning = false;
-    inputDelayCtr = 0;
 
     // current running power
     leftCmdWheelRate = Constants.Launcher.kLeftCmdRate; // RPM
@@ -124,6 +130,63 @@ public class LauncherSubsystem extends SubsystemBase {
 
     // push left motor configuration to the left motor flash memory.
     rightLaunchWheel.burnFlash();
+
+        // create two new SPARK MAXs and configure them ---------------------------------------|
+    // 1 motor for the left launcher wheel: -------------------------------------------||
+    preLeftLaunchWheel =
+        new CANSparkMax(Constants.Launcher.kLTSCanId, CANSparkLowLevel.MotorType.kBrushless);
+
+    preLeftLaunchWheel.setInverted(false);
+    preLeftLaunchWheel.setSmartCurrentLimit(Constants.Launcher.kCurrentLimit);
+    preLeftLaunchWheel.setIdleMode(IdleMode.kBrake);
+    
+    // create a PID controller for the left launcher motor 
+    m_preLeftLancherPIDCtrl = preLeftLaunchWheel.getPIDController();
+
+    // encoder object created to display position and velocity values for the left motor
+    m_preLeftEncoder = preLeftLaunchWheel.getEncoder();
+    m_preLeftLancherPIDCtrl.setFeedbackDevice(m_preLeftEncoder);
+    m_preLeftEncoder.setPositionConversionFactor(1.0); // rotations
+    m_preLeftEncoder.setVelocityConversionFactor(1.0); // rpm
+
+    // configure the left motor PID controller
+    m_preLeftLancherPIDCtrl.setP(Constants.Launcher.kpP);
+    m_preLeftLancherPIDCtrl.setI(Constants.Launcher.kpI);
+    m_preLeftLancherPIDCtrl.setD(Constants.Launcher.kpD);
+    m_preLeftLancherPIDCtrl.setIZone(Constants.Launcher.kpIz);
+    m_preLeftLancherPIDCtrl.setFF(Constants.Launcher.kpFF);
+    m_preLeftLancherPIDCtrl.setOutputRange(kMinOutput, kMaxOutput);
+
+    // Push left motor configuration to the left motor flash memory.
+    preLeftLaunchWheel.burnFlash();
+
+    // 1 motor for the right launcher wheel: -------------------------------------------||
+    preRightLaunchWheel =
+    new CANSparkMax(Constants.Launcher.kRTSCanId, CANSparkLowLevel.MotorType.kBrushless);
+
+    preRightLaunchWheel.setInverted(true);
+    preRightLaunchWheel.setSmartCurrentLimit(Constants.Launcher.kCurrentLimit);
+    preRightLaunchWheel.setIdleMode(IdleMode.kBrake);
+
+    // create a PID controller for the left launcher motor 
+    m_preRightLancherPIDCtrl = preRightLaunchWheel.getPIDController();
+
+    // encoder object created to display position and velocity values for the right motor
+    m_preRightEncoder = preRightLaunchWheel.getEncoder();
+    m_preRightLancherPIDCtrl.setFeedbackDevice(m_preRightEncoder);
+    m_preRightEncoder.setPositionConversionFactor(1.0); // rotations
+    m_preRightEncoder.setVelocityConversionFactor(1.0); // rpm
+
+    // configure the left motor PID controller
+    m_preRightLancherPIDCtrl.setP(Constants.Launcher.kpP);
+    m_preRightLancherPIDCtrl.setI(Constants.Launcher.kpI);
+    m_preRightLancherPIDCtrl.setD(Constants.Launcher.kpD);
+    m_preRightLancherPIDCtrl.setIZone(Constants.Launcher.kpIz);
+    m_preRightLancherPIDCtrl.setFF(Constants.Launcher.kpFF);
+    m_preRightLancherPIDCtrl.setOutputRange(kMinOutput, kMaxOutput);
+
+    // push left motor configuration to the left motor flash memory.
+    preRightLaunchWheel.burnFlash();
   }
 
 /**
@@ -499,21 +562,32 @@ public Command testFlyWheels() {
       kMinOutput = min; kMaxOutput = max; 
     }
 
+
+    double preLeftSetPoint;
+    double preRightSetPoint;
     
+
     if (flyWheelsRunning) {
 
       leftSetPoint = leftCmdWheelRate; // leftCmdWheelRate/maxMotorRPM;
       rightSetPoint = rightCmdWheelRate; //Constants.NeoMotorConstants.kFreeSpeedRpm; // rightCmdWheelRate/maxMotorRPM;
 
+      preLeftSetPoint = preLeftCmdWheelRate;
+      preRightSetPoint = preRightCmdWheelRate;
+
     } else {
       leftSetPoint = 0;
       rightSetPoint = 0;
+
+      preLeftSetPoint = 0;
+      preRightSetPoint = 0;
     }
 
     m_leftLancherPIDCtrl.setReference(leftSetPoint, CANSparkMax.ControlType.kVelocity);
     m_rightLancherPIDCtrl.setReference(rightSetPoint, CANSparkMax.ControlType.kVelocity);
 
-    ShuffleboardTab LaunchTab = Shuffleboard.getTab("Launcher Subsystem");
+    m_preLeftLancherPIDCtrl.setReference(preLeftSetPoint, CANSparkMax.ControlType.kVelocity);
+    m_preRightLancherPIDCtrl.setReference(preRightSetPoint, CANSparkMax.ControlType.kVelocity);
     
 //    Shuffleboard.getTab("Launcher Subsystem").add("Left RPM Setting", leftCmdWheelRate);
     SmartDashboard.putNumber("Left RPM", leftCmdWheelRate);
