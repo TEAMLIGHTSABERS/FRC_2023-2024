@@ -134,9 +134,9 @@ public class LauncherSubsystem extends SubsystemBase {
         // create two new SPARK MAXs and configure them ---------------------------------------|
     // 1 motor for the left launcher wheel: -------------------------------------------||
     preLeftLaunchWheel =
-        new CANSparkMax(Constants.Launcher.kLTSCanId, CANSparkLowLevel.MotorType.kBrushless);
+        new CANSparkMax(Constants.Launcher.kPLTSCanId, CANSparkLowLevel.MotorType.kBrushless);
 
-    preLeftLaunchWheel.setInverted(false);
+    preLeftLaunchWheel.setInverted(true);
     preLeftLaunchWheel.setSmartCurrentLimit(Constants.Launcher.kCurrentLimit);
     preLeftLaunchWheel.setIdleMode(IdleMode.kBrake);
     
@@ -162,9 +162,9 @@ public class LauncherSubsystem extends SubsystemBase {
 
     // 1 motor for the right launcher wheel: -------------------------------------------||
     preRightLaunchWheel =
-    new CANSparkMax(Constants.Launcher.kRTSCanId, CANSparkLowLevel.MotorType.kBrushless);
+    new CANSparkMax(Constants.Launcher.kPRTSCanId, CANSparkLowLevel.MotorType.kBrushless);
 
-    preRightLaunchWheel.setInverted(true);
+    preRightLaunchWheel.setInverted(false);
     preRightLaunchWheel.setSmartCurrentLimit(Constants.Launcher.kCurrentLimit);
     preRightLaunchWheel.setIdleMode(IdleMode.kBrake);
 
@@ -572,8 +572,8 @@ public Command testFlyWheels() {
       leftSetPoint = leftCmdWheelRate; // leftCmdWheelRate/maxMotorRPM;
       rightSetPoint = rightCmdWheelRate; //Constants.NeoMotorConstants.kFreeSpeedRpm; // rightCmdWheelRate/maxMotorRPM;
 
-      preLeftSetPoint = preLeftCmdWheelRate;
-      preRightSetPoint = preRightCmdWheelRate;
+      preLeftSetPoint = leftCmdWheelRate;
+      preRightSetPoint = rightCmdWheelRate;
 
     } else {
       leftSetPoint = 0;
