@@ -59,9 +59,18 @@ public final class Constants {
     public static double kLeftCmdRate = 4050;
 
     public static final int kCurrentLimit = 80;
+
+    public static double kpP = 0.00007;
+    public static double kpI = 0.0000007;
+    public static double kpD = 0;
+    public static double kpIz = 0;
+    public static double kpFF = 0.000007;
     
     public static final int kLTSCanId = 3;
     public static final int kRTSCanId = 4;
+
+    public static final int kPLTSCanId = 8;
+    public static final int kPRTSCanId = 9;
   }
   
   public static final class DriveConstants {
