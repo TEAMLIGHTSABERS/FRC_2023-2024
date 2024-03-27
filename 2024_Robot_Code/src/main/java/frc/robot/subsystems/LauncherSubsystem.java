@@ -63,7 +63,6 @@ public class LauncherSubsystem extends SubsystemBase {
     rightCmdWheelRate = Constants.Launcher.kRightCmdRate;
 
     leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
-
     // Set SparkMax motor limits
     kMaxOutput = 1; 
     kMinOutput = -1;
@@ -262,6 +261,7 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
             /* Stop both the Launcher and the Intake feeder */
             flyWheelsRunning = false;
             _Intake.stopFeeder();
+
             if (CurrentTurretPosition == (int) 2) {
               leftCmdWheelRate = saveLeftCmdRPM;
               rightCmdWheelRate = saveRightCmdRPM;
