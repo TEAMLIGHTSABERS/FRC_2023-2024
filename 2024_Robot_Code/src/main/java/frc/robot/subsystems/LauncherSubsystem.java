@@ -6,8 +6,11 @@ import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkBase.IdleMode;
 
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -16,14 +19,14 @@ import frc.robot.Constants;
 public class LauncherSubsystem extends SubsystemBase {
 
   
+  private ShuffleboardTab launchTab;
+  private GenericEntry leftCmdWheelRateEntry;
+
   private double kMaxOutput, kMinOutput;
   public boolean flyWheelsRunning;
   
   private static double leftCmdWheelRate;
   private static double rightCmdWheelRate; 
-
-  private static double preLeftCmdWheelRate;
-  private static double preRightCmdWheelRate;
 
   private CANSparkMax leftLaunchWheel;
   private CANSparkMax rightLaunchWheel;
@@ -49,12 +52,17 @@ public class LauncherSubsystem extends SubsystemBase {
   public LauncherSubsystem() {
     // Set private holding variables: -----------------------------------------------------|
     // launcher status
+    launchTab = Shuffleboard.getTab("Launch Subsystem");
+    leftCmdWheelRateEntry = launchTab
+      .add("Left Cmd Wheel Rate", Constants.Launcher.kLeftCmdRate).getEntry();
 
     flyWheelsRunning = false;
 
     // current running power
     leftCmdWheelRate = Constants.Launcher.kLeftCmdRate; // RPM
     rightCmdWheelRate = Constants.Launcher.kRightCmdRate;
+
+    leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
 
     // Set SparkMax motor limits
     kMaxOutput = 1; 
@@ -205,7 +213,7 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
         new Command() {
           
           private Timer m_timer;
-          private double CurrentTurretPosition;
+          private int CurrentTurretPosition;
           private double saveRightCmdRPM;
           private double saveLeftCmdRPM;
 
@@ -213,12 +221,16 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
           public void initialize() {
             /* Start the Launcher Wheels and the Launch timer. */
             CurrentTurretPosition = _Turret.getSelPosition();
-            if (CurrentTurretPosition == Constants.Turret.kHangingPosition) {
+
+            if (CurrentTurretPosition == (int)2) {
               saveLeftCmdRPM = leftCmdWheelRate;
               saveRightCmdRPM = rightCmdWheelRate;
               leftCmdWheelRate = 250;
               rightCmdWheelRate = 250;
+
+              leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
             }
+
             flyWheelsRunning = true;
             m_timer = new Timer();
             m_timer.start();
@@ -250,15 +262,43 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
             /* Stop both the Launcher and the Intake feeder */
             flyWheelsRunning = false;
             _Intake.stopFeeder();
-            if (CurrentTurretPosition == Constants.Turret.kHangingPosition) {
+            if (CurrentTurretPosition == (int) 2) {
               leftCmdWheelRate = saveLeftCmdRPM;
               rightCmdWheelRate = saveRightCmdRPM;
+
+              leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
             }
           }
         };
 
         return launching;
   }
+
+/**
+* Constructs a command that raises the commanded set point for 
+* the left flywheel motor by 1000 rpm.
+*
+* @return The riseUp1000 command
+*/
+public Command acceptCommandedLeftWheelRate(){
+  Command acceptwheelRate = 
+    new Command() {
+      @Override
+      public void initialize() {
+        /* Start the Launcher Wheels and the Launch timer. */
+        leftCmdWheelRate = leftCmdWheelRateEntry.getDouble(Constants.Launcher.kLeftCmdRate); 
+        leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
+      }
+
+      @Override
+      public boolean isFinished() {
+        return true;
+      }
+    };
+
+  return acceptwheelRate;
+};
+
 
 /**
 * Constructs a command that raises the commanded set point for 
@@ -273,7 +313,8 @@ public Command raiseLCR1000(){
       public void initialize() {
         /* Start the Launcher Wheels and the Launch timer. */
         leftCmdWheelRate += 1000; 
-       }
+        leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
+      }
 
       @Override
       public boolean isFinished() {
@@ -297,7 +338,8 @@ public Command raiseLCR100(){
       public void initialize() {
         /* Start the Launcher Wheels and the Launch timer. */
         leftCmdWheelRate += 100; 
-       }
+        leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
+      }
 
       @Override
       public boolean isFinished() {
@@ -321,7 +363,8 @@ public Command downLC1000(){
       public void initialize() {
         /* Start the Launcher Wheels and the Launch timer. */
         leftCmdWheelRate -= 1000; 
-       }
+        leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
+      }
 
       @Override
       public boolean isFinished() {
