@@ -57,6 +57,7 @@ public final class Constants {
     public static double kFeederSpeed = 0.5;
     public static double kRightCmdRate = 5050;
     public static double kLeftCmdRate = 4050;
+    public static double kWheelRateRatio = 4.0/3.0;
 
     public static final int kCurrentLimit = 80;
 

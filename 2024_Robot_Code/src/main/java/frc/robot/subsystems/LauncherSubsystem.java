@@ -549,9 +549,6 @@ public Command testFlyWheels() {
   public void periodic() { // this method will be called once per scheduler run
     // set the launcher motor powers based on whether the launcher is on or not
 
-    double leftSetPoint = leftCmdWheelRate;
-    double rightSetPoint;
-
     double max = 1.0; //SmartDashboard.getNumber("Max Output", 0);
     double min = -1.0; //SmartDashboard.getNumber("Min Output", 0);
     // read PID coefficients from SmartDashboard
@@ -606,6 +603,9 @@ public Command testFlyWheels() {
     }
 
 
+    double leftSetPoint;
+    double rightSetPoint;
+
     double preLeftSetPoint;
     double preRightSetPoint;
     
@@ -615,8 +615,8 @@ public Command testFlyWheels() {
       leftSetPoint = leftCmdWheelRate; // leftCmdWheelRate/maxMotorRPM;
       rightSetPoint = rightCmdWheelRate; //Constants.NeoMotorConstants.kFreeSpeedRpm; // rightCmdWheelRate/maxMotorRPM;
 
-      preLeftSetPoint = leftCmdWheelRate;
-      preRightSetPoint = rightCmdWheelRate;
+      preLeftSetPoint = leftCmdWheelRate * Constants.Launcher.kWheelRateRatio;
+      preRightSetPoint = rightCmdWheelRate * Constants.Launcher.kWheelRateRatio;
 
     } else {
       leftSetPoint = 0;
