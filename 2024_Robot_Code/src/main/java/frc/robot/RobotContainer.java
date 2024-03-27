@@ -70,7 +70,7 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
-    launchTab = Shuffleboard.getTab("Launch Subsystem");
+    launchTab = Shuffleboard.getTab("Launcher Subsystem");
     launchTab.add("Accept LCWR", m_launcher.acceptCommandedLeftWheelRate());
 //    launchTab.add("Accept RCWR", m_launcher.acceptCommandedRightWheelRate());
 

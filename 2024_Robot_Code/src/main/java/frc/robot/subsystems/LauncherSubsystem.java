@@ -21,6 +21,7 @@ public class LauncherSubsystem extends SubsystemBase {
   
   private ShuffleboardTab launchTab;
   private GenericEntry leftCmdWheelRateEntry;
+  private GenericEntry leftPwrWheelRPMEntry;
 
   private double kMaxOutput, kMinOutput;
   public boolean flyWheelsRunning;
@@ -52,9 +53,11 @@ public class LauncherSubsystem extends SubsystemBase {
   public LauncherSubsystem() {
     // Set private holding variables: -----------------------------------------------------|
     // launcher status
-    launchTab = Shuffleboard.getTab("Launch Subsystem");
+    launchTab = Shuffleboard.getTab("Launcher Subsystem");
     leftCmdWheelRateEntry = launchTab
       .add("Left Cmd Wheel Rate", Constants.Launcher.kLeftCmdRate).getEntry();
+    leftPwrWheelRPMEntry = launchTab
+      .add("Left Power Wheel RPM", Constants.Launcher.kLeftCmdRate).getEntry();
 
     flyWheelsRunning = false;
 
@@ -63,6 +66,8 @@ public class LauncherSubsystem extends SubsystemBase {
     rightCmdWheelRate = Constants.Launcher.kRightCmdRate;
 
     leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
+    leftPwrWheelRPMEntry.setDouble(0.0);
+
     // Set SparkMax motor limits
     kMaxOutput = 1; 
     kMinOutput = -1;
@@ -635,8 +640,9 @@ public Command testFlyWheels() {
 //    Shuffleboard.getTab("Launcher Subsystem").add("Left RPM Setting", leftCmdWheelRate);
     SmartDashboard.putNumber("Left RPM", leftCmdWheelRate);
     SmartDashboard.putNumber("Right RPM", rightCmdWheelRate);
-//    Shuffleboard.getTab("Launcher Subsystem").add("Left Current RPM", m_leftEncoder.getVelocity());
-    SmartDashboard.putNumber("Left Current RPM", m_leftEncoder.getVelocity());
+
+    leftPwrWheelRPMEntry.setDouble(m_leftEncoder.getVelocity());
+//    SmartDashboard.putNumber("Left Current RPM", m_leftEncoder.getVelocity());
     SmartDashboard.putNumber("Right Current RPM", m_rightEncoder.getVelocity());
   }
 
