@@ -143,7 +143,7 @@ public class LauncherSubsystem extends SubsystemBase {
     preLeftLaunchWheel =
         new CANSparkMax(Constants.Launcher.kPLTSCanId, CANSparkLowLevel.MotorType.kBrushless);
 
-    preLeftLaunchWheel.setInverted(true);
+    preLeftLaunchWheel.setInverted(false);
     preLeftLaunchWheel.setSmartCurrentLimit(Constants.Launcher.kCurrentLimit);
     preLeftLaunchWheel.setIdleMode(IdleMode.kBrake);
     
@@ -171,7 +171,7 @@ public class LauncherSubsystem extends SubsystemBase {
     preRightLaunchWheel =
     new CANSparkMax(Constants.Launcher.kPRTSCanId, CANSparkLowLevel.MotorType.kBrushless);
 
-    preRightLaunchWheel.setInverted(false);
+    preRightLaunchWheel.setInverted(true);
     preRightLaunchWheel.setSmartCurrentLimit(Constants.Launcher.kCurrentLimit);
     preRightLaunchWheel.setIdleMode(IdleMode.kBrake);
 

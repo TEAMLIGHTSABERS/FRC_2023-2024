@@ -31,11 +31,11 @@ public final class Constants {
 
   public static final class Turret {
     public static final int kTurCanId = 5;
-    public static final int kTurCurrentLimit = 20;
-    public static final double kPEController = 0.0;
+    public static final int kTurCurrentLimit = 40;
+    public static final double kPEController = 0.02;
     public static final double kIEController = 0.0;
     public static final double kDEController = 0.0;
-    public static final double kVEController = 2.5e-3;
+    public static final double kVEController = 0.0; //2.5e-3
     public static final double kAmpPosition = 170; // Degrees
     public static final double kSpeakerPosition = 30; // Degrees
     public static final double kStartPosition = 0; // Degrees

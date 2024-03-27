@@ -1,0 +1,25 @@
+{
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/Autonomous/SendableChooser[0]": "String Chooser",
+      "/Shuffleboard/Drivetrain/Commands": "Subsystem",
+      "/Shuffleboard/Intake Subsystem/Commands": "Subsystem",
+      "/Shuffleboard/Launch Subsystem/Accept LCWR": "Command",
+      "/Shuffleboard/Launcher Subsystem/Commands": "Subsystem",
+      "/SmartDashboard/Auto Selection": "String Chooser",
+      "/SmartDashboard/LDn-100": "Command",
+      "/SmartDashboard/LDn-1000": "Command",
+      "/SmartDashboard/LUp-100": "Command",
+      "/SmartDashboard/LUp-1000": "Command",
+      "/SmartDashboard/Launcher Wheel Test": "Command",
+      "/SmartDashboard/RDn-100": "Command",
+      "/SmartDashboard/RDn-1000": "Command",
+      "/SmartDashboard/RUp-100": "Command",
+      "/SmartDashboard/RUp-1000": "Command"
+    }
+  },
+  "NetworkTables Info": {
+    "visible": true
+  }
+}

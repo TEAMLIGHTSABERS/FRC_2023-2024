@@ -49,7 +49,7 @@ public class TurretSubsystem extends SubsystemBase {
         elevationPIDCtrl.setD(Constants.Turret.kDEController);
         elevationPIDCtrl.setFF(Constants.Turret.kVEController);
         elevationPIDCtrl.setFeedbackDevice(elevationRelEncoder);
-        elevationPIDCtrl.setOutputRange(-1, 1); 
+        elevationPIDCtrl.setOutputRange(-0.2, 1); 
 
     }
 
