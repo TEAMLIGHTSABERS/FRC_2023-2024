@@ -110,8 +110,8 @@ public class RobotContainer {
     m_launcher.setDefaultCommand(new RunCommand(() -> m_launcher.stopLauncher(), m_launcher));
 
     m_turret.setDefaultCommand(new RunCommand(() -> m_turret.driveWench(
-        ((m_driverController).getRightTriggerAxis() > Constants.OIConstants.kTriggerButtonThreshold),
         (m_driverController).getRightBumperPressed()),
+        ((m_driverController).getRightTriggerAxis() > Constants.OIConstants.kTriggerButtonThreshold),
         m_turret));
 
     // Add commands to the autonomous command chooser

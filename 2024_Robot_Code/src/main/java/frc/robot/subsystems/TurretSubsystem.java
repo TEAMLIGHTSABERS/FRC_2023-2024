@@ -99,12 +99,12 @@ public class TurretSubsystem extends SubsystemBase {
     public void driveWench(Boolean upCommand, Boolean downCommand) {
 
         if(upCommand){
+            advancePOS();
+        } else if (downCommand){
             if (inputDelayCtr == Constants.OIConstants.kInputDelayTimedOut){
-                advancePOS();
+                reducePOS();
                 inputDelayCtr = 0;
             }
-        } else if (downCommand){
-            reducePOS();
         }
     };
 
