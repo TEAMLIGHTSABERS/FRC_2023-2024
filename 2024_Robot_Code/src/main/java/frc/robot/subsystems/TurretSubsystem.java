@@ -33,7 +33,7 @@ public class TurretSubsystem extends SubsystemBase {
         elevationMotor =
         new CANSparkMax(Constants.Turret.kTurCanId, CANSparkLowLevel.MotorType.kBrushless);
 
-        elevationMotor.setInverted(false);
+        elevationMotor.setInverted(false );
         elevationMotor.setSmartCurrentLimit(Constants.Turret.kTurCurrentLimit);
         elevationMotor.setIdleMode(IdleMode.kBrake);
 
