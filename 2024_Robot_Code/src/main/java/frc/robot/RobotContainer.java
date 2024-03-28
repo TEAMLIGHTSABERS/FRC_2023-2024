@@ -72,25 +72,25 @@ public class RobotContainer {
 
     launchTab = Shuffleboard.getTab("Launcher Subsystem");
     launchTab.add("Accept LCWR", m_launcher.acceptCommandedLeftWheelRate());
-//    launchTab.add("Accept RCWR", m_launcher.acceptCommandedRightWheelRate());
+    launchTab.add("Accept RCWR", m_launcher.acceptCommandedRightWheelRate());
+    launchTab.add("Launcher Wheel Test", m_launcher.testFlyWheels());
 
   // Configure the trigger bindings
     configureButtonBindings();
 
-    SmartDashboard.putData("Launcher Wheel Test", m_launcher.testFlyWheels());
 
     // Add Button to SmartDashboard with a RunCommand that executes a "void" method/function.
     SmartDashboard.putData("LUp-1000", 
       new RunCommand(() -> m_launcher.raiseLCR1000(), m_launcher));
 
     // Add Buttons to the SmartDashboard that executes a "command" methods/functions.
-    SmartDashboard.putData("LUp-100", m_launcher.raiseLCR100());
-    SmartDashboard.putData("LDn-1000", m_launcher.downLC1000());
-    SmartDashboard.putData("LDn-100", m_launcher.downLC100());
-    SmartDashboard.putData("RUp-1000", m_launcher.raiseRC1000());
-    SmartDashboard.putData("RDn-1000", m_launcher.downRC1000());
-    SmartDashboard.putData("RUp-100", m_launcher.raiseRC100());
-    SmartDashboard.putData("RDn-100", m_launcher.downRC100());
+    //SmartDashboard.putData("LUp-100", m_launcher.raiseLCR100());
+    //SmartDashboard.putData("LDn-1000", m_launcher.downLC1000());
+    //SmartDashboard.putData("LDn-100", m_launcher.downLC100());
+    //SmartDashboard.putData("RUp-1000", m_launcher.raiseRC1000());
+    //SmartDashboard.putData("RDn-1000", m_launcher.downRC1000());
+    //SmartDashboard.putData("RUp-100", m_launcher.raiseRC100());
+    //SmartDashboard.putData("RDn-100", m_launcher.downRC100());
     
     // Configure default commands
     m_robotDrive.setDefaultCommand(
