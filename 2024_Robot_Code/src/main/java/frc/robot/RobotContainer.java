@@ -72,12 +72,12 @@ public class RobotContainer {
 
     launchTab = Shuffleboard.getTab("Launcher Subsystem");
     launchTab.add("Accept LCWR", m_launcher.acceptCommandedLeftWheelRate());
-//    launchTab.add("Accept RCWR", m_launcher.acceptCommandedRightWheelRate());
+    launchTab.add("Accept RCWR", m_launcher.acceptCommandedRightWheelRate());
+    launchTab.add("Launcher Wheel Test", m_launcher.testFlyWheels());
 
   // Configure the trigger bindings
     configureButtonBindings();
 
-    SmartDashboard.putData("Launcher Wheel Test", m_launcher.testFlyWheels());
 
     // Add Button to SmartDashboard with a RunCommand that executes a "void" method/function.
     SmartDashboard.putData("LUp-1000", 
