@@ -127,6 +127,7 @@ public class RobotContainer {
     Shuffleboard.getTab("Drivetrain").add("Commands", m_robotDrive);
     Shuffleboard.getTab("Intake Subsystem").add("Commands", m_intake);
     Shuffleboard.getTab("Launcher Subsystem").add("Commands", m_launcher);
+    Shuffleboard.getTab("Turret Subsystem").add("Commands", m_turret);
   }
 
   /**
