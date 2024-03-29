@@ -233,11 +233,28 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
             /* Start the Launcher Wheels and the Launch timer. */
             CurrentTurretPosition = _Turret.getSelPosition();
 
-            if (CurrentTurretPosition == (int)2) {
+            if (CurrentTurretPosition == Constants.Turret.kAmpID) {
               saveLeftCmdRPM = leftCmdWheelRate;
               saveRightCmdRPM = rightCmdWheelRate;
               leftCmdWheelRate = 250;
               rightCmdWheelRate = 250;
+
+              leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
+              rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
+            } else if (CurrentTurretPosition == Constants.Turret.kSpeakerID) {
+              saveLeftCmdRPM = leftCmdWheelRate;
+              saveRightCmdRPM = rightCmdWheelRate;
+              leftCmdWheelRate = 1500;
+              rightCmdWheelRate = 1500;
+
+              leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
+              rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
+            }
+             else if (CurrentTurretPosition == Constants.Turret.kStartID) {
+              saveLeftCmdRPM = leftCmdWheelRate;
+              saveRightCmdRPM = rightCmdWheelRate;
+              leftCmdWheelRate = 4300;
+              rightCmdWheelRate = 4300;
 
               leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
               rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
@@ -275,13 +292,21 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
             flyWheelsRunning = false;
             _Intake.stopFeeder();
 
-            if (CurrentTurretPosition == (int) 2) {
+            if (
+                (CurrentTurretPosition == Constants.Turret.kAmpID)
+                ||
+                (CurrentTurretPosition == Constants.Turret.kSpeakerID)
+                ||
+                (CurrentTurretPosition == Constants.Turret.kStartID)
+            )
+            {
               leftCmdWheelRate = saveLeftCmdRPM;
               rightCmdWheelRate = saveRightCmdRPM;
 
               leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
               rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
             }
+
           }
         };
 
