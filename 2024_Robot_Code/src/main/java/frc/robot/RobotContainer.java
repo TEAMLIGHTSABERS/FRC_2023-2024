@@ -15,6 +15,7 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.AutoConstants;
@@ -51,7 +52,9 @@ public class RobotContainer {
 //  private PIDController lastXAxisController;
 //  private PIDController lastYAxisController;
 
-  // A simple auto routine that drives forward a specified distance, and then stops.
+  private static ShuffleboardTab launchTab; 
+
+    // A simple auto routine that drives forward a specified distance, and then stops.
   private final Command m_simpleAuto = Autos.exampleAuto(ExampleSubsystem);
 
   // A complex auto routine that drives forward, drops a hatch, and then drives backward.
@@ -66,18 +69,28 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    // Configure the trigger bindings
+
+    launchTab = Shuffleboard.getTab("Launcher Subsystem");
+    launchTab.add("Accept LCWR", m_launcher.acceptCommandedLeftWheelRate());
+    launchTab.add("Accept RCWR", m_launcher.acceptCommandedRightWheelRate());
+    launchTab.add("Launcher Wheel Test", m_launcher.testFlyWheels());
+
+  // Configure the trigger bindings
     configureButtonBindings();
 
-    SmartDashboard.putData("Launcher Wheel Test", m_launcher.testFlyWheels());
-    SmartDashboard.putData("LUp-1000", m_launcher.raiseLCR1000());
-    SmartDashboard.putData("LUp-100", m_launcher.raiseLCR100());
-    SmartDashboard.putData("LDn-1000", m_launcher.downLC1000());
-    SmartDashboard.putData("LDn-100", m_launcher.downLC100());
-    SmartDashboard.putData("RUp-1000", m_launcher.raiseRC1000());
-    SmartDashboard.putData("RDn-1000", m_launcher.downRC1000());
-    SmartDashboard.putData("RUp-100", m_launcher.raiseRC100());
-    SmartDashboard.putData("RDn-100", m_launcher.downRC100());
+
+    // Add Button to SmartDashboard with a RunCommand that executes a "void" method/function.
+    SmartDashboard.putData("LUp-1000", 
+      new RunCommand(() -> m_launcher.raiseLCR1000(), m_launcher));
+
+    // Add Buttons to the SmartDashboard that executes a "command" methods/functions.
+    //SmartDashboard.putData("LUp-100", m_launcher.raiseLCR100());
+    //SmartDashboard.putData("LDn-1000", m_launcher.downLC1000());
+    //SmartDashboard.putData("LDn-100", m_launcher.downLC100());
+    //SmartDashboard.putData("RUp-1000", m_launcher.raiseRC1000());
+    //SmartDashboard.putData("RDn-1000", m_launcher.downRC1000());
+    //SmartDashboard.putData("RUp-100", m_launcher.raiseRC100());
+    //SmartDashboard.putData("RDn-100", m_launcher.downRC100());
     
     // Configure default commands
     m_robotDrive.setDefaultCommand(
@@ -97,8 +110,8 @@ public class RobotContainer {
     m_launcher.setDefaultCommand(new RunCommand(() -> m_launcher.stopLauncher(), m_launcher));
 
     m_turret.setDefaultCommand(new RunCommand(() -> m_turret.driveWench(
-        ((m_driverController).getRightTriggerAxis() > Constants.OIConstants.kTriggerButtonThreshold),
-        (m_driverController).getRightBumperPressed()),
+        (m_driverController).getRightBumperPressed(),
+        ((m_driverController).getRightTriggerAxis() > Constants.OIConstants.kTriggerButtonThreshold)),
         m_turret));
 
     // Add commands to the autonomous command chooser
@@ -114,6 +127,7 @@ public class RobotContainer {
     Shuffleboard.getTab("Drivetrain").add("Commands", m_robotDrive);
     Shuffleboard.getTab("Intake Subsystem").add("Commands", m_intake);
     Shuffleboard.getTab("Launcher Subsystem").add("Commands", m_launcher);
+    Shuffleboard.getTab("Turret Subsystem").add("Commands", m_turret);
   }
 
   /**
@@ -158,7 +172,7 @@ public class RobotContainer {
     // Launcher Controls -------------------------------------------------------
     // "A" Button will launch a Note toward the Target
     new JoystickButton(m_driverController, XboxController.Button.kA.value)
-        .onTrue(m_launcher.launchNote(m_intake));
+        .onTrue(m_launcher.launchNote(m_intake, m_turret));
     
     // "X" Button will run the Launcher Flywheels for 5 seconds
     new JoystickButton(m_driverController, XboxController.Button.kX.value)

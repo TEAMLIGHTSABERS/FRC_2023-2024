@@ -31,14 +31,17 @@ public final class Constants {
 
   public static final class Turret {
     public static final int kTurCanId = 5;
-    public static final int kTurCurrentLimit = 20;
-    public static final double kPEController = 0.0;
-    public static final double kIEController = 0.0;
+    public static final int kTurCurrentLimit = 47;
+    public static final double kPEController = 0.00185;
+    public static final double kIEController = 0.000001; //DO NOT GO > 0.000001
     public static final double kDEController = 0.0;
-    public static final double kVEController = 2.5e-3;
-    public static final double kHangingPosition = -50; // Degrees
-    public static final double kAmpPosition = 90; // Degrees
-    public static final double kSpeakerPosition = 120; // Degrees
+    public static final double kVEController = 0.0; //2.5e-3
+    public static final int kAmpID = 2;
+    public static final int kSpeakerID = 1;
+    public static final int kStartID = 0;
+    public static final double kAmpPosition = 220; // Degrees
+    public static final double kSpeakerPosition = 62; // Degrees
+    public static final double kStartPosition = 0; // Degrees
   }
 
   public static final class Intake {
@@ -51,17 +54,27 @@ public final class Constants {
     public static double kInputDelaySec = 5;
     public static double kLeftPower = 1.0;
     public static double kRightPower = 1.0;
-    public static double kTimeToLaunch = 0.0;
+    public static double kTimeToLaunch = 1.0;
     public static double kTimeToStop = 3.0; // seconds when Launching
-    public static double kFlyWheelStopTime = 5; // Seconds when Spinning Up
+    public static double kFlyWheelStopTime = 1.0; // Seconds when Spinning Up
     public static double kFeederSpeed = 0.5;
     public static double kRightCmdRate = 5050;
     public static double kLeftCmdRate = 4050;
+    public static double kWheelRateRatio = 4.0/3.0;
 
     public static final int kCurrentLimit = 80;
+
+    public static double kpP = 0.00007;
+    public static double kpI = 0.0000007;
+    public static double kpD = 0;
+    public static double kpIz = 0;
+    public static double kpFF = 0.000007;
     
     public static final int kLTSCanId = 3;
     public static final int kRTSCanId = 4;
+
+    public static final int kPLTSCanId = 8;
+    public static final int kPRTSCanId = 9;
   }
   
   public static final class DriveConstants {
