@@ -32,10 +32,8 @@ public final class Constants {
   public static final class Turret {
     public static final int kTurCanId = 5;
     public static final int kTurCurrentLimit = 47;
-    public static final double kPEController = 0.0; //0.00185;
     public static final double kIEController = 0.0; //0.000001; //DO NOT GO > 0.000001
     public static final double kDEController = 0.0;
-    public static final double kVEController = 8e-3;
 
     public static final double kPEGainStartUp = 0.0; 
     public static final double kVEGainStartUp = 0.003;
