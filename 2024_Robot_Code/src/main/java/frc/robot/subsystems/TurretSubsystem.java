@@ -285,7 +285,10 @@ public class TurretSubsystem extends SubsystemBase {
         case 1: // Speaker Position
             wenchPosition = kSpeakerDeg;   // Rotations
             break;
-        case 2: // Amp Position
+        case 2: // Speaker Position
+            wenchPosition = kHighShotDeg;   // Rotations
+            break;
+        case 3: // Amp Position
         default:
             wenchPosition = kAmpDeg;  // Rotations
             break;
