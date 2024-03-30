@@ -217,14 +217,14 @@ public class TurretSubsystem extends SubsystemBase {
 
         switch (_SelectedPos) {
         case 0: // Start Position
-            wenchPosition = Constants.Turret.kStartPosition;    // Rotations
+            wenchPosition = kStartDeg;    // Rotations
             break;
         case 1: // Speaker Position
-            wenchPosition = Constants.Turret.kSpeakerPosition;   // Rotations
+            wenchPosition = kSpeakerDeg;   // Rotations
             break;
         case 2: // Amp Position
         default:
-            wenchPosition = Constants.Turret.kAmpPosition;  // Rotations
+            wenchPosition = kAmpDeg;  // Rotations
             break;
         };
 
