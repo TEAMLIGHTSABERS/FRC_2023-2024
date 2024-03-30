@@ -37,6 +37,22 @@ public final class Constants {
     public static final double kDEController = 0.0;
     public static final double kVEController = 8e-3;
 
+    public static final double kPEGainStartUp = 0.003; 
+    public static final double kVEGainStartUp = 0.003;
+    public static final double kPEGainStartDown = 0.001; 
+    public static final double kVEGainStartDown = 0.001;
+    public static final double kPEGainSpeakerUp = 0.005; 
+    public static final double kVEGainSpeakerUp = 0.005;
+    public static final double kPEGainSpeakerDown = 0.003; 
+    public static final double kVEGainSpeakerDown = 0.003;
+    public static final double kPEGainHighShotUp = 0.003; 
+    public static final double kVEGainHighShotUp = 0.003;
+    public static final double kPEGainHighShotDown = 0.003; 
+    public static final double kVEGainHighShotDown = 0.003;
+    public static final double kPEGainAmpUp = 0.001; 
+    public static final double kVEGainAmpUp = 0.001;
+
+
     public static final int kStartID = 0;
     public static final int kSpeakerID = 1;
     public static final int kHighShotID = 2;
