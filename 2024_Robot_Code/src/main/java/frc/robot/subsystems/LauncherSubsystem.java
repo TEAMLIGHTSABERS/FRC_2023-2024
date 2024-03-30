@@ -236,8 +236,8 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
             if (CurrentTurretPosition == Constants.Turret.kAmpID) {
               saveLeftCmdRPM = leftCmdWheelRate;
               saveRightCmdRPM = rightCmdWheelRate;
-              leftCmdWheelRate = 250;
-              rightCmdWheelRate = 250;
+              leftCmdWheelRate = 350;
+              rightCmdWheelRate = 350;
 
               leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
               rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
