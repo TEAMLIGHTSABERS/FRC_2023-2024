@@ -22,7 +22,7 @@ public class TurretSubsystem extends SubsystemBase {
     private GenericEntry selectOneEntry;
     private GenericEntry selectTwoEntry;
     private GenericEntry selectThreeEntry;
-    private GenericEntry selectCurrLmtEntry;
+    private GenericEntry selectFFGainEntry;
     private GenericEntry currSelPosEntry;
     private GenericEntry currWenchPosEntry;
 
@@ -31,10 +31,11 @@ public class TurretSubsystem extends SubsystemBase {
     private static double currentWenchPosition;
     private SparkPIDController elevationPIDCtrl;
     private static int inputDelayCtr;
-    private static long kCurrLmt, currLmt;
+    private static Boolean resetEncoder;
 
     private static double kStartDeg, kSpeakerDeg, kHighShotDeg, kAmpDeg;
     private static double startDeg, speakerDeg, highShotDeg, ampDeg;
+    private static double kFFGain, fFGain;
 
     // Class Hardware
     private CANSparkMax elevationMotor;
@@ -47,13 +48,14 @@ public class TurretSubsystem extends SubsystemBase {
         kSpeakerDeg = Constants.Turret.kSpeakerPosition;
         kHighShotDeg = Constants.Turret.kHighShotPosition;
         kAmpDeg = Constants.Turret.kAmpPosition;
-        kCurrLmt = Constants.Turret.kTurCurrentLimit;
+        kFFGain = Constants.Turret.kVEController;
 
         // Initialize operational variables
         selectedPosition = 0; // Hanging Position
         currentWenchPosition = convertSelPosToWench(selectedPosition);
         commandedWenchPosition = currentWenchPosition;
         inputDelayCtr = 0;
+        resetEncoder = false;
 
         // Turret status
         TurretTab = Shuffleboard.getTab("Turret Subsystem");
@@ -66,8 +68,8 @@ public class TurretSubsystem extends SubsystemBase {
         .add("Sel 2 Pos", kHighShotDeg).getEntry();
         selectThreeEntry = TurretTab
         .add("Sel 3 Pos", kAmpDeg).getEntry();
-        selectCurrLmtEntry = TurretTab
-        .add("Sel Curr Lmt", kCurrLmt).getEntry();
+        selectFFGainEntry = TurretTab
+        .add("Sel FF Gain", kFFGain).getEntry();
 
         currSelPosEntry = TurretTab
         .add("Current Selected Position", kStartDeg).getEntry();
@@ -78,13 +80,13 @@ public class TurretSubsystem extends SubsystemBase {
         TurretTab.add("Accept 1st", acceptOneSetting());
         TurretTab.add("Accept 2nd", acceptTwoSetting());
         TurretTab.add("Accept 3rd", acceptThreeSetting());
-        TurretTab.add("Accept CurrLmt", acceptCurrLmtSetting());
+        TurretTab.add("Accept FFGain", acceptFFGainSetting());
     
         elevationMotor =
         new CANSparkMax(Constants.Turret.kTurCanId, CANSparkLowLevel.MotorType.kBrushless);
 
         elevationMotor.setInverted(false );
-        elevationMotor.setSmartCurrentLimit((int) kCurrLmt);
+        elevationMotor.setSmartCurrentLimit((int) kFFGain);
         elevationMotor.setIdleMode(IdleMode.kBrake);
 
         elevationRelEncoder = elevationMotor.getEncoder();
@@ -99,7 +101,7 @@ public class TurretSubsystem extends SubsystemBase {
         elevationPIDCtrl.setD(Constants.Turret.kDEController);
         elevationPIDCtrl.setFF(Constants.Turret.kVEController);
         elevationPIDCtrl.setFeedbackDevice(elevationRelEncoder);
-        elevationPIDCtrl.setOutputRange(-0.2, 1); 
+        elevationPIDCtrl.setOutputRange(-1, 1); 
 
     }
 
@@ -224,14 +226,14 @@ public class TurretSubsystem extends SubsystemBase {
     *
     * @return The SetCurrLmt command
     */
-    public Command acceptCurrLmtSetting(){
+    public Command acceptFFGainSetting(){
     Command setCurrLmt = 
         new Command() {
         @Override
         public void initialize() {
-            currLmt = selectCurrLmtEntry.getInteger(kCurrLmt); 
-            kCurrLmt = currLmt;
-            elevationMotor.setSmartCurrentLimit((int) kCurrLmt);
+            fFGain = selectFFGainEntry.getDouble(kFFGain); 
+            kFFGain = fFGain;
+            elevationPIDCtrl.setFF(kFFGain);
         }
 
         @Override
@@ -262,6 +264,10 @@ public class TurretSubsystem extends SubsystemBase {
     //        };
         posError = commandedWenchPosition - currentWenchPosition;
         elevationPIDCtrl.setReference(posError, ControlType.kPosition);
+
+        //if ((resetEncoder == true) && (currentWenchPosition < kStartDeg + 5)) {
+        //    elevationPIDCtrl.setFF(0.0);
+        //}
 
         // Add Launcher Power Wheel Rates to the Launcher Subsystem Tab on Shuffleboard.
         currSelPosEntry.setInteger(selectedPosition);
@@ -308,6 +314,9 @@ public class TurretSubsystem extends SubsystemBase {
     public void reducePOS(){
         if (selectedPosition > Constants.Turret.kStartID){
             selectedPosition--;
+            if (selectedPosition == 0) {
+                resetEncoder = true;
+            }
             currSelPosEntry.setInteger(selectedPosition);
             SmartDashboard.putNumber("Selected Position", selectedPosition);
         }
