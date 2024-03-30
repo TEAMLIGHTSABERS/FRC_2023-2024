@@ -90,7 +90,7 @@ public class TurretSubsystem extends SubsystemBase {
         elevationRelEncoder = elevationMotor.getEncoder();
         elevationRelEncoder.setPositionConversionFactor(22.0); // Degrees/Shaft
         elevationRelEncoder.setVelocityConversionFactor(22.0); // dpm/Shaft
-        elevationRelEncoder.setPosition(currentWenchPosition);
+        elevationRelEncoder.setPosition(0.0);
 
 
         elevationPIDCtrl = elevationMotor.getPIDController();
