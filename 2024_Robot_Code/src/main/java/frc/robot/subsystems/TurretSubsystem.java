@@ -21,6 +21,8 @@ public class TurretSubsystem extends SubsystemBase {
     private GenericEntry selectZeroEntry;
     private GenericEntry selectOneEntry;
     private GenericEntry selectTwoEntry;
+    private GenericEntry selectThreeEntry;
+    private GenericEntry selectCurrLmtEntry;
     private GenericEntry currSelPosEntry;
     private GenericEntry currWenchPosEntry;
 
@@ -29,9 +31,10 @@ public class TurretSubsystem extends SubsystemBase {
     private static double currentWenchPosition;
     private SparkPIDController elevationPIDCtrl;
     private static int inputDelayCtr;
+    private static long kCurrLmt, currLmt;
 
-    private static double kStartDeg, kSpeakerDeg, kAmpDeg;
-    private static double startDeg, speakerDeg, ampDeg;
+    private static double kStartDeg, kSpeakerDeg, kHighShotDeg, kAmpDeg;
+    private static double startDeg, speakerDeg, highShotDeg, ampDeg;
 
     // Class Hardware
     private CANSparkMax elevationMotor;
@@ -39,37 +42,49 @@ public class TurretSubsystem extends SubsystemBase {
 
     // Class Constructor
     public TurretSubsystem(){
+        // Tunable Constants
+        kStartDeg = Constants.Turret.kStartPosition;
+        kSpeakerDeg = Constants.Turret.kSpeakerPosition;
+        kHighShotDeg = Constants.Turret.kHighShotPosition;
+        kAmpDeg = Constants.Turret.kAmpPosition;
+        kCurrLmt = Constants.Turret.kTurCurrentLimit;
+
+        // Initialize operational variables
         selectedPosition = 0; // Hanging Position
         currentWenchPosition = convertSelPosToWench(selectedPosition);
         commandedWenchPosition = currentWenchPosition;
         inputDelayCtr = 0;
 
-        kStartDeg = Constants.Turret.kStartPosition;
-        kSpeakerDeg = Constants.Turret.kSpeakerPosition;
-        kAmpDeg = Constants.Turret.kAmpPosition;
-
         // Turret status
         TurretTab = Shuffleboard.getTab("Turret Subsystem");
+
         selectZeroEntry = TurretTab
-        .add("Select 0 Position", kStartDeg).getEntry();
+        .add("Sel 0 Pos", kStartDeg).getEntry();
         selectOneEntry = TurretTab
-        .add("Select 1 Position", kSpeakerDeg).getEntry();
+        .add("Sel 1 Pos", kSpeakerDeg).getEntry();
         selectTwoEntry = TurretTab
-        .add("Select 2 Position", kAmpDeg).getEntry();
+        .add("Sel 2 Pos", kHighShotDeg).getEntry();
+        selectThreeEntry = TurretTab
+        .add("Sel 3 Pos", kAmpDeg).getEntry();
+        selectCurrLmtEntry = TurretTab
+        .add("Sel Curr Lmt", kCurrLmt).getEntry();
+
         currSelPosEntry = TurretTab
         .add("Current Selected Position", kStartDeg).getEntry();
         currWenchPosEntry = TurretTab
         .add("Current Turrent Position", currentWenchPosition).getEntry();
 
-        TurretTab.add("Accept 0th Pos", acceptZeroSetting());
-        TurretTab.add("Accept 1st Pos", acceptOneSetting());
-        TurretTab.add("Accept 2nd Pos", acceptTwoSetting());
+        TurretTab.add("Accept 0th", acceptZeroSetting());
+        TurretTab.add("Accept 1st", acceptOneSetting());
+        TurretTab.add("Accept 2nd", acceptTwoSetting());
+        TurretTab.add("Accept 3rd", acceptThreeSetting());
+        TurretTab.add("Accept CurrLmt", acceptCurrLmtSetting());
     
         elevationMotor =
         new CANSparkMax(Constants.Turret.kTurCanId, CANSparkLowLevel.MotorType.kBrushless);
 
         elevationMotor.setInverted(false );
-        elevationMotor.setSmartCurrentLimit(Constants.Turret.kTurCurrentLimit);
+        elevationMotor.setSmartCurrentLimit((int) kCurrLmt);
         elevationMotor.setIdleMode(IdleMode.kBrake);
 
         elevationRelEncoder = elevationMotor.getEncoder();
@@ -160,14 +175,38 @@ public class TurretSubsystem extends SubsystemBase {
     * Constructs a command for a button that accepts the Gear position (in deg) 
     * for the 2nd Turret Position.
     *
-    * @return The SetAmp command
+    * @return The SetHighShot command
     */
     public Command acceptTwoSetting(){
+    Command setHighShot = 
+        new Command() {
+        @Override
+        public void initialize() {
+            highShotDeg = selectTwoEntry.getDouble(kHighShotDeg); 
+            kHighShotDeg = highShotDeg;
+        }
+
+        @Override
+        public boolean isFinished() {
+            return true;
+        }
+        };
+
+    return setHighShot;
+    };
+
+    /**
+    * Constructs a command for a button that accepts the Gear position (in deg) 
+    * for the 3rd Turret Position.
+    *
+    * @return The SetAmp command
+    */
+    public Command acceptThreeSetting(){
     Command setAmp = 
         new Command() {
         @Override
         public void initialize() {
-            ampDeg = selectTwoEntry.getDouble(kAmpDeg); 
+            ampDeg = selectThreeEntry.getDouble(kAmpDeg); 
             kAmpDeg = ampDeg;
         }
 
@@ -178,6 +217,30 @@ public class TurretSubsystem extends SubsystemBase {
         };
 
     return setAmp;
+    };
+
+    /**
+    * Constructs a command for a button that accepts the Current Limit (percentage).
+    *
+    * @return The SetCurrLmt command
+    */
+    public Command acceptCurrLmtSetting(){
+    Command setCurrLmt = 
+        new Command() {
+        @Override
+        public void initialize() {
+            currLmt = selectCurrLmtEntry.getInteger(kCurrLmt); 
+            kCurrLmt = currLmt;
+            elevationMotor.setSmartCurrentLimit((int) kCurrLmt);
+        }
+
+        @Override
+        public boolean isFinished() {
+            return true;
+        }
+        };
+
+    return setCurrLmt;
     };
 
     @Override

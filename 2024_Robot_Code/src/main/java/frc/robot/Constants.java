@@ -36,12 +36,16 @@ public final class Constants {
     public static final double kIEController = 0.0; //0.000001; //DO NOT GO > 0.000001
     public static final double kDEController = 0.0;
     public static final double kVEController = 2.5e-3;
-    public static final int kAmpID = 2;
-    public static final int kSpeakerID = 1;
+
     public static final int kStartID = 0;
-    public static final double kAmpPosition = 120; // Degrees
-    public static final double kSpeakerPosition = 45; // Degrees
+    public static final int kSpeakerID = 1;
+    public static final int kHighShotID = 2;
+    public static final int kAmpID = 3;
+
     public static final double kStartPosition = 0; // Degrees
+    public static final double kSpeakerPosition = 45; // Degrees
+    public static final double kHighShotPosition = 45; // Degrees
+    public static final double kAmpPosition = 120; // Degrees
   }
 
   public static final class Intake {
