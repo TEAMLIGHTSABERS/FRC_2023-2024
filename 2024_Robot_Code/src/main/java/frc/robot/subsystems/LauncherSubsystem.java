@@ -3,11 +3,15 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+
+import java.nio.channels.Channel;
+
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -50,8 +54,11 @@ public class LauncherSubsystem extends SubsystemBase {
   private SparkPIDController m_preRightLancherPIDCtrl;
   private RelativeEncoder m_preRightEncoder;
 
+  private Servo deflServo;
+
   /** Creates a new LauncherSubsystem. */
   public LauncherSubsystem() {
+
     // Set private holding variables: -----------------------------------------------------|
     // launcher status
     launchTab = Shuffleboard.getTab("Launcher Subsystem");
@@ -206,6 +213,10 @@ public class LauncherSubsystem extends SubsystemBase {
 
     // push left motor configuration to the left motor flash memory.
     preRightLaunchWheel.burnFlash();
+
+    deflServo = new Servo(0);
+    deflServo.setAngle(-90);
+
   }
 
 /**
@@ -241,7 +252,21 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
 
               leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
               rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
-            } else if (CurrentTurretPosition == Constants.Turret.kSpeakerID) {
+
+              deflServo.setAngle(90);
+            }
+            else if (CurrentTurretPosition == Constants.Turret.kHighShotID) {
+              saveLeftCmdRPM = leftCmdWheelRate;
+              saveRightCmdRPM = rightCmdWheelRate;
+              leftCmdWheelRate = 4000;
+              rightCmdWheelRate = 4000;
+
+              leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
+              rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
+
+              deflServo.setAngle(-90);
+            }
+             else if (CurrentTurretPosition == Constants.Turret.kSpeakerID) {
               saveLeftCmdRPM = leftCmdWheelRate;
               saveRightCmdRPM = rightCmdWheelRate;
               leftCmdWheelRate = 1500;
@@ -249,6 +274,8 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
 
               leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
               rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
+
+              deflServo.setAngle(-90);
             }
              else if (CurrentTurretPosition == Constants.Turret.kStartID) {
               saveLeftCmdRPM = leftCmdWheelRate;
@@ -258,6 +285,8 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
 
               leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
               rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
+
+              deflServo.setAngle(-90);
             }
 
             flyWheelsRunning = true;
@@ -296,6 +325,8 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
                 (CurrentTurretPosition == Constants.Turret.kAmpID)
                 ||
                 (CurrentTurretPosition == Constants.Turret.kSpeakerID)
+                ||
+                (CurrentTurretPosition == Constants.Turret.kHighShotID)
                 ||
                 (CurrentTurretPosition == Constants.Turret.kStartID)
             )
