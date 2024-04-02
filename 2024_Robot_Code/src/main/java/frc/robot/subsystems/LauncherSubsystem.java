@@ -214,8 +214,8 @@ public class LauncherSubsystem extends SubsystemBase {
     // push left motor configuration to the left motor flash memory.
     preRightLaunchWheel.burnFlash();
 
-    deflServo = new Servo(0);
-    deflServo.setAngle(-90);
+    deflServo = new Servo(Constants.Launcher.kDeflID);
+    deflServo.setAngle(Constants.Launcher.kDeflOff);
 
   }
 
@@ -253,7 +253,7 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
               leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
               rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
 
-              deflServo.setAngle(90);
+              deflServo.setAngle(Constants.Launcher.kDeflON);
             }
             else if (CurrentTurretPosition == Constants.Turret.kHighShotID) {
               saveLeftCmdRPM = leftCmdWheelRate;
@@ -264,7 +264,7 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
               leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
               rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
 
-              deflServo.setAngle(-90);
+              deflServo.setAngle(Constants.Launcher.kDeflOff);
             }
              else if (CurrentTurretPosition == Constants.Turret.kSpeakerID) {
               saveLeftCmdRPM = leftCmdWheelRate;
@@ -275,7 +275,7 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
               leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
               rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
 
-              deflServo.setAngle(-90);
+              deflServo.setAngle(Constants.Launcher.kDeflOff);
             }
              else if (CurrentTurretPosition == Constants.Turret.kStartID) {
               saveLeftCmdRPM = leftCmdWheelRate;
@@ -286,7 +286,7 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
               leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
               rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
 
-              deflServo.setAngle(-90);
+              deflServo.setAngle(Constants.Launcher.kDeflOff);
             }
 
             flyWheelsRunning = true;

@@ -79,6 +79,10 @@ public final class Constants {
     public static double kRightCmdRate = 5050;
     public static double kLeftCmdRate = 4050;
     public static double kWheelRateRatio = 4.0/3.0;
+    public static int kDeflID = 0;
+    public static double kDeflON = 90;
+    public static double kDeflOff = -90;
+  
 
     public static final int kCurrentLimit = 80;
 
