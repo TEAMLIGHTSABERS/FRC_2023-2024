@@ -60,6 +60,10 @@ public final class Constants {
     public static final double kSpeakerPosition = 45; // Degrees
     public static final double kHighShotPosition = 70; // Degrees
     public static final double kAmpPosition = 125; // Degrees
+
+    public static int kDeflID = 0;
+    public static double kDeflON = 1.0;
+    public static double kDeflOff = 0.0;
   }
 
   public static final class Intake {
@@ -76,10 +80,24 @@ public final class Constants {
     public static double kTimeToStop = 3.0; // seconds when Launching
     public static double kFlyWheelStopTime = 1.0; // Seconds when Spinning Up
     public static double kFeederSpeed = 0.5;
-    public static double kRightCmdRate = 5050;
-    public static double kLeftCmdRate = 4050;
     public static double kWheelRateRatio = 4.0/3.0;
 
+    //Wheel Rates
+    
+    public static double kAmpL = 350;
+    public static double kAmpR = 350;
+
+    public static double kHighShotL = 4000;
+    public static double kHighShotR = 4000;
+
+    public static double kSpeakerL = 1500;
+    public static double kSpeakerR = 1500;
+
+    public static double kStartL = 4300;
+    public static double kStartR = 4300;
+
+  
+    // Gen Pid K
     public static final int kCurrentLimit = 80;
 
     public static double kpP = 0.00007;
