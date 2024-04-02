@@ -8,6 +8,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -42,6 +43,7 @@ public class TurretSubsystem extends SubsystemBase {
     // Class Hardware
     private CANSparkMax elevationMotor;
     private RelativeEncoder elevationRelEncoder;
+    private Servo deflServo;
 
     // Class Constructor
     public TurretSubsystem(){
@@ -110,6 +112,9 @@ public class TurretSubsystem extends SubsystemBase {
         elevationPIDCtrl.setFF(kFFGain);
         elevationPIDCtrl.setFeedbackDevice(elevationRelEncoder);
         elevationPIDCtrl.setOutputRange(-1, 1); 
+
+        deflServo = new Servo(Constants.Turret.kDeflID);
+        deflServo.set(Constants.Turret.kDeflOff);
 
     }
 
@@ -367,6 +372,9 @@ public class TurretSubsystem extends SubsystemBase {
                     break;
             
                 case Constants.Turret.kAmpID:
+
+                    deflServo.set(Constants.Turret.kDeflON);
+
                     savePGain = selectPGainEntry.getDouble(kPGain);
                     saveFFGain = selectFFGainEntry.getDouble(kFFGain);
 
@@ -402,6 +410,9 @@ public class TurretSubsystem extends SubsystemBase {
 
             switch (selectedPosition) {
                 case Constants.Turret.kHighShotID:
+
+                    deflServo.set(Constants.Turret.kDeflOff);
+
                     savePGain = selectPGainEntry.getDouble(kPGain);
                     saveFFGain = selectFFGainEntry.getDouble(kFFGain);
 
