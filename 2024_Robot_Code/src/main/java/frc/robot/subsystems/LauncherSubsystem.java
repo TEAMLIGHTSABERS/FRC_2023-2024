@@ -63,19 +63,19 @@ public class LauncherSubsystem extends SubsystemBase {
     // launcher status
     launchTab = Shuffleboard.getTab("Launcher Subsystem");
     leftCmdWheelRateEntry = launchTab
-      .add("Left Cmd Wheel Rate", Constants.Launcher.kLeftCmdRate).getEntry();
+      .add("Left Cmd Wheel Rate", Constants.Launcher.kStartL).getEntry();
     leftPwrWheelRPMEntry = launchTab
-      .add("Left Power Wheel RPM", Constants.Launcher.kLeftCmdRate).getEntry();
+      .add("Left Power Wheel RPM", Constants.Launcher.kStartL).getEntry();
     rightCmdWheelRateEntry = launchTab
-      .add("Right Cmd Wheel Rate", Constants.Launcher.kRightCmdRate).getEntry();
+      .add("Right Cmd Wheel Rate", Constants.Launcher.kStartR).getEntry();
     rightPwrWheelRPMEntry = launchTab
-      .add("Right Power Wheel RPM", Constants.Launcher.kRightCmdRate).getEntry();
+      .add("Right Power Wheel RPM", Constants.Launcher.kStartR).getEntry();
 
     flyWheelsRunning = false;
 
     // current running power
-    leftCmdWheelRate = Constants.Launcher.kLeftCmdRate; // RPM
-    rightCmdWheelRate = Constants.Launcher.kRightCmdRate;
+    leftCmdWheelRate = Constants.Launcher.kStartL;
+    rightCmdWheelRate = Constants.Launcher.kStartR;
 
     leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
     leftPwrWheelRPMEntry.setDouble(0.0);
@@ -247,8 +247,8 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
             if (CurrentTurretPosition == Constants.Turret.kAmpID) {
               saveLeftCmdRPM = leftCmdWheelRate;
               saveRightCmdRPM = rightCmdWheelRate;
-              leftCmdWheelRate = 350;
-              rightCmdWheelRate = 350;
+              leftCmdWheelRate = Constants.Launcher.kAmpL;
+              rightCmdWheelRate = Constants.Launcher.kAmpR;
 
               leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
               rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
@@ -258,8 +258,8 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
             else if (CurrentTurretPosition == Constants.Turret.kHighShotID) {
               saveLeftCmdRPM = leftCmdWheelRate;
               saveRightCmdRPM = rightCmdWheelRate;
-              leftCmdWheelRate = 4000;
-              rightCmdWheelRate = 4000;
+              leftCmdWheelRate = Constants.Launcher.kHighShotL;
+              rightCmdWheelRate = Constants.Launcher.kHighShotR;
 
               leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
               rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
@@ -269,8 +269,8 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
              else if (CurrentTurretPosition == Constants.Turret.kSpeakerID) {
               saveLeftCmdRPM = leftCmdWheelRate;
               saveRightCmdRPM = rightCmdWheelRate;
-              leftCmdWheelRate = 1500;
-              rightCmdWheelRate = 1500;
+              leftCmdWheelRate = Constants.Launcher.kSpeakerL;
+              rightCmdWheelRate = Constants.Launcher.kSpeakerR;
 
               leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
               rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
@@ -280,8 +280,8 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
              else if (CurrentTurretPosition == Constants.Turret.kStartID) {
               saveLeftCmdRPM = leftCmdWheelRate;
               saveRightCmdRPM = rightCmdWheelRate;
-              leftCmdWheelRate = 4300;
-              rightCmdWheelRate = 4300;
+              leftCmdWheelRate = Constants.Launcher.kStartL;
+              rightCmdWheelRate = Constants.Launcher.kStartR;
 
               leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
               rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
@@ -343,57 +343,6 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
 
         return launching;
   }
-
-/**
-* Constructs a command for a button that accepts the Commanded Rate 
-* for the Left Power Wheel.
-*
-* @return The riseUp1000 command
-*/
-public Command acceptCommandedLeftWheelRate(){
-  Command acceptwheelRate = 
-    new Command() {
-      @Override
-      public void initialize() {
-        /* Start the Launcher Wheels and the Launch timer. */
-        leftCmdWheelRate = leftCmdWheelRateEntry.getDouble(Constants.Launcher.kLeftCmdRate); 
-        leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
-      }
-
-      @Override
-      public boolean isFinished() {
-        return true;
-      }
-    };
-
-  return acceptwheelRate;
-};
-
-
-/**
-* Constructs a command for a button that accepts the Commanded Rate 
-* for the Right Power Wheel.
-*
-* @return The riseUp1000 command
-*/
-public Command acceptCommandedRightWheelRate(){
-  Command acceptwheelRate = 
-    new Command() {
-      @Override
-      public void initialize() {
-        /* Start the Launcher Wheels and the Launch timer. */
-        rightCmdWheelRate = rightCmdWheelRateEntry.getDouble(Constants.Launcher.kRightCmdRate); 
-        rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
-      }
-
-      @Override
-      public boolean isFinished() {
-        return true;
-      }
-    };
-
-  return acceptwheelRate;
-};
 
 
 /**

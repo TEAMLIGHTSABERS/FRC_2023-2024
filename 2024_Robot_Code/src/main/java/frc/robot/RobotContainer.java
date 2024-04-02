@@ -71,8 +71,6 @@ public class RobotContainer {
   public RobotContainer() {
 
     launchTab = Shuffleboard.getTab("Launcher Subsystem");
-    launchTab.add("Accept LCWR", m_launcher.acceptCommandedLeftWheelRate());
-    launchTab.add("Accept RCWR", m_launcher.acceptCommandedRightWheelRate());
     launchTab.add("Launcher Wheel Test", m_launcher.testFlyWheels());
 
   // Configure the trigger bindings
