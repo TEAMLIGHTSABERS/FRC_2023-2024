@@ -38,7 +38,7 @@ public final class Constants {
     public static final double kPEGainStartUp = 0.0; 
     public static final double kVEGainStartUp = 0.003;
     public static final double kPEGainStartDown = 0.0; 
-    public static final double kVEGainStartDown = 0.003;
+    public static final double kVEGainStartDown = 0.002;
     public static final double kPEGainSpeakerUp = 0.0; 
     public static final double kVEGainSpeakerUp = 0.005;
     public static final double kPEGainSpeakerDown = 0.0; 

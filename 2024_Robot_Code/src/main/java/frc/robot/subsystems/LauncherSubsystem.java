@@ -254,7 +254,7 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
               leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
               rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
             }
-             else if (CurrentTurretPosition == Constants.Turret.kSpeakerID) {
+             /*else if (CurrentTurretPosition == Constants.Turret.kSpeakerID) {
               saveLeftCmdRPM = leftCmdWheelRate;
               saveRightCmdRPM = rightCmdWheelRate;
               leftCmdWheelRate = Constants.Launcher.kSpeakerL;
@@ -262,7 +262,7 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
 
               leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
               rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
-            }
+            }*/
              else if (CurrentTurretPosition == Constants.Turret.kStartID) {
               saveLeftCmdRPM = leftCmdWheelRate;
               saveRightCmdRPM = rightCmdWheelRate;
@@ -308,8 +308,8 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
             if (
                 (CurrentTurretPosition == Constants.Turret.kAmpID)
                 ||
-                (CurrentTurretPosition == Constants.Turret.kSpeakerID)
-                ||
+                /*(CurrentTurretPosition == Constants.Turret.kSpeakerID)
+                ||*/
                 (CurrentTurretPosition == Constants.Turret.kHighShotID)
                 ||
                 (CurrentTurretPosition == Constants.Turret.kStartID)
