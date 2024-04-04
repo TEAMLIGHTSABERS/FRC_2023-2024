@@ -49,7 +49,6 @@ public class TurretSubsystem extends SubsystemBase {
     public TurretSubsystem(){
         // Tunable Constants
         kStartDeg = Constants.Turret.kStartPosition;
-        //kLongShotDeg = Constants.Turret.kLongShotPosition;
         kHighShotDeg = Constants.Turret.kHighShotPosition; //Speaker
         kAmpDeg = Constants.Turret.kAmpPosition;
         kFFGain = Constants.Turret.kVEGainStartUp;
@@ -69,8 +68,6 @@ public class TurretSubsystem extends SubsystemBase {
 
         selectZeroEntry = TurretTab
         .add("Sel 0 Pos", kStartDeg).getEntry();
-        //selectOneEntry = TurretTab
-        //.add("Sel 1 Pos", kLongShotDeg).getEntry();
         selectTwoEntry = TurretTab
         .add("Sel 2 Pos", kHighShotDeg).getEntry();
         selectThreeEntry = TurretTab
@@ -86,7 +83,6 @@ public class TurretSubsystem extends SubsystemBase {
         .add("Current Turrent Position", currentWenchPosition).getEntry();
 
         TurretTab.add("Accept 0th", acceptZeroSetting());
-        //TurretTab.add("Accept 1st", acceptOneSetting());
         TurretTab.add("Accept 2nd", acceptTwoSetting());
         TurretTab.add("Accept 3rd", acceptThreeSetting());
         TurretTab.add("Accept FFGain", acceptFFGainSetting());
@@ -189,30 +185,6 @@ public class TurretSubsystem extends SubsystemBase {
 
     return setStart;
     };
-
-    /**
-    * Constructs a command for a button that accepts the Gear position (in deg) 
-    * for the 1st Turret Position.
-    *
-    * @return The setSpeaker command
-    */
-    /*public Command acceptOneSetting(){
-    Command setSpeaker = 
-        new Command() {
-        @Override
-        public void initialize() {
-            longShotDeg = selectOneEntry.getDouble(kLongShotDeg); 
-            kLongShotDeg = longShotDeg;
-        }
-
-        @Override
-        public boolean isFinished() {
-            return true;
-        }
-        };
-
-    return setSpeaker;
-    };*/
 
     /**
     * Constructs a command for a button that accepts the Gear position (in deg) 
@@ -322,17 +294,8 @@ public class TurretSubsystem extends SubsystemBase {
         commandedWenchPosition = convertSelPosToWench(selectedPosition);
         currentWenchPosition = elevationRelEncoder.getPosition();
 
-    //        if (currentWenchPosition < commandedWenchPosition){
-    //            elevationMotor.set(.5);
-    //        } else if (currentWenchPosition > commandedWenchPosition){
-    //            elevationMotor.set(-.5);
-    //        };
         posError = commandedWenchPosition - currentWenchPosition;
         elevationPIDCtrl.setReference(posError, ControlType.kPosition);
-
-        //if ((resetEncoder == true) && (currentWenchPosition < kStartDeg + 5)) {
-        //    elevationPIDCtrl.setFF(0.0);
-        //}
 
         // Add Launcher Power Wheel Rates to the Launcher Subsystem Tab on Shuffleboard.
         currSelPosEntry.setInteger(selectedPosition);
@@ -376,19 +339,6 @@ public class TurretSubsystem extends SubsystemBase {
             }
 
             switch (selectedPosition) {
-                /*case Constants.Turret.kSpeakerID:
-                    savePGain = selectPGainEntry.getDouble(kPGain);
-                    saveFFGain = selectFFGainEntry.getDouble(kFFGain);
-
-                    kPGain = Constants.Turret.kPEGainSpeakerUp;
-                    kFFGain = Constants.Turret.kVEGainSpeakerUp; 
-                    elevationPIDCtrl.setP(kPGain);
-                    elevationPIDCtrl.setFF(kFFGain);
-
-                    selectPGainEntry.setDouble(kPGain);
-                    selectFFGainEntry.setDouble(kFFGain);
-                    break;*/
-            
                 case Constants.Turret.kHighShotID:
                     savePGain = selectPGainEntry.getDouble(kPGain);
                     saveFFGain = selectFFGainEntry.getDouble(kFFGain);
@@ -460,21 +410,6 @@ public class TurretSubsystem extends SubsystemBase {
 
                     resetEncoder = true;
                     break;
-            
-                /*case Constants.Turret.kSpeakerID:
-                    savePGain = selectPGainEntry.getDouble(kPGain);
-                    saveFFGain = selectFFGainEntry.getDouble(kFFGain);
-
-                    kPGain = Constants.Turret.kPEGainSpeakerDown;
-                    kFFGain = Constants.Turret.kVEGainSpeakerDown; 
-                    elevationPIDCtrl.setP(kPGain);
-                    elevationPIDCtrl.setFF(kFFGain);
-
-                    selectPGainEntry.setDouble(kPGain);
-                    selectFFGainEntry.setDouble(kFFGain);
-
-                    resetEncoder = true;
-                    break;*/
             
                 case Constants.Turret.kStartID:
                     savePGain = selectPGainEntry.getDouble(kPGain);

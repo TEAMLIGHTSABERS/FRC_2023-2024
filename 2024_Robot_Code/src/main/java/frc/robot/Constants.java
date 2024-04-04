@@ -39,10 +39,10 @@ public final class Constants {
     public static final double kVEGainStartUp = 0.003;
     public static final double kPEGainStartDown = 0.0; 
     public static final double kVEGainStartDown = 0.002;
-    public static final double kPEGainSpeakerUp = 0.0; 
-    public static final double kVEGainSpeakerUp = 0.005;
-    public static final double kPEGainSpeakerDown = 0.0; 
-    public static final double kVEGainSpeakerDown = 0.003;
+    //public static final double kPEGainSpeakerUp = 0.0; 
+    //public static final double kVEGainSpeakerUp = 0.005;
+    //public static final double kPEGainSpeakerDown = 0.0; 
+    //public static final double kVEGainSpeakerDown = 0.003;
     public static final double kPEGainHighShotUp = 0.0; 
     public static final double kVEGainHighShotUp = 0.006;
     public static final double kPEGainHighShotDown = 0.0; 
@@ -52,13 +52,13 @@ public final class Constants {
 
 
     public static final int kStartID = 0;
-    public static final int kSpeakerID = 1;
+    //public static final int kSpeakerID = 1;
     public static final int kHighShotID = 2;
     public static final int kAmpID = 3;
 
     public static final double kStartPosition = 15; // Degrees
-    public static final double kLongShotPosition = 45; // Degrees
-    public static final double kHighShotPosition = 60; // Degrees  Actual speaker position
+    //public static final double kLongShotPosition = 45; // Degrees
+    public static final double kHighShotPosition = 55; // Degrees  Actual speaker position
     public static final double kAmpPosition = 125; // Degrees
 
     public static int kDeflID = 0;
