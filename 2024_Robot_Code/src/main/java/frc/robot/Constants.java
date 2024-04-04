@@ -62,8 +62,8 @@ public final class Constants {
     public static final double kAmpPosition = 125; // Degrees
 
     public static int kDeflID = 0;
-    public static double kDeflON = 1.0;
-    public static double kDeflOff = 0.0;
+    public static double kDeflON = 0.0;
+    public static double kDeflOff = 1.0;
   }
 
   public static final class Intake {
