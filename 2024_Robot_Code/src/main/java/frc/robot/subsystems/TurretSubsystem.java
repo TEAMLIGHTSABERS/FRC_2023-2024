@@ -20,7 +20,7 @@ public class TurretSubsystem extends SubsystemBase {
     // Class variables
     private ShuffleboardTab TurretTab;
     private GenericEntry selectZeroEntry;
-    private GenericEntry selectOneEntry;
+    //private GenericEntry selectOneEntry;
     private GenericEntry selectTwoEntry;
     private GenericEntry selectThreeEntry;
     private GenericEntry selectFFGainEntry;
@@ -35,8 +35,8 @@ public class TurretSubsystem extends SubsystemBase {
     private static int inputDelayCtr;
     private static Boolean resetEncoder;
 
-    private static double kStartDeg, kSpeakerDeg, kHighShotDeg, kAmpDeg;
-    private static double startDeg, speakerDeg, highShotDeg, ampDeg;
+    private static double kStartDeg, kHighShotDeg, kAmpDeg;
+    private static double startDeg, highShotDeg, ampDeg;
     private static double kFFGain, fFGain, saveFFGain;
     private static double kPGain, pGain, savePGain;
 
@@ -49,8 +49,8 @@ public class TurretSubsystem extends SubsystemBase {
     public TurretSubsystem(){
         // Tunable Constants
         kStartDeg = Constants.Turret.kStartPosition;
-        kSpeakerDeg = Constants.Turret.kSpeakerPosition;
-        kHighShotDeg = Constants.Turret.kHighShotPosition;
+        //kLongShotDeg = Constants.Turret.kLongShotPosition;
+        kHighShotDeg = Constants.Turret.kHighShotPosition; //Speaker
         kAmpDeg = Constants.Turret.kAmpPosition;
         kFFGain = Constants.Turret.kVEGainStartUp;
         kPGain = Constants.Turret.kPEGainStartUp;
@@ -69,8 +69,8 @@ public class TurretSubsystem extends SubsystemBase {
 
         selectZeroEntry = TurretTab
         .add("Sel 0 Pos", kStartDeg).getEntry();
-        selectOneEntry = TurretTab
-        .add("Sel 1 Pos", kSpeakerDeg).getEntry();
+        //selectOneEntry = TurretTab
+        //.add("Sel 1 Pos", kLongShotDeg).getEntry();
         selectTwoEntry = TurretTab
         .add("Sel 2 Pos", kHighShotDeg).getEntry();
         selectThreeEntry = TurretTab
@@ -86,7 +86,7 @@ public class TurretSubsystem extends SubsystemBase {
         .add("Current Turrent Position", currentWenchPosition).getEntry();
 
         TurretTab.add("Accept 0th", acceptZeroSetting());
-        TurretTab.add("Accept 1st", acceptOneSetting());
+        //TurretTab.add("Accept 1st", acceptOneSetting());
         TurretTab.add("Accept 2nd", acceptTwoSetting());
         TurretTab.add("Accept 3rd", acceptThreeSetting());
         TurretTab.add("Accept FFGain", acceptFFGainSetting());
@@ -139,6 +139,34 @@ public class TurretSubsystem extends SubsystemBase {
     };
 
     /**
+    * Command to move the Turret to a specified Position.
+    *
+    * @param ChangePosTo  The position indicator from the POV.
+    *                         Up is Speaker Position,
+    *                         Right is Amp position, and
+    *                         Down is Center Stand Positon.
+    */
+/*     public Command moveTo( (int) requestedPos) {
+        Command changePosTo = new Command(){
+            int currSelPos =getSelPos();
+            while(currSelPos != RequestedPos)
+            {
+                if(currSelPos < requestedPos){
+                    advancePOS();
+                }
+            }
+        }
+        if(upCommand){
+            advancePOS();
+        } else if (downCommand){
+            if (inputDelayCtr == Constants.OIConstants.kInputDelayTimedOut){
+                reducePOS();
+                inputDelayCtr = 0;
+            }
+        }
+    };
+*/
+    /**
     * Constructs a command for a button that accepts the Gear position (in deg) 
     * for the Zeroth Turret Position.
     *
@@ -168,13 +196,13 @@ public class TurretSubsystem extends SubsystemBase {
     *
     * @return The setSpeaker command
     */
-    public Command acceptOneSetting(){
+    /*public Command acceptOneSetting(){
     Command setSpeaker = 
         new Command() {
         @Override
         public void initialize() {
-            speakerDeg = selectOneEntry.getDouble(kSpeakerDeg); 
-            kSpeakerDeg = speakerDeg;
+            longShotDeg = selectOneEntry.getDouble(kLongShotDeg); 
+            kLongShotDeg = longShotDeg;
         }
 
         @Override
@@ -184,7 +212,7 @@ public class TurretSubsystem extends SubsystemBase {
         };
 
     return setSpeaker;
-    };
+    };*/
 
     /**
     * Constructs a command for a button that accepts the Gear position (in deg) 
@@ -325,9 +353,9 @@ public class TurretSubsystem extends SubsystemBase {
         case 0: // Start Position
             wenchPosition = kStartDeg;    // Rotations
             break;
-        case 1: // Speaker Position
-            wenchPosition = kSpeakerDeg;   // Rotations
-            break;
+        /*case 1: // Speaker Position
+            wenchPosition = kLongShotDeg;   // Rotations
+            break;*/
         case 2: // Speaker Position
             wenchPosition = kHighShotDeg;   // Rotations
             break;
@@ -343,9 +371,12 @@ public class TurretSubsystem extends SubsystemBase {
     public void advancePOS(){
         if (selectedPosition < Constants.Turret.kAmpID){
             selectedPosition++;
+            if(selectedPosition == 1){
+                selectedPosition++;
+            }
 
             switch (selectedPosition) {
-                case Constants.Turret.kSpeakerID:
+                /*case Constants.Turret.kSpeakerID:
                     savePGain = selectPGainEntry.getDouble(kPGain);
                     saveFFGain = selectFFGainEntry.getDouble(kFFGain);
 
@@ -356,7 +387,7 @@ public class TurretSubsystem extends SubsystemBase {
 
                     selectPGainEntry.setDouble(kPGain);
                     selectFFGainEntry.setDouble(kFFGain);
-                    break;
+                    break;*/
             
                 case Constants.Turret.kHighShotID:
                     savePGain = selectPGainEntry.getDouble(kPGain);
@@ -407,6 +438,9 @@ public class TurretSubsystem extends SubsystemBase {
     public void reducePOS(){
         if (selectedPosition > Constants.Turret.kStartID){
             selectedPosition--;
+            if(selectedPosition == 1){
+                selectedPosition--;
+            }
 
             switch (selectedPosition) {
                 case Constants.Turret.kHighShotID:
@@ -427,7 +461,7 @@ public class TurretSubsystem extends SubsystemBase {
                     resetEncoder = true;
                     break;
             
-                case Constants.Turret.kSpeakerID:
+                /*case Constants.Turret.kSpeakerID:
                     savePGain = selectPGainEntry.getDouble(kPGain);
                     saveFFGain = selectFFGainEntry.getDouble(kFFGain);
 
@@ -440,7 +474,7 @@ public class TurretSubsystem extends SubsystemBase {
                     selectFFGainEntry.setDouble(kFFGain);
 
                     resetEncoder = true;
-                    break;
+                    break;*/
             
                 case Constants.Turret.kStartID:
                     savePGain = selectPGainEntry.getDouble(kPGain);

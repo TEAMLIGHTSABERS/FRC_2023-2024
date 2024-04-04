@@ -38,7 +38,7 @@ public final class Constants {
     public static final double kPEGainStartUp = 0.0; 
     public static final double kVEGainStartUp = 0.003;
     public static final double kPEGainStartDown = 0.0; 
-    public static final double kVEGainStartDown = 0.003;
+    public static final double kVEGainStartDown = 0.002;
     public static final double kPEGainSpeakerUp = 0.0; 
     public static final double kVEGainSpeakerUp = 0.005;
     public static final double kPEGainSpeakerDown = 0.0; 
@@ -57,8 +57,8 @@ public final class Constants {
     public static final int kAmpID = 3;
 
     public static final double kStartPosition = 15; // Degrees
-    public static final double kSpeakerPosition = 45; // Degrees
-    public static final double kHighShotPosition = 70; // Degrees
+    public static final double kLongShotPosition = 45; // Degrees
+    public static final double kHighShotPosition = 60; // Degrees  Actual speaker position
     public static final double kAmpPosition = 125; // Degrees
 
     public static int kDeflID = 0;
@@ -84,17 +84,17 @@ public final class Constants {
 
     //Wheel Rates
     
-    public static double kAmpL = 350;
-    public static double kAmpR = 350;
+    public static double kAmpL = 500;
+    public static double kAmpR = 500;
 
-    public static double kHighShotL = 4000;
-    public static double kHighShotR = 4000;
+    public static double kHighShotL = 3000;
+    public static double kHighShotR = 3000;
 
-    public static double kSpeakerL = 1500;
-    public static double kSpeakerR = 1500;
+    public static double kSpeakerL = 5400;
+    public static double kSpeakerR = 5000;
 
-    public static double kStartL = 4300;
-    public static double kStartR = 4300;
+    public static double kStartL = 5400;
+    public static double kStartR = 5000;
 
   
     // Gen Pid K
