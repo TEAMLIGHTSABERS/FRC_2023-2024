@@ -35,8 +35,8 @@ public class TurretSubsystem extends SubsystemBase {
     private static int inputDelayCtr;
     private static Boolean resetEncoder;
 
-    private static double kStartDeg, kSpeakerDeg, kHighShotDeg, kAmpDeg;
-    private static double startDeg, speakerDeg, highShotDeg, ampDeg;
+    private static double kStartDeg, kLongShotDeg, kHighShotDeg, kAmpDeg;
+    private static double startDeg, longShotDeg, highShotDeg, ampDeg;
     private static double kFFGain, fFGain, saveFFGain;
     private static double kPGain, pGain, savePGain;
 
@@ -49,8 +49,8 @@ public class TurretSubsystem extends SubsystemBase {
     public TurretSubsystem(){
         // Tunable Constants
         kStartDeg = Constants.Turret.kStartPosition;
-        kSpeakerDeg = Constants.Turret.kSpeakerPosition;
-        kHighShotDeg = Constants.Turret.kHighShotPosition;
+        kLongShotDeg = Constants.Turret.kLongShotPosition;
+        kHighShotDeg = Constants.Turret.kHighShotPosition; //Speaker
         kAmpDeg = Constants.Turret.kAmpPosition;
         kFFGain = Constants.Turret.kVEGainStartUp;
         kPGain = Constants.Turret.kPEGainStartUp;
@@ -70,7 +70,7 @@ public class TurretSubsystem extends SubsystemBase {
         selectZeroEntry = TurretTab
         .add("Sel 0 Pos", kStartDeg).getEntry();
         selectOneEntry = TurretTab
-        .add("Sel 1 Pos", kSpeakerDeg).getEntry();
+        .add("Sel 1 Pos", kLongShotDeg).getEntry();
         selectTwoEntry = TurretTab
         .add("Sel 2 Pos", kHighShotDeg).getEntry();
         selectThreeEntry = TurretTab
@@ -139,6 +139,34 @@ public class TurretSubsystem extends SubsystemBase {
     };
 
     /**
+    * Command to move the Turret to a specified Position.
+    *
+    * @param ChangePosTo  The position indicator from the POV.
+    *                         Up is Speaker Position,
+    *                         Right is Amp position, and
+    *                         Down is Center Stand Positon.
+    */
+/*     public Command moveTo( (int) requestedPos) {
+        Command changePosTo = new Command(){
+            int currSelPos =getSelPos();
+            while(currSelPos != RequestedPos)
+            {
+                if(currSelPos < requestedPos){
+                    advancePOS();
+                }
+            }
+        }
+        if(upCommand){
+            advancePOS();
+        } else if (downCommand){
+            if (inputDelayCtr == Constants.OIConstants.kInputDelayTimedOut){
+                reducePOS();
+                inputDelayCtr = 0;
+            }
+        }
+    };
+*/
+    /**
     * Constructs a command for a button that accepts the Gear position (in deg) 
     * for the Zeroth Turret Position.
     *
@@ -173,8 +201,8 @@ public class TurretSubsystem extends SubsystemBase {
         new Command() {
         @Override
         public void initialize() {
-            speakerDeg = selectOneEntry.getDouble(kSpeakerDeg); 
-            kSpeakerDeg = speakerDeg;
+            longShotDeg = selectOneEntry.getDouble(kLongShotDeg); 
+            kLongShotDeg = longShotDeg;
         }
 
         @Override
@@ -326,7 +354,7 @@ public class TurretSubsystem extends SubsystemBase {
             wenchPosition = kStartDeg;    // Rotations
             break;
         case 1: // Speaker Position
-            wenchPosition = kSpeakerDeg;   // Rotations
+            wenchPosition = kLongShotDeg;   // Rotations
             break;
         case 2: // Speaker Position
             wenchPosition = kHighShotDeg;   // Rotations
