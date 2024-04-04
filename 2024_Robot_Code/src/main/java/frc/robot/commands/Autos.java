@@ -33,7 +33,7 @@ public final class Autos {
   }
 
   public static Command centerAuto(DriveSubsystem drivesys, LauncherSubsystem launchsys, IntakeSubsystem intakesys, TurretSubsystem turretsys) {
-    return Commands.sequence(straightAutoCommand(drivesys, -3));
+    return Commands.sequence(straightAutoCommand(drivesys, 3));
   }
 
   /*public static Command centerAuto(DriveSubsystem drivesys, LauncherSubsystem launchsys, IntakeSubsystem intakesys, TurretSubsystem turretsys) {
