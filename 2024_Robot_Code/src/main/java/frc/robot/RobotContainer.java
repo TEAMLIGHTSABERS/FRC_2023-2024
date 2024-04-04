@@ -116,9 +116,9 @@ public class RobotContainer {
         m_turret));
 
     // Add commands to the autonomous command chooser
-    m_chooser.setDefaultOption("Simple Auto", m_simpleAuto);
-    m_chooser.addOption("Complex Auto", m_complexAuto);
-    m_chooser.addOption("Center Auto", m_centerAuto);
+    m_chooser.setDefaultOption("Center Auto", m_centerAuto);
+    //m_chooser.addOption("Side Auto", m_simpleAuto);
+    //m_chooser.addOption("Field Auto", m_complexAuto);
     SmartDashboard.putData("Auto Selection", m_chooser);
 //    SmartDashboard.putData(m_launcher);
 
