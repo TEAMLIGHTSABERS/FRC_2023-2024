@@ -33,6 +33,15 @@ public final class Autos {
   }
 
   public static Command centerAuto(DriveSubsystem drivesys, LauncherSubsystem launchsys, IntakeSubsystem intakesys, TurretSubsystem turretsys) {
+    return Commands.sequence(
+      launchsys.launchNote(intakesys, turretsys), 
+      straightAutoCommand(drivesys, 3), 
+      intakesys.pickupNote(), 
+      straightAutoCommand(drivesys, 3),
+      launchsys.launchNote(intakesys, turretsys));
+  }
+
+  /*public static Command leftAuto(DriveSubsystem drivesys, LauncherSubsystem launchsys, IntakeSubsystem intakesys, TurretSubsystem turretsys) {
     return Commands.sequence(launchsys.launchNote(intakesys, turretsys), 
       straightAutoCommand(drivesys, 3), 
       intakesys.pickupNote(), 
@@ -40,7 +49,15 @@ public final class Autos {
       launchsys.launchNote(intakesys, turretsys));
   }
 
-  public static Command straightAutoCommand(DriveSubsystem drivesys, double distance) {
+  public static Command rightAuto(DriveSubsystem drivesys, LauncherSubsystem launchsys, IntakeSubsystem intakesys, TurretSubsystem turretsys) {
+    return Commands.sequence(launchsys.launchNote(intakesys, turretsys), 
+      straightAutoCommand(drivesys, 3), 
+      intakesys.pickupNote(), 
+      straightAutoCommand(drivesys, -3),
+      launchsys.launchNote(intakesys, turretsys));
+  }*/
+
+  public static Command straightAutoCommand(DriveSubsystem drivesys, double xpose) {
     // Create config for trajectory
     TrajectoryConfig config = new TrajectoryConfig(
         AutoConstants.kMaxSpeedMetersPerSecond,
@@ -51,12 +68,11 @@ public final class Autos {
     // An example trajectory to follow. All units in meters.
     edu.wpi.first.math.trajectory.Trajectory sTurnTrajectory = TrajectoryGenerator.generateTrajectory(
         // Start at the origin facing the +X direction
-        new Pose2d(0, 0, new Rotation2d(0)),
+        new Pose2d(0, 0, new Rotation2d(Math.toRadians(180))),
         // Pass through these two interior waypoints, making an 's' curve path
-        List.of(new Translation2d(distance/3, 0), new Translation2d(distance *2/3, 0)),
+        List.of(new Translation2d(xpose/3, 0), new Translation2d(xpose*2/3, 0)),
         // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(distance, 0, new Rotation2d(0)),
-        config);
+        new Pose2d(xpose, 0, new Rotation2d(Math.toRadians(180))), config);
 
     ProfiledPIDController thetaController = new ProfiledPIDController(
         AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);

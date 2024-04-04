@@ -57,8 +57,14 @@ public class RobotContainer {
     // A simple auto routine that drives forward a specified distance, and then stops.
   private final Command m_simpleAuto = Autos.exampleAuto(ExampleSubsystem);
 
-   // A simple auto routine that drives forward a specified distance, and then stops.
+   // Center position auto that shoots, goes to pick up another note, and then shoots again.
   private final Command m_centerAuto = Autos.centerAuto(m_robotDrive, m_launcher, m_intake, m_turret);
+
+   /*// A simple auto routine that drives forward a specified distance, and then stops.
+  private final Command m_leftAuto = Autos.leftAuto(m_robotDrive, m_launcher, m_intake, m_turret);
+
+  // A simple auto routine that drives forward a specified distance, and then stops.
+  private final Command m_rightAuto = Autos.rightAuto(m_robotDrive, m_launcher, m_intake, m_turret);*/
 
   // A complex auto routine that drives forward, drops a hatch, and then drives backward.
   private final Command m_complexAuto = sTurnAutoCommand();
@@ -117,6 +123,8 @@ public class RobotContainer {
 
     // Add commands to the autonomous command chooser
     m_chooser.setDefaultOption("Center Auto", m_centerAuto);
+    /*m_chooser.setDefaultOption("Left Auto", m_leftAuto);
+    m_chooser.setDefaultOption("Right Auto", m_rightAuto);*/
     //m_chooser.addOption("Side Auto", m_simpleAuto);
     //m_chooser.addOption("Field Auto", m_complexAuto);
     SmartDashboard.putData("Auto Selection", m_chooser);
