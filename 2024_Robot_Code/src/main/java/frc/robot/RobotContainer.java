@@ -123,10 +123,8 @@ public class RobotContainer {
 
     // Add commands to the autonomous command chooser
     m_chooser.setDefaultOption("Center Auto", m_centerAuto);
-    /*m_chooser.setDefaultOption("Left Auto", m_leftAuto);
-    m_chooser.setDefaultOption("Right Auto", m_rightAuto);*/
-    //m_chooser.addOption("Side Auto", m_simpleAuto);
-    //m_chooser.addOption("Field Auto", m_complexAuto);
+    /*m_chooser.setOption("Left Auto", m_leftAuto);
+    m_chooser.setOption("Right Auto", m_rightAuto);*/
     SmartDashboard.putData("Auto Selection", m_chooser);
 //    SmartDashboard.putData(m_launcher);
 
