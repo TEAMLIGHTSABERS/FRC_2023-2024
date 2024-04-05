@@ -58,7 +58,12 @@ public class RobotContainer {
   private final Command m_simpleAuto = Autos.exampleAuto(ExampleSubsystem);
 
    // Center position auto that shoots, goes to pick up another note, and then shoots again.
-  private final Command m_centerAuto = Autos.centerAuto(m_robotDrive, m_launcher, m_intake, m_turret);
+  private final Command m_straightAuto = Autos.straightAuto(m_robotDrive, m_launcher, m_intake, m_turret);
+
+  // Test auto that shoots, goes to pick up another note, and then shoots again.
+  private final Command m_AutoTest1 = Autos.AutoTest1(m_robotDrive, m_launcher, m_intake, m_turret);
+
+  private final Command m_AutoTest2 = Autos.AutoTest2(m_robotDrive, m_launcher, m_intake, m_turret);
 
    /*// A simple auto routine that drives forward a specified distance, and then stops.
   private final Command m_leftAuto = Autos.leftAuto(m_robotDrive, m_launcher, m_intake, m_turret);
@@ -122,7 +127,10 @@ public class RobotContainer {
         m_turret));
 
     // Add commands to the autonomous command chooser
-    m_chooser.setDefaultOption("Center Auto", m_centerAuto);
+    m_chooser.setDefaultOption("Straight Auto", m_straightAuto);
+    m_chooser.setDefaultOption("Auto Test1 ", m_AutoTest1);
+    m_chooser.setDefaultOption("Auto Test2", m_AutoTest2);
+
     /*m_chooser.setDefaultOption("Left Auto", m_leftAuto);
     m_chooser.setDefaultOption("Right Auto", m_rightAuto);*/
     //m_chooser.addOption("Side Auto", m_simpleAuto);
