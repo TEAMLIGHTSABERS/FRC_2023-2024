@@ -15,8 +15,6 @@ import frc.robot.subsystems.TurretSubsystem;
 
 import java.util.List;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -26,7 +24,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
@@ -50,6 +47,7 @@ public final class Autos {
   )
   {
     return Commands.sequence(
+      raiseTurretCommand(turretsys, Constants.Turret.kHighShotID)
       launchsys.launchNote(intakesys, turretsys), 
       straightAutoCommand(drivesys, 3), 
       intakesys.pickupNote(), 
@@ -68,6 +66,7 @@ public final class Autos {
     return Commands.sequence(
       straightAutoCommand(drivesys, 1, -1), 
       rotateBodyAzCommand(drivesys, 90)
+      raiseTurretCommand(turretsys, Constants.Turret.kHighShotID)
       launchsys.launchNote(intakesys, turretsys), 
       rotateBodyAzCommand(drivesys, -90)
       straightAutoCommand(drivesys, 0, 1), 
@@ -88,12 +87,13 @@ public final class Autos {
   {
     return Commands.sequence(
       rotateBodyAzCommand(drivesys, 45)
+      raiseTurretCommand(turretsys, Constants.Turret.kAmpID)
       launchsys.launchNote(intakesys, turretsys), 
       rotateBodyAzCommand(drivesys, -45)
       straightAutoCommand(drivesys, 3), 
       intakesys.pickupNote(), 
       straightAutoCommand(drivesys, 3),
-      rotateBodyAzCommand(drivesys, 45)
+      rotateBodyAzCommand(drivesys, 45),
       launchsys.launchNote(intakesys, turretsys));
   }*/
 
@@ -201,6 +201,36 @@ public final class Autos {
 
     return rotateTo;
   }
+
+  public static Command raiseTurretCommand(TurretSubsystem turretSys, int cmdedTurretPos) {
+    Command raiseTo =
+        new Command() {
+          
+          @Override
+          public void initialize() {
+
+            int currSelPos = turretSys.getSelPosition();
+            while(currSelPos != cmdedTurretPos)
+            {
+              if (currSelPos < cmdedTurretPos) {
+                turretSys.advancePOS();
+              } else if (currSelPos > cmdedTurretPos) {
+                turretSys.reducePOS();
+              }
+
+              currSelPos = turretSys.getSelPosition();
+            };
+          }
+
+          @Override
+          public boolean isFinished() {
+            return (true);
+          }
+        };
+
+    return raiseTo;
+  }
+
 
   private Autos() {
     throw new UnsupportedOperationException("This is a utility class!");
