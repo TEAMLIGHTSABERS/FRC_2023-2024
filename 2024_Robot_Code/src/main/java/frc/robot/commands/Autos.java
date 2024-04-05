@@ -47,11 +47,13 @@ public final class Autos {
   )
   {
     return Commands.sequence(
+      // Assumes that you align 0 heading along +x towards the opposing Alliance
+      // and Robot get rotated to 180 degrees before the team leaves the field.
       raiseTurretCommand(turretsys, Constants.Turret.kHighShotID)
       launchsys.launchNote(intakesys, turretsys), 
-      straightAutoCommand(drivesys, 3), 
+      straightAutoCommand(drivesys, 3, 0, 180), 
       intakesys.pickupNote(), 
-      straightAutoCommand(drivesys, 3),
+      straightAutoCommand(drivesys, -3, 0, 180),
       launchsys.launchNote(intakesys, turretsys));
   }*/
 
@@ -64,12 +66,14 @@ public final class Autos {
   )
   {
     return Commands.sequence(
-      straightAutoCommand(drivesys, 1, -1), 
-      rotateBodyAzCommand(drivesys, 90)
+      // Assumes that you align 0 heading along +x towards the opposing Alliance
+      // and Robot get rotated to 180 degrees before the team leaves the field.
+      straightAutoCommand(drivesys, 1, 1, 90), // Drive to Amp
+  //    rotateBodyAzCommand(drivesys, 90)
       raiseTurretCommand(turretsys, Constants.Turret.kHighShotID)
       launchsys.launchNote(intakesys, turretsys), 
-      rotateBodyAzCommand(drivesys, -90)
-      straightAutoCommand(drivesys, 0, 1), 
+      rotateBodyAzCommand(drivesys, -90),
+      straightAutoCommand(drivesys, 0, 1, ), 
       straightAutoCommand(drivesys, 2, 0), 
       intakesys.pickupNote(), 
       straightAutoCommand(drivesys, -2, -1),
@@ -85,6 +89,8 @@ public final class Autos {
     TurretSubsystem turretsys
   )
   {
+      // Assumes that you align 0 heading along +x towards the opposing Alliance
+      // and Robot get rotated to 180 degrees before the team leaves the field.
     return Commands.sequence(
       rotateBodyAzCommand(drivesys, 45)
       raiseTurretCommand(turretsys, Constants.Turret.kAmpID)
