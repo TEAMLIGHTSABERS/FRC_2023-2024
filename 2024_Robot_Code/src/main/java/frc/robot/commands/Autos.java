@@ -15,6 +15,8 @@ import frc.robot.subsystems.TurretSubsystem;
 
 import java.util.List;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -23,8 +25,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
@@ -52,38 +54,53 @@ public final class Autos {
       // and Robot get rotated to 180 degrees before the team leaves the field.
       // Starting position (0, 0, 180).
       raiseTurretCommand(turretSys, Constants.Turret.kHighShotID),   // Raise Turret to Speaker Shot Position
+      timeDelay(3),
       launchNoteAuto(launchSys, intakeSys, turretSys),               // Shoot Note into Speaker
-      straightAutoCommand11(driveSys),                               // move out of Zone to position (2, 0) m.                
+      straightAutoCommand11(driveSys));                               // move out of Zone to position (2, 0) m.                
       //straightAutoCommand12(driveSys),                               // move out of Zone to position (3, 0) m.                
-      intakeSys.pickupNote(),                                        // Pickup the Note
+      //pickupNoteAuto(),                                        // Pickup the Note
       //straightAutoCommand13(driveSys),                               // move back to speaker (1, 0 180) m.                
-      straightAutoCommand14(driveSys),                               // move up to Speaker (0, 0 180) m.                
-      launchNoteAuto(launchSys, intakeSys, turretSys));              // Shoot Note into Speaker
+      //straightAutoCommand14(driveSys),                               // move up to Speaker (0, 0 180) m.                
+      //launchNoteAuto(launchSys, intakeSys, turretSys));              // Shoot Note into Speaker
   }
 
-  /*public static Command leftAuto
+  public static Command redLeftAuto
   (
-    DriveSubsystem drivesys,
-    LauncherSubsystem launchsys,
-    IntakeSubsystem intakesys,
-    TurretSubsystem turretsys
+    DriveSubsystem driveSys,
+    LauncherSubsystem launchSys,
+    IntakeSubsystem intakeSys,
+    TurretSubsystem turretSys
   )
   {
     return Commands.sequence(
       // Assumes that you align 0 heading along +x towards the opposing Alliance
-      // and Robot get rotated to 90 degrees to face the Amp before the team leaves the field.
-      straightAutoCommand(drivesys, 1, 1, 90),                     // Drive to the Amp
-  //    rotateBodyAzCommand(drivesys, 90),
-      raiseTurretCommand(turretsys, Constants.Turret.kHighShotID), // Raise Turret to the Amp Position
-      launchsys.launchNote(intakesys, turretsys),                  // Launch Note into the Amp
-  //    rotateBodyAzCommand(drivesys, -90),
-      straightAutoCommand(drivesys, 1, 1, 0),                      // Move out of Zone rotating to 0 
-      straightAutoCommand(drivesys, 1, 0, 0),                      // Move to the Note
-      intakesys.pickupNote(),                                      // PIckup Note
-      straightAutoCommand(drivesys, -1, 90),                       //
-      rotateBodyAzCommand(drivesys, 90)
-      launchsys.launchNote(intakesys, turretsys));
-  }*/
+      // and Robot get rotated to 180 degrees before the team leaves the field.
+      // Starting position (0, 0, 180).
+      raiseTurretCommand(turretSys, Constants.Turret.kHighShotID),   // Raise Turret to Speaker Shot Position
+      timeDelay(3),
+      launchNoteAuto(launchSys, intakeSys, turretSys),
+      raiseTurretCommand(turretSys, Constants.Turret.kStartID),              // Shoot Note into Speaker
+      straightAutoCommand21(driveSys));                               // move out of Zone to position (2, 0) m.                
+  }
+
+  public static Command blueLeftAuto
+  (
+    DriveSubsystem driveSys,
+    LauncherSubsystem launchSys,
+    IntakeSubsystem intakeSys,
+    TurretSubsystem turretSys
+  )
+  {
+    return Commands.sequence(
+      // Assumes that you align 0 heading along +x towards the opposing Alliance
+      // and Robot get rotated to 180 degrees before the team leaves the field.
+      // Starting position (0, 0, 180).
+      raiseTurretCommand(turretSys, Constants.Turret.kHighShotID),   // Raise Turret to Speaker Shot Position
+      timeDelay(3),
+      launchNoteAuto(launchSys, intakeSys, turretSys),
+      raiseTurretCommand(turretSys, Constants.Turret.kStartID),              // Shoot Note into Speaker
+      straightAutoCommand31(driveSys));                               // move out of Zone to position (2, 0) m.                
+  }
 
   /*public static Command RightAuto
   (
@@ -245,6 +262,26 @@ public final class Autos {
     return raiseTo;
   }
 
+  public static Command timeDelay(double delayTime) {
+    Command Delay =
+        new Command() {
+          private Timer m_timer;
+        
+          @Override
+          public void initialize() {
+            m_timer = new Timer();
+            m_timer.start();
+          }
+
+          @Override
+          public boolean isFinished() {
+            return m_timer.get() > Constants.Launcher.kTimeToStop;
+          }
+        };
+
+    return Delay;
+  }
+
 public static Command launchNoteAuto(LauncherSubsystem _Launcher, IntakeSubsystem _Intake, TurretSubsystem _Turret) {
     Command launching =
         new Command() {
@@ -258,6 +295,7 @@ public static Command launchNoteAuto(LauncherSubsystem _Launcher, IntakeSubsyste
           public void initialize() {
             /* Start the Launcher Wheels and the Launch timer. */
             CurrentTurretPosition = _Turret.getSelPosition();
+            SmartDashboard.putNumber("launcherAuto curr Turret Pos", CurrentTurretPosition);
 
             if (CurrentTurretPosition == Constants.Turret.kAmpID) {
               _Launcher.SetLCWR(Constants.Launcher.kAmpL);
@@ -275,6 +313,8 @@ public static Command launchNoteAuto(LauncherSubsystem _Launcher, IntakeSubsyste
             _Launcher.startFlyWheels();
             m_timer = new Timer();
             m_timer.start();
+            _Launcher.periodic();
+            _Intake.periodic();
           }
 
           @Override
@@ -287,7 +327,10 @@ public static Command launchNoteAuto(LauncherSubsystem _Launcher, IntakeSubsyste
 
              if(m_timer.get() > Constants.Launcher.kTimeToLaunch){
               _Intake.moveNote(Constants.Launcher.kFeederSpeed);
+              _Intake.periodic();
             }
+
+            _Launcher.periodic();
           }
 
           @Override
@@ -303,6 +346,8 @@ public static Command launchNoteAuto(LauncherSubsystem _Launcher, IntakeSubsyste
             /* Stop both the Launcher and the Intake feeder */
             _Launcher.stopFlyWheels();
             _Intake.stopFeeder();
+            _Launcher.periodic();
+            _Intake.periodic();
           }
         };
 
@@ -310,6 +355,50 @@ public static Command launchNoteAuto(LauncherSubsystem _Launcher, IntakeSubsyste
   }
 
 
+  /**
+* Constructs a command that starts the launcher and then runs the Intake feeder
+* motor to put the Note up to the spinning launcher wheels. After a few more seconds
+* the command will shutdown the Launcher Wheels and an the Intake feeder. This
+* command takes control of the intake subsystem to make sure the feeder keeps
+* running during the launch sequence.
+*
+* @return The launch command
+*/
+
+/*
+public Command pickupNoteAuto(IntakeSubsystem _Intake) {
+    Command pickingUp =
+        new Command() {
+          
+          private Timer m_timer;
+
+          @Override
+          public void initialize() {
+            m_timer = new Timer();
+            m_timer.start();
+            _Intake.setTopRoller.set(ControlMode.PercentOutput, Constants.Intake.kTopPower);
+            _Intake.setFeedRollers(ControlMode.PercentOutput, Constants.Intake.kFeedPower);
+          }
+
+          @Override
+          public void execute() {
+          }
+
+          @Override
+          public boolean isFinished() {
+            return m_timer.get() > Constants.Launcher.kTimeToStop;
+          }
+
+          @Override
+          public void end(boolean interrupted) {
+            topRoller.set(ControlMode.PercentOutput, 0.0);
+            feedRollers.set(ControlMode.PercentOutput, 0.0);
+          }
+        };
+
+        return pickingUp;
+  }
+*/
   public static Command straightAutoCommand1(DriveSubsystem drivesys, double xPos, double yPos) {
     // create local parameters for the trajectory and robot angles
     edu.wpi.first.math.trajectory.Trajectory straightTrajectory;
@@ -543,6 +632,108 @@ public static Command launchNoteAuto(LauncherSubsystem _Launcher, IntakeSubsyste
                 new Translation2d((finishXPos-startXPos)*2/3, (finishYPos-startYPos)*2/3)),
         // End 3 meters straight ahead of where we started, facing forward
         new Pose2d(finishXPos, finishYPos, new Rotation2d(Math.toRadians(180))), config
+    );
+
+    ProfiledPIDController thetaController = new ProfiledPIDController(
+        AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+    PIDController xAxisController = new PIDController(AutoConstants.kPXController, 0, 0);
+    PIDController yAxisController = new PIDController(AutoConstants.kPYController, 0, 0);
+
+    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+    straightTrajectory,
+    drivesys::getPose, // Functional interface to feed supplier
+    DriveConstants.kDriveKinematics,
+
+    // Position controllers
+    xAxisController,
+    yAxisController,
+    thetaController,
+    drivesys::setModuleStates,
+    drivesys);
+
+    // Reset odometry to the starting pose of the trajectory.
+    drivesys.resetOdometry(straightTrajectory.getInitialPose());
+
+    // Run path following command, then stop at the end.
+    return swerveControllerCommand.andThen(() -> drivesys.drive(0, 0, 0, false, false));
+  }
+
+  // version 21 move out of the zone by 2.5 m while turning from 180 degrees to 0 Degrees.
+  public static Command straightAutoCommand21(DriveSubsystem drivesys) {
+    // create local parameters for the trajectory and robot angles
+    edu.wpi.first.math.trajectory.Trajectory straightTrajectory;
+    double xPos = 3.0;
+    double yPos = 3.0; 
+
+    // Create config for trajectory
+    TrajectoryConfig config = new TrajectoryConfig(
+        AutoConstants.kMaxSpeedMetersPerSecond,
+        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+        // Add kinematics to ensure max speed is actually obeyed
+        .setKinematics(DriveConstants.kDriveKinematics)
+        .setReversed(true);
+
+      // Create a straight trajectory to follow. All units in meters.
+    straightTrajectory = TrajectoryGenerator.generateTrajectory(
+        // Start at the origin facing the +X direction
+        new Pose2d(0, 0, new Rotation2d(Math.toRadians(-135))),
+        // Pass through these two interior waypoints, making an 's' curve path
+        List.of(new Translation2d(xPos/3, yPos/3), new Translation2d(xPos*2/3, yPos*2/3)),
+        // End 3 meters straight ahead of where we started, facing forward
+        new Pose2d(xPos, yPos, new Rotation2d(Math.toRadians(-135))), config
+    );
+
+    ProfiledPIDController thetaController = new ProfiledPIDController(
+        AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+    PIDController xAxisController = new PIDController(AutoConstants.kPXController, 0, 0);
+    PIDController yAxisController = new PIDController(AutoConstants.kPYController, 0, 0);
+
+    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+    straightTrajectory,
+    drivesys::getPose, // Functional interface to feed supplier
+    DriveConstants.kDriveKinematics,
+
+    // Position controllers
+    xAxisController,
+    yAxisController,
+    thetaController,
+    drivesys::setModuleStates,
+    drivesys);
+
+    // Reset odometry to the starting pose of the trajectory.
+    drivesys.resetOdometry(straightTrajectory.getInitialPose());
+
+    // Run path following command, then stop at the end.
+    return swerveControllerCommand.andThen(() -> drivesys.drive(0, 0, 0, false, false));
+  }
+
+  // version 31 move out of the zone by 2.5 m while turning from 180 degrees to 0 Degrees.
+  public static Command straightAutoCommand31(DriveSubsystem drivesys) {
+    // create local parameters for the trajectory and robot angles
+    edu.wpi.first.math.trajectory.Trajectory straightTrajectory;
+    double xPos = 3.0;
+    double yPos = -3.0; 
+
+    // Create config for trajectory
+    TrajectoryConfig config = new TrajectoryConfig(
+        AutoConstants.kMaxSpeedMetersPerSecond,
+        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+        // Add kinematics to ensure max speed is actually obeyed
+        .setKinematics(DriveConstants.kDriveKinematics)
+        .setReversed(true);
+
+      // Create a straight trajectory to follow. All units in meters.
+    straightTrajectory = TrajectoryGenerator.generateTrajectory(
+        // Start at the origin facing the +X direction
+        new Pose2d(0, 0, new Rotation2d(Math.toRadians(135))),
+        // Pass through these two interior waypoints, making an 's' curve path
+        List.of(new Translation2d(xPos/3, yPos/3), new Translation2d(xPos*2/3, yPos*2/3)),
+        // End 3 meters straight ahead of where we started, facing forward
+        new Pose2d(xPos, yPos, new Rotation2d(Math.toRadians(135))), config
     );
 
     ProfiledPIDController thetaController = new ProfiledPIDController(

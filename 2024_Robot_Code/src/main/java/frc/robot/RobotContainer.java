@@ -60,6 +60,12 @@ public class RobotContainer {
   // Center position auto that shoots, goes to pick up another note, and then shoots again.
   private final Command m_centerAuto = Autos.centerAuto(m_robotDrive, m_launcher, m_intake, m_turret);
 
+  // Center position auto that shoots, goes to pick up another note, and then shoots again.
+  private final Command m_redLeftAuto = Autos.redLeftAuto(m_robotDrive, m_launcher, m_intake, m_turret);
+
+  // Center position auto that shoots, goes to pick up another note, and then shoots again.
+  private final Command m_blueLeftAuto = Autos.blueLeftAuto(m_robotDrive, m_launcher, m_intake, m_turret);
+
   // Straight Auto moves the robot directly out of the zone a distance of 2.5 m.
   private final Command m_StraightAuto = Autos.straightAutoCommand1(m_robotDrive, 2.5, 0);
 
@@ -126,6 +132,8 @@ public class RobotContainer {
 
     // Add commands to the autonomous command chooser
     m_chooser.setDefaultOption("Straight Auto", m_StraightAuto);
+    m_chooser.addOption("Red Left Auto", m_redLeftAuto);
+    m_chooser.addOption("Blue Left Auto", m_blueLeftAuto);
     m_chooser.addOption("Center Auto", m_centerAuto);
     /*m_chooser.setOption("Left Auto", m_leftAuto);
     m_chooser.setOption("Right Auto", m_rightAuto);*/
