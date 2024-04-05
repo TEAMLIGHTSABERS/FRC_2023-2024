@@ -211,6 +211,22 @@ public class LauncherSubsystem extends SubsystemBase {
 
   }
 
+  public void SetLCWR(double _LCWR){
+    leftCmdWheelRate = _LCWR;
+  }
+
+  public void SetRCWR(double _RCWR){
+    rightCmdWheelRate = _RCWR;
+  }
+
+  public void startFlyWheels(){
+    flyWheelsRunning = true;
+  }
+
+  public void stopFlyWheels(){
+    flyWheelsRunning = false;
+  }
+
 /**
 * Constructs a command that starts the launcher and then runs the Intake feeder
 * motor to put the Note up to the spinning launcher wheels. After a few more seconds

@@ -60,8 +60,8 @@ public class RobotContainer {
   // Center position auto that shoots, goes to pick up another note, and then shoots again.
   private final Command m_centerAuto = Autos.centerAuto(m_robotDrive, m_launcher, m_intake, m_turret);
 
-  // Center position auto that shoots, goes to pick up another note, and then shoots again.
-  private final Command m_StraightAuto = Autos.straightAutoCommand(m_robotDrive, 3, 0, 180);
+  // Straight Auto moves the robot directly out of the zone a distance of 2.5 m.
+  private final Command m_StraightAuto = Autos.straightAutoCommand1(m_robotDrive, 2.5, 0);
 
    /*// A simple auto routine that drives forward a specified distance, and then stops.
   private final Command m_leftAuto = Autos.leftAuto(m_robotDrive, m_launcher, m_intake, m_turret);
