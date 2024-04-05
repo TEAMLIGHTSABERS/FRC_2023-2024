@@ -34,11 +34,11 @@ public final class Autos {
     return Commands.sequence(subsystem.exampleMethodCommand(), new ExampleCommand(subsystem));
   }
 
-  public static Command centerAuto(DriveSubsystem drivesys, LauncherSubsystem launchsys, IntakeSubsystem intakesys, TurretSubsystem turretsys) {
-    return Commands.sequence(straightAutoCommand(drivesys, -3, 0));
-  }
+//  public static Command centerAuto(DriveSubsystem drivesys, LauncherSubsystem launchsys, IntakeSubsystem intakesys, TurretSubsystem turretsys) {
+//    return Commands.sequence(straightAutoCommand(drivesys, -3, 0));
+//  }
 
-  /*public static Command centerAuto
+  public static Command centerAuto
   (
     DriveSubsystem drivesys,
     LauncherSubsystem launchsys,
@@ -49,13 +49,15 @@ public final class Autos {
     return Commands.sequence(
       // Assumes that you align 0 heading along +x towards the opposing Alliance
       // and Robot get rotated to 180 degrees before the team leaves the field.
-      raiseTurretCommand(turretsys, Constants.Turret.kHighShotID)
-      launchsys.launchNote(intakesys, turretsys), 
-      straightAutoCommand(drivesys, 3, 0, 180), 
-      intakesys.pickupNote(), 
-      straightAutoCommand(drivesys, -3, 0, 180),
-      launchsys.launchNote(intakesys, turretsys));
-  }*/
+      raiseTurretCommand(turretsys, Constants.Turret.kHighShotID),   // Raise Turret to Speaker Shot Position
+      launchsys.launchNote(intakesys, turretsys),                    // Shoot Note into Speaker
+      straightAutoCommand(drivesys, 2, 0, 0),      // Move out of Zone while turning around                   
+      straightAutoCommand(drivesys, 3, 0, 0),      // Move up to the Note
+      intakesys.pickupNote(),                                        // Pickup the Note
+      straightAutoCommand(drivesys, -2, 0, 180),        // Move into the Zone while turning around
+      straightAutoCommand(drivesys, -1, 0, 0),          // Move up to the Speaker
+      launchsys.launchNote(intakesys, turretsys));                   // Shoot Note into Speaker
+  }
 
   /*public static Command leftAuto
   (
@@ -67,16 +69,16 @@ public final class Autos {
   {
     return Commands.sequence(
       // Assumes that you align 0 heading along +x towards the opposing Alliance
-      // and Robot get rotated to 180 degrees before the team leaves the field.
-      straightAutoCommand(drivesys, 1, 1, 90), // Drive to Amp
-  //    rotateBodyAzCommand(drivesys, 90)
-      raiseTurretCommand(turretsys, Constants.Turret.kHighShotID)
-      launchsys.launchNote(intakesys, turretsys), 
-      rotateBodyAzCommand(drivesys, -90),
-      straightAutoCommand(drivesys, 0, 1, ), 
-      straightAutoCommand(drivesys, 2, 0), 
-      intakesys.pickupNote(), 
-      straightAutoCommand(drivesys, -2, -1),
+      // and Robot get rotated to 90 degrees to face the Amp before the team leaves the field.
+      straightAutoCommand(drivesys, 1, 1, 90),                     // Drive to the Amp
+  //    rotateBodyAzCommand(drivesys, 90),
+      raiseTurretCommand(turretsys, Constants.Turret.kHighShotID), // Raise Turret to the Amp Position
+      launchsys.launchNote(intakesys, turretsys),                  // Launch Note into the Amp
+  //    rotateBodyAzCommand(drivesys, -90),
+      straightAutoCommand(drivesys, 1, 1, 0),                      // Move out of Zone rotating to 0 
+      straightAutoCommand(drivesys, 1, 0, 0),                      // Move to the Note
+      intakesys.pickupNote(),                                      // PIckup Note
+      straightAutoCommand(drivesys, -1, 90),                       //
       rotateBodyAzCommand(drivesys, 90)
       launchsys.launchNote(intakesys, turretsys));
   }*/
@@ -103,11 +105,11 @@ public final class Autos {
       launchsys.launchNote(intakesys, turretsys));
   }*/
 
-  public static Command straightAutoCommand(DriveSubsystem drivesys, double deltaXPos, double deltaYPos) {
+  public static Command straightAutoCommand(DriveSubsystem drivesys, double xPos, double yPos, double finalAz) {
     // create local parameters for the trajectory and robot angles
     edu.wpi.first.math.trajectory.Trajectory straightTrajectory;
-    double azimuth = drivesys.getHeading();
-    double heading = Units.radiansToDegrees(Math.atan2(deltaXPos, -deltaYPos));  // In Degrees
+    double startAz = drivesys.getHeading();
+    double heading = Units.radiansToDegrees(Math.atan2(xPos, -yPos));  // In Degrees
 
     // Create config for trajectory
     TrajectoryConfig config = new TrajectoryConfig(
@@ -118,9 +120,9 @@ public final class Autos {
 
     // Determine if the Robot is moving in backward on the field.
     if (
-      (Math.abs(azimuth - heading) < 90.0)
+      (Math.abs(startAz - heading) < 90.0)
       ||
-      (Math.abs(azimuth - heading)  > 270.0)
+      (Math.abs(startAz - heading)  > 270.0)
     ){
       // if the robot is moving forward along the direction of travel.
       config.setReversed(false);
@@ -132,11 +134,11 @@ public final class Autos {
       // Create a straight trajectory to follow. All units in meters.
     straightTrajectory = TrajectoryGenerator.generateTrajectory(
         // Start at the origin facing the +X direction
-        new Pose2d(0, 0, new Rotation2d(Math.toRadians(heading))),
+        new Pose2d(0, 0, new Rotation2d(Math.toRadians(startAz))),
         // Pass through these two interior waypoints, making an 's' curve path
-        List.of(new Translation2d(deltaXPos/3, deltaYPos/3), new Translation2d(deltaXPos*2/3, deltaYPos*2/3)),
+        List.of(new Translation2d(xPos/3, yPos/3), new Translation2d(xPos*2/3, yPos*2/3)),
         // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(deltaXPos, deltaYPos, new Rotation2d(Math.toRadians(heading))), config
+        new Pose2d(xPos, yPos, new Rotation2d(Math.toRadians(finalAz))), config
     );
 
     ProfiledPIDController thetaController = new ProfiledPIDController(

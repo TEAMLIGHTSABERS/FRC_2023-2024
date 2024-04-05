@@ -54,11 +54,14 @@ public class RobotContainer {
 
   private static ShuffleboardTab launchTab; 
 
-    // A simple auto routine that drives forward a specified distance, and then stops.
+  // A simple auto routine that drives forward a specified distance, and then stops.
   private final Command m_simpleAuto = Autos.exampleAuto(ExampleSubsystem);
 
-   // Center position auto that shoots, goes to pick up another note, and then shoots again.
+  // Center position auto that shoots, goes to pick up another note, and then shoots again.
   private final Command m_centerAuto = Autos.centerAuto(m_robotDrive, m_launcher, m_intake, m_turret);
+
+  // Center position auto that shoots, goes to pick up another note, and then shoots again.
+  private final Command m_StraightAuto = Autos.straightAutoCommand(m_robotDrive, 3, 0, 180);
 
    /*// A simple auto routine that drives forward a specified distance, and then stops.
   private final Command m_leftAuto = Autos.leftAuto(m_robotDrive, m_launcher, m_intake, m_turret);
