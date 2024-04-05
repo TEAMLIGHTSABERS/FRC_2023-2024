@@ -50,17 +50,15 @@ public final class Autos {
     return Commands.sequence(
       // Assumes that you align 0 heading along +x towards the opposing Alliance
       // and Robot get rotated to 180 degrees before the team leaves the field.
+      // Starting position (0, 0, 180).
       raiseTurretCommand(turretSys, Constants.Turret.kHighShotID),   // Raise Turret to Speaker Shot Position
-      launchNoteAuto(launchSys, intakeSys, turretSys),                    // Shoot Note into Speaker
-      //straightAutoCommand(drivesys, 2, 0, 0),      // Move out of Zone while turning around 
-      straightAutoCommand11(driveSys));              // move out of Zone 2 m.                
-      /*
-      straightAutoCommand(drivesys, 3, 0, 0),      // Move up to the Note
-      intakesys.pickupNote(),                                        // Pickup the Note
-      straightAutoCommand(drivesys, -2, 0, 180),        // Move into the Zone while turning around
-      straightAutoCommand(drivesys, -1, 0, 0),          // Move up to the Speaker
-      launchsys.launchNote(intakesys, turretsys));                   // Shoot Note into Speaker
-      */
+      launchNoteAuto(launchSys, intakeSys, turretSys),               // Shoot Note into Speaker
+      straightAutoCommand11(driveSys),                               // move out of Zone to position (2, 0) m.                
+      //straightAutoCommand12(driveSys),                               // move out of Zone to position (3, 0) m.                
+      intakeSys.pickupNote(),                                        // Pickup the Note
+      //straightAutoCommand13(driveSys),                               // move back to speaker (1, 0 180) m.                
+      straightAutoCommand14(driveSys),                               // move up to Speaker (0, 0 180) m.                
+      launchNoteAuto(launchSys, intakeSys, turretSys));              // Shoot Note into Speaker
   }
 
   /*public static Command leftAuto
@@ -382,7 +380,169 @@ public static Command launchNoteAuto(LauncherSubsystem _Launcher, IntakeSubsyste
         // Pass through these two interior waypoints, making an 's' curve path
         List.of(new Translation2d(xPos/3, yPos/3), new Translation2d(xPos*2/3, yPos*2/3)),
         // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(xPos, yPos, new Rotation2d(Math.toRadians(0))), config
+        new Pose2d(xPos, yPos, new Rotation2d(Math.toRadians(180))), config
+    );
+
+    ProfiledPIDController thetaController = new ProfiledPIDController(
+        AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+    PIDController xAxisController = new PIDController(AutoConstants.kPXController, 0, 0);
+    PIDController yAxisController = new PIDController(AutoConstants.kPYController, 0, 0);
+
+    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+    straightTrajectory,
+    drivesys::getPose, // Functional interface to feed supplier
+    DriveConstants.kDriveKinematics,
+
+    // Position controllers
+    xAxisController,
+    yAxisController,
+    thetaController,
+    drivesys::setModuleStates,
+    drivesys);
+
+    // Reset odometry to the starting pose of the trajectory.
+    drivesys.resetOdometry(straightTrajectory.getInitialPose());
+
+    // Run path following command, then stop at the end.
+    return swerveControllerCommand.andThen(() -> drivesys.drive(0, 0, 0, false, false));
+  }
+
+  // version 12 move out of the zone by 1 m while turning from 180 degrees to 0 Degrees.
+  public static Command straightAutoCommand12(DriveSubsystem drivesys) {
+    // create local parameters for the trajectory and robot angles
+    edu.wpi.first.math.trajectory.Trajectory straightTrajectory;
+    double startXPos = 2.0;
+    double startYPos = 0.0;
+    double finishXPos = 3.0;
+    double finishYPos = 0.0; 
+
+    // Create config for trajectory
+    TrajectoryConfig config = new TrajectoryConfig(
+        AutoConstants.kMaxSpeedMetersPerSecond,
+        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+        // Add kinematics to ensure max speed is actually obeyed
+        .setKinematics(DriveConstants.kDriveKinematics)
+        .setReversed(false);
+
+      // Create a straight trajectory to follow. All units in meters.
+    straightTrajectory = TrajectoryGenerator.generateTrajectory(
+        // Start at the origin facing the +X direction
+        new Pose2d(startXPos, startYPos, new Rotation2d(Math.toRadians(0))),
+        // Pass through these two interior waypoints, making an 's' curve path
+        List.of(new Translation2d((finishXPos-startXPos)/3, (finishYPos-startYPos)/3),
+                new Translation2d((finishXPos-startXPos)*2/3, (finishYPos-startYPos)*2/3)),
+        // End 3 meters straight ahead of where we started, facing forward
+        new Pose2d(finishXPos, finishYPos, new Rotation2d(Math.toRadians(0))), config
+    );
+
+    ProfiledPIDController thetaController = new ProfiledPIDController(
+        AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+    PIDController xAxisController = new PIDController(AutoConstants.kPXController, 0, 0);
+    PIDController yAxisController = new PIDController(AutoConstants.kPYController, 0, 0);
+
+    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+    straightTrajectory,
+    drivesys::getPose, // Functional interface to feed supplier
+    DriveConstants.kDriveKinematics,
+
+    // Position controllers
+    xAxisController,
+    yAxisController,
+    thetaController,
+    drivesys::setModuleStates,
+    drivesys);
+
+    // Reset odometry to the starting pose of the trajectory.
+    drivesys.resetOdometry(straightTrajectory.getInitialPose());
+
+    // Run path following command, then stop at the end.
+    return swerveControllerCommand.andThen(() -> drivesys.drive(0, 0, 0, false, false));
+  }
+
+  // version 13 moves back to the Speaker (1,0) while turning from 0 degrees to 180 Degrees.
+  public static Command straightAutoCommand13(DriveSubsystem drivesys) {
+    // create local parameters for the trajectory and robot angles
+    edu.wpi.first.math.trajectory.Trajectory straightTrajectory;
+    double startXPos = 3.0;
+    double startYPos = 0.0;
+    double finishXPos = 1.0;
+    double finishYPos = 0.0; 
+
+    // Create config for trajectory
+    TrajectoryConfig config = new TrajectoryConfig(
+        AutoConstants.kMaxSpeedMetersPerSecond,
+        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+        // Add kinematics to ensure max speed is actually obeyed
+        .setKinematics(DriveConstants.kDriveKinematics)
+        .setReversed(false);
+
+      // Create a straight trajectory to follow. All units in meters.
+    straightTrajectory = TrajectoryGenerator.generateTrajectory(
+        // Start at the origin facing the +X direction
+        new Pose2d(startXPos, startYPos, new Rotation2d(Math.toRadians(0))),
+        // Pass through these two interior waypoints, making an 's' curve path
+        List.of(new Translation2d((finishXPos-startXPos)/3, (finishYPos-startYPos)/3),
+                new Translation2d((finishXPos-startXPos)*2/3, (finishYPos-startYPos)*2/3)),
+        // End 3 meters straight ahead of where we started, facing forward
+        new Pose2d(finishXPos, finishYPos, new Rotation2d(Math.toRadians(180))), config
+    );
+
+    ProfiledPIDController thetaController = new ProfiledPIDController(
+        AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+    PIDController xAxisController = new PIDController(AutoConstants.kPXController, 0, 0);
+    PIDController yAxisController = new PIDController(AutoConstants.kPYController, 0, 0);
+
+    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+    straightTrajectory,
+    drivesys::getPose, // Functional interface to feed supplier
+    DriveConstants.kDriveKinematics,
+
+    // Position controllers
+    xAxisController,
+    yAxisController,
+    thetaController,
+    drivesys::setModuleStates,
+    drivesys);
+
+    // Reset odometry to the starting pose of the trajectory.
+    drivesys.resetOdometry(straightTrajectory.getInitialPose());
+
+    // Run path following command, then stop at the end.
+    return swerveControllerCommand.andThen(() -> drivesys.drive(0, 0, 0, false, false));
+  }
+
+  // version 14 moves up to the Speaker launch position (0,0) 
+  public static Command straightAutoCommand14(DriveSubsystem drivesys) {
+    // create local parameters for the trajectory and robot angles
+    edu.wpi.first.math.trajectory.Trajectory straightTrajectory;
+    double startXPos = 2.0;
+    double startYPos = 0.0;
+    double finishXPos = 0.0;
+    double finishYPos = 0.0; 
+
+    // Create config for trajectory
+    TrajectoryConfig config = new TrajectoryConfig(
+        AutoConstants.kMaxSpeedMetersPerSecond,
+        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+        // Add kinematics to ensure max speed is actually obeyed
+        .setKinematics(DriveConstants.kDriveKinematics)
+        .setReversed(true);
+
+      // Create a straight trajectory to follow. All units in meters.
+    straightTrajectory = TrajectoryGenerator.generateTrajectory(
+        // Start at the origin facing the +X direction
+        new Pose2d(startXPos, startYPos, new Rotation2d(Math.toRadians(0))),
+        // Pass through these two interior waypoints, making an 's' curve path
+        List.of(new Translation2d((finishXPos-startXPos)/3, (finishYPos-startYPos)/3),
+                new Translation2d((finishXPos-startXPos)*2/3, (finishYPos-startYPos)*2/3)),
+        // End 3 meters straight ahead of where we started, facing forward
+        new Pose2d(finishXPos, finishYPos, new Rotation2d(Math.toRadians(180))), config
     );
 
     ProfiledPIDController thetaController = new ProfiledPIDController(
