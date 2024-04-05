@@ -111,7 +111,11 @@ public final class Autos {
         .setKinematics(DriveConstants.kDriveKinematics);
 
     // Determine if the Robot is moving in backward on the field.
-    if (Math.abs(azimuth - heading) < 90.0){
+    if (
+      (Math.abs(azimuth - heading) < 90.0)
+      ||
+      (Math.abs(azimuth - heading)  > 270.0)
+    ){
       // if the robot is moving forward along the direction of travel.
       config.setReversed(false);
     }else{
