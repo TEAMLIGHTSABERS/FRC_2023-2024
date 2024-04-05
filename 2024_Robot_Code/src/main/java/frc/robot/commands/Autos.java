@@ -74,7 +74,7 @@ public final class Autos {
         // Add kinematics to ensure max speed is actually obeyed
         .setKinematics(DriveConstants.kDriveKinematics);
 
-    // Determine if the Robot is moving in reverse on the field.
+    // Determine if the Robot is moving in backward on the field.
     if (Math.abs(azimuth - heading) < 180.0){
       // if the robot is moving forward along the direction of travel.
       config.setReversed(false);
