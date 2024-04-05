@@ -101,7 +101,7 @@ public final class Autos {
     // create local parameters for the trajectory and robot angles
     edu.wpi.first.math.trajectory.Trajectory straightTrajectory;
     double azimuth = drivesys.getHeading();
-    double heading = Units.radiansToDegrees(Math.atan2(deltaYPos, deltaXPos));  // In Degrees
+    double heading = Units.radiansToDegrees(Math.atan2(deltaXPos, -deltaYPos));  // In Degrees
 
     // Create config for trajectory
     TrajectoryConfig config = new TrajectoryConfig(
@@ -111,7 +111,7 @@ public final class Autos {
         .setKinematics(DriveConstants.kDriveKinematics);
 
     // Determine if the Robot is moving in backward on the field.
-    if (Math.abs(azimuth - heading) < 180.0){
+    if (Math.abs(azimuth - heading) < 90.0){
       // if the robot is moving forward along the direction of travel.
       config.setReversed(false);
     }else{
