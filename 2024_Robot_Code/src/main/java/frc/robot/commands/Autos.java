@@ -167,7 +167,7 @@ public final class Autos {
     // An example trajectory to follow. All units in meters.
     edu.wpi.first.math.trajectory.Trajectory Test2Trajectory = TrajectoryGenerator.generateTrajectory(
         // Start at the origin facing the +X direction
-        new Pose2d(0, 0, new Rotation2d(Math.toRadians(0))),
+        new Pose2d(0, 0, new Rotation2d(Math.toRadians(180))),
         // Pass through these two interior waypoints, making an 's' curve path
         List.of(new Translation2d(xpose/3, 0), new Translation2d(xpose*2/3, 0)),
         // End 3 meters straight ahead of where we started, facing forward
