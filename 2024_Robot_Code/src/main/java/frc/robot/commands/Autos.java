@@ -62,7 +62,8 @@ public final class Autos {
   }*/
 
   public static Command straightAutoCommand(DriveSubsystem drivesys, double deltaXPos, double deltaYPos) {
-    edu.wpi.first.math.trajectory.Trajectory straightXTrajectory;
+    // create local parameters for the trajectory and robot angles
+    edu.wpi.first.math.trajectory.Trajectory straightTrajectory;
     double azimuth = drivesys.getHeading();
     double heading = Units.radiansToDegrees(Math.atan2(deltaYPos, deltaXPos));  // In Degrees
 
@@ -73,36 +74,24 @@ public final class Autos {
         // Add kinematics to ensure max speed is actually obeyed
         .setKinematics(DriveConstants.kDriveKinematics);
 
+    // Determine if the Robot is moving in reverse on the field.
     if (Math.abs(azimuth - heading) < 180.0){
+      // if the robot is moving forward along the direction of travel.
       config.setReversed(false);
-
-      // An example trajectory to follow. All units in meters.
-      straightXTrajectory = TrajectoryGenerator.generateTrajectory(
-          // Start at the origin facing the +X direction
-          new Pose2d(0, 0, new Rotation2d(Math.toRadians(heading))),
-          // Pass through these two interior waypoints, making an 's' curve path
-          List.of(new Translation2d(deltaXPos/3, deltaYPos/3), new Translation2d(deltaXPos*2/3, deltaYPos*2/3)),
-          // End 3 meters straight ahead of where we started, facing forward
-          new Pose2d(deltaXPos, deltaYPos, new Rotation2d(Math.toRadians(heading))), config);
     }else{
+      // if the robot is moving in reverse along the direction of travel.
       config.setReversed(true);
-
-      double reverseHeading;
-      if (heading + 180.0 > 180.0){
-        reverseHeading = heading - 180.0;
-      } else{
-        reverseHeading = heading + 180.0;
-      }
-
-      // An example trajectory to follow. All units in meters.
-      straightXTrajectory = TrajectoryGenerator.generateTrajectory(
-          // Start at the origin facing the +X direction
-          new Pose2d(0, 0, new Rotation2d(Math.toRadians(reverseHeading))),
-          // Pass through these two interior waypoints, making an 's' curve path
-          List.of(new Translation2d(deltaXPos/3, deltaYPos/3), new Translation2d(deltaXPos*2/3, deltaYPos*2/3)),
-          // End 3 meters straight ahead of where we started, facing forward
-          new Pose2d(deltaXPos, deltaYPos, new Rotation2d(Math.toRadians(reverseHeading))), config);
     }
+
+      // Create a straight trajectory to follow. All units in meters.
+    straightTrajectory = TrajectoryGenerator.generateTrajectory(
+        // Start at the origin facing the +X direction
+        new Pose2d(0, 0, new Rotation2d(Math.toRadians(heading))),
+        // Pass through these two interior waypoints, making an 's' curve path
+        List.of(new Translation2d(deltaXPos/3, deltaYPos/3), new Translation2d(deltaXPos*2/3, deltaYPos*2/3)),
+        // End 3 meters straight ahead of where we started, facing forward
+        new Pose2d(deltaXPos, deltaYPos, new Rotation2d(Math.toRadians(heading))), config
+    );
 
     ProfiledPIDController thetaController = new ProfiledPIDController(
         AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
@@ -112,7 +101,7 @@ public final class Autos {
     PIDController yAxisController = new PIDController(AutoConstants.kPYController, 0, 0);
 
     SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-    straightXTrajectory,
+    straightTrajectory,
     drivesys::getPose, // Functional interface to feed supplier
     DriveConstants.kDriveKinematics,
 
@@ -124,7 +113,7 @@ public final class Autos {
     drivesys);
 
     // Reset odometry to the starting pose of the trajectory.
-    drivesys.resetOdometry(straightXTrajectory.getInitialPose());
+    drivesys.resetOdometry(straightTrajectory.getInitialPose());
 
     // Run path following command, then stop at the end.
     return swerveControllerCommand.andThen(() -> drivesys.drive(0, 0, 0, false, false));
