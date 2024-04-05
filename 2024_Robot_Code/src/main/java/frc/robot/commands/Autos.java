@@ -107,7 +107,7 @@ public final class Autos {
       rotateBodyAzCommand(drivesys, 45),
       launchsys.launchNote(intakesys, turretsys));
   }*/
-
+/*
   public static Command straightAutoCommand(DriveSubsystem drivesys, double xPos, double yPos, double finalAz) {
     // create local parameters for the trajectory and robot angles
     edu.wpi.first.math.trajectory.Trajectory straightTrajectory;
@@ -169,7 +169,7 @@ public final class Autos {
     // Run path following command, then stop at the end.
     return swerveControllerCommand.andThen(() -> drivesys.drive(0, 0, 0, false, false));
   }
-
+*/
   public static Command rotateBodyAzCommand(DriveSubsystem drivesys, double cmdedFieldAz) {
     Command rotateTo =
         new Command() {
