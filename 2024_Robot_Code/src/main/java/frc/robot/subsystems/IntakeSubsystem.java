@@ -66,8 +66,8 @@ public Command pickupNote() {
             /* Start the Feed Rollers. */
             m_timer = new Timer();
             m_timer.start();
-            topRoller.set(ControlMode.PercentOutput, top_power);
-            feedRollers.set(ControlMode.PercentOutput, feed_power);
+            topRoller.set(ControlMode.PercentOutput, Constants.Intake.kTopPower);
+            feedRollers.set(ControlMode.PercentOutput, Constants.Intake.kFeedPower);
           }
 
           @Override
