@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.VictorSPXControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -93,12 +94,20 @@ public Command pickupNote() {
         return pickingUp;
   }
 
+  public void setTopRoller(VictorSPXControlMode percentoutput, double topPower){
+    topRoller.set(percentoutput, topPower);
+  }
+  
+  public void setFeedRoller(VictorSPXControlMode mode, double feedPower){
+    feedRollers.set(mode, feedPower);
+  }
+ 
   @Override
   public void periodic() { // This method will be called once per scheduler run
     // if we've reached the position target, drop out of position mode
     // update the motor power based on mode and setpoint
-    topRoller.set(ControlMode.PercentOutput, top_power);
-    feedRollers.set(ControlMode.PercentOutput, feed_power);
+    topRoller.set(VictorSPXControlMode.PercentOutput, top_power);
+    feedRollers.set(VictorSPXControlMode.PercentOutput, feed_power);
     
   }
 
