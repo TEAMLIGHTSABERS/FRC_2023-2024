@@ -94,6 +94,16 @@ public Command pickupNote() {
         return pickingUp;
   }
 
+  public void start(){
+    topRoller.set(ControlMode.PercentOutput, Constants.Intake.kTopPower);
+    feedRollers.set(ControlMode.PercentOutput, Constants.Intake.kFeedPower);
+  }
+
+  public void stop(){
+    topRoller.set(ControlMode.PercentOutput, 0.0);
+    feedRollers.set(ControlMode.PercentOutput, 0.0);
+  }
+
   public void setTopRoller(VictorSPXControlMode percentoutput, double topPower){
     topRoller.set(percentoutput, topPower);
   }

@@ -87,7 +87,7 @@ public final class DriveCommands {
 
     // create local parameters for the trajectory and robot angles
     edu.wpi.first.math.trajectory.Trajectory straightTrajectory;
-    double xPos = 2.0;
+    double xPos = 1.5;
     double yPos = 0.0; 
 
     // Create config for trajectory
@@ -141,10 +141,16 @@ public final class DriveCommands {
 
     // create local parameters for the trajectory and robot angles
     edu.wpi.first.math.trajectory.Trajectory straightTrajectory;
-    double startXPos = 2.0;
+    double startXPos = 1.0;
     double startYPos = 0.0;
     double finishXPos = 0.0;
-    double finishYPos = 0.0; 
+    double finishYPos = 0.0;
+    double deltaXPos = finishXPos-startXPos;
+    double deltaYPos = finishYPos-startYPos;
+    double xPosP1 = startXPos + deltaXPos/3;
+    double xPosP2 = startXPos + deltaXPos*2/3;
+    double yPosP1 = startYPos + deltaYPos/3;
+    double yPosP2 = startYPos + deltaYPos*2/3;
 
     // Create config for trajectory
     TrajectoryConfig config = new TrajectoryConfig(
@@ -157,12 +163,12 @@ public final class DriveCommands {
       // Create a straight trajectory to follow. All units in meters.
     straightTrajectory = TrajectoryGenerator.generateTrajectory(
         // Start at the origin facing the +X direction
-        new Pose2d(startXPos, startYPos, new Rotation2d(Math.toRadians(0))),
+        new Pose2d(startXPos, startYPos, new Rotation2d(Math.toRadians(180))),
         // Pass through these two interior waypoints, making an 's' curve path
-        List.of(new Translation2d((finishXPos-startXPos)/3, (finishYPos-startYPos)/3),
-                new Translation2d((finishXPos-startXPos)*2/3, (finishYPos-startYPos)*2/3)),
+        List.of(new Translation2d(xPosP1, yPosP1),
+                new Translation2d(xPosP2, yPosP2)),
         // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(finishXPos, finishYPos, new Rotation2d(Math.toRadians(0))), config
+        new Pose2d(finishXPos, finishYPos, new Rotation2d(Math.toRadians(180))), config
     );
 
     ProfiledPIDController thetaController = new ProfiledPIDController(

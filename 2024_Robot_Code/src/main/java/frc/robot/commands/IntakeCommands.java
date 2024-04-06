@@ -6,8 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-port frc.robot.Constants;
-
+import frc.robot.Constants;
 import frc.robot.subsystems.IntakeSubsystem;
 
 public final class IntakeCommands {
@@ -21,8 +20,8 @@ public final class IntakeCommands {
 *
 * @return The PickUp command
 */
-/*
-public Command pickupNoteAuto(IntakeSubsystem _Intake) {
+
+public static Command pickupNoteAuto(IntakeSubsystem _Intake) {
     Command pickingUp =
         new Command() {
           
@@ -33,12 +32,12 @@ public Command pickupNoteAuto(IntakeSubsystem _Intake) {
             m_timer = new Timer();
             m_timer.start();
             _Intake.start();
-            _Intake.setTopRoller.set(ControlMode.PercentOutput, Constants.Intake.kTopPower);
-            _Intake.setFeedRollers(ControlMode.PercentOutput, Constants.Intake.kFeedPower);
+            _Intake.periodic();
           }
 
           @Override
           public void execute() {
+            _Intake.periodic();
           }
 
           @Override
@@ -49,11 +48,10 @@ public Command pickupNoteAuto(IntakeSubsystem _Intake) {
           @Override
           public void end(boolean interrupted) {
             _Intake.stop();
-            topRoller.set(ControlMode.PercentOutput, 0.0);
-            feedRollers.set(ControlMode.PercentOutput, 0.0);
+            _Intake.periodic();
           }
         };
-*/
+
         return pickingUp;
   }
 

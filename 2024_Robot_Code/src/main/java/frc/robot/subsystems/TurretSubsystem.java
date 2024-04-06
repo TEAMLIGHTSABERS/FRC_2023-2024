@@ -33,7 +33,6 @@ public class TurretSubsystem extends SubsystemBase {
     private static double currentWenchPosition;
     private SparkPIDController elevationPIDCtrl;
     private static int inputDelayCtr;
-    private static Boolean resetEncoder;
 
     private static double kStartDeg, kHighShotDeg, kAmpDeg;
     private static double startDeg, highShotDeg, ampDeg;
@@ -61,8 +60,7 @@ public class TurretSubsystem extends SubsystemBase {
         currentWenchPosition = convertSelPosToWench(selectedPosition);
         commandedWenchPosition = currentWenchPosition;
         inputDelayCtr = 0;
-        resetEncoder = false;
-
+    
         // Turret status
         TurretTab = Shuffleboard.getTab("Turret Subsystem");
 
@@ -408,7 +406,6 @@ public class TurretSubsystem extends SubsystemBase {
                     selectPGainEntry.setDouble(kPGain);
                     selectFFGainEntry.setDouble(kFFGain);
 
-                    resetEncoder = true;
                     break;
             
                 case Constants.Turret.kStartID:
@@ -423,7 +420,6 @@ public class TurretSubsystem extends SubsystemBase {
                     selectPGainEntry.setDouble(kPGain);
                     selectFFGainEntry.setDouble(kFFGain);
 
-                    resetEncoder = true;
                     break;
             
                 default:

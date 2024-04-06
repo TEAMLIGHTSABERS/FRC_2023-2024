@@ -35,14 +35,17 @@ public final class Autos {
       TurretCommands.raiseTurretCommand(turretSys, Constants.Turret.kHighShotID),   // Raise Turret to Speaker Shot Position
       TurretCommands.timeDelay(3),                                        // Time delay prevents Turret & LaunchNote interference 
       LaunchCommands.launchNoteAuto(launchSys, intakeSys, turretSys),               // Shoot Note into Speaker
-      DriveCommands.straightAutoCommand11(driveSys));                               // move out of Zone to position (2, 0) m.                
+      TurretCommands.raiseTurretCommand(turretSys, Constants.Turret.kStartID),      // Raise Turret to Speaker Shot Position
+      DriveCommands.straightAutoCommand11(driveSys),                                // move out of Zone to position (1.5, 0) m.                
     
       // More Advanced CenterAuto pick up a second Note and shoots it.
-      //IntakeCommands.pickupNoteAuto(),                                              // Pickup the Note
-      //DriveCommands.straightAutoCommand13(driveSys),                                // move back to speaker (1, 0 180) m.                
-      //DriveCommands.straightAutoCommand14(driveSys),                                // move up to Speaker (0, 0 180) m.                
-      //TurretCommands.raiseTurretCommand(turretSys, Constants.Turret.kHighShotID),   // Raise Turret to Speaker Shot Position
-      //LaunchCommands.launchNoteAuto(launchSys, intakeSys, turretSys));              // Shoot Note into Speaker
+      IntakeCommands.pickupNoteAuto(intakeSys),                                     // Pickup the Note
+      DriveCommands.straightAutoCommand12(driveSys),                                // move back to speaker (1, 0 180) m.                
+      TurretCommands.raiseTurretCommand(turretSys, Constants.Turret.kHighShotID),   // Raise Turret to Speaker Shot Position
+      TurretCommands.timeDelay(3),                                        // Time delay prevents Turret & LaunchNote interference 
+      LaunchCommands.launchNoteAuto(launchSys, intakeSys, turretSys),               // Shoot Note into Speaker
+      TurretCommands.raiseTurretCommand(turretSys, Constants.Turret.kStartID),      // Raise Turret to Speaker Shot Position
+      DriveCommands.straightAutoCommand11(driveSys));                               // move out of Zone to position (1.5, 0) m.                
   }
 
   // Autonoumous Command for driving from the left side of the Speaker on the Red Alliance.
