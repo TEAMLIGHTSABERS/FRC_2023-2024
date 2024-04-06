@@ -211,6 +211,22 @@ public class LauncherSubsystem extends SubsystemBase {
 
   }
 
+  public void SetLCWR(double _LCWR){
+    leftCmdWheelRate = _LCWR;
+  }
+
+  public void SetRCWR(double _RCWR){
+    rightCmdWheelRate = _RCWR;
+  }
+
+  public void startFlyWheels(){
+    flyWheelsRunning = true;
+  }
+
+  public void stopFlyWheels(){
+    flyWheelsRunning = false;
+  }
+
 /**
 * Constructs a command that starts the launcher and then runs the Intake feeder
 * motor to put the Note up to the spinning launcher wheels. After a few more seconds
@@ -228,8 +244,8 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
           
           private Timer m_timer;
           private int CurrentTurretPosition;
-          private double saveRightCmdRPM;
-          private double saveLeftCmdRPM;
+          //private double saveRightCmdRPM;
+          //private double saveLeftCmdRPM;
 
           @Override
           public void initialize() {
@@ -237,8 +253,8 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
             CurrentTurretPosition = _Turret.getSelPosition();
 
             if (CurrentTurretPosition == Constants.Turret.kAmpID) {
-              saveLeftCmdRPM = leftCmdWheelRate;
-              saveRightCmdRPM = rightCmdWheelRate;
+              //saveLeftCmdRPM = leftCmdWheelRate;
+              //saveRightCmdRPM = rightCmdWheelRate;
               leftCmdWheelRate = Constants.Launcher.kAmpL;
               rightCmdWheelRate = Constants.Launcher.kAmpR;
 
@@ -246,26 +262,17 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
               rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
             }
             else if (CurrentTurretPosition == Constants.Turret.kHighShotID) {
-              saveLeftCmdRPM = leftCmdWheelRate;
-              saveRightCmdRPM = rightCmdWheelRate;
+              //saveLeftCmdRPM = leftCmdWheelRate;
+              //saveRightCmdRPM = rightCmdWheelRate;
               leftCmdWheelRate = Constants.Launcher.kHighShotL;
               rightCmdWheelRate = Constants.Launcher.kHighShotR;
 
               leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
               rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
             }
-             /*else if (CurrentTurretPosition == Constants.Turret.kSpeakerID) {
-              saveLeftCmdRPM = leftCmdWheelRate;
-              saveRightCmdRPM = rightCmdWheelRate;
-              leftCmdWheelRate = Constants.Launcher.kSpeakerL;
-              rightCmdWheelRate = Constants.Launcher.kSpeakerR;
-
-              leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
-              rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
-            }*/
-             else if (CurrentTurretPosition == Constants.Turret.kStartID) {
-              saveLeftCmdRPM = leftCmdWheelRate;
-              saveRightCmdRPM = rightCmdWheelRate;
+            else if (CurrentTurretPosition == Constants.Turret.kStartID) {
+              //saveLeftCmdRPM = leftCmdWheelRate;
+              //saveRightCmdRPM = rightCmdWheelRate;
               leftCmdWheelRate = Constants.Launcher.kStartL;
               rightCmdWheelRate = Constants.Launcher.kStartR;
 
@@ -305,12 +312,12 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
             flyWheelsRunning = false;
             _Intake.stopFeeder();
 
-            if (
+            /*if (
                 (CurrentTurretPosition == Constants.Turret.kAmpID)
-                ||
+                ||*/
                 /*(CurrentTurretPosition == Constants.Turret.kSpeakerID)
                 ||*/
-                (CurrentTurretPosition == Constants.Turret.kHighShotID)
+                /*(CurrentTurretPosition == Constants.Turret.kHighShotID)
                 ||
                 (CurrentTurretPosition == Constants.Turret.kStartID)
             )
@@ -320,7 +327,7 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
 
               leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
               rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
-            }
+            }*/
 
           }
         };

@@ -5,35 +5,22 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
+import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LauncherSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import java.util.List;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -47,27 +34,24 @@ public class RobotContainer {
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final LauncherSubsystem m_launcher = new LauncherSubsystem();
   private final TurretSubsystem m_turret = new TurretSubsystem();
-  private static final ExampleSubsystem ExampleSubsystem = new ExampleSubsystem();
-//  private ProfiledPIDController lastThetaController;
-//  private PIDController lastXAxisController;
-//  private PIDController lastYAxisController;
 
-  private static ShuffleboardTab launchTab; 
-
-    // A simple auto routine that drives forward a specified distance, and then stops.
-  private final Command m_simpleAuto = Autos.exampleAuto(ExampleSubsystem);
-
-   // Center position auto that shoots, goes to pick up another note, and then shoots again.
+  // Center position auto that shoots, goes to pick up another note, and then shoots again.
   private final Command m_centerAuto = Autos.centerAuto(m_robotDrive, m_launcher, m_intake, m_turret);
+
+  // Center position auto that shoots, goes to pick up another note, and then shoots again.
+  private final Command m_redLeftAuto = Autos.redLeftAuto(m_robotDrive, m_launcher, m_intake, m_turret);
+
+  // Center position auto that shoots, goes to pick up another note, and then shoots again.
+  private final Command m_blueRightAuto = Autos.blueRightAuto(m_robotDrive, m_launcher, m_intake, m_turret);
+
+  // Straight Auto moves the robot directly out of the zone a distance of 2.5 m.
+  private final Command m_StraightAuto = DriveCommands.straightAutoCommand1(m_robotDrive, 2.5, 0);
 
    /*// A simple auto routine that drives forward a specified distance, and then stops.
   private final Command m_leftAuto = Autos.leftAuto(m_robotDrive, m_launcher, m_intake, m_turret);
 
   // A simple auto routine that drives forward a specified distance, and then stops.
   private final Command m_rightAuto = Autos.rightAuto(m_robotDrive, m_launcher, m_intake, m_turret);*/
-
-  // A complex auto routine that drives forward, drops a hatch, and then drives backward.
-  private final Command m_complexAuto = sTurnAutoCommand();
 
   // A chooser for autonomous commands
   SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -79,26 +63,11 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
-    launchTab = Shuffleboard.getTab("Launcher Subsystem");
-    launchTab.add("Launcher Wheel Test", m_launcher.testFlyWheels());
+    SmartDashboard.putData("Launcher Wheel Test", m_launcher.testFlyWheels());
 
-  // Configure the trigger bindings
+    // Configure the trigger bindings
     configureButtonBindings();
 
-
-    // Add Button to SmartDashboard with a RunCommand that executes a "void" method/function.
-    SmartDashboard.putData("LUp-1000", 
-      new RunCommand(() -> m_launcher.raiseLCR1000(), m_launcher));
-
-    // Add Buttons to the SmartDashboard that executes a "command" methods/functions.
-    //SmartDashboard.putData("LUp-100", m_launcher.raiseLCR100());
-    //SmartDashboard.putData("LDn-1000", m_launcher.downLC1000());
-    //SmartDashboard.putData("LDn-100", m_launcher.downLC100());
-    //SmartDashboard.putData("RUp-1000", m_launcher.raiseRC1000());
-    //SmartDashboard.putData("RDn-1000", m_launcher.downRC1000());
-    //SmartDashboard.putData("RUp-100", m_launcher.raiseRC100());
-    //SmartDashboard.putData("RDn-100", m_launcher.downRC100());
-    
     // Configure default commands
     m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
@@ -122,13 +91,13 @@ public class RobotContainer {
         m_turret));
 
     // Add commands to the autonomous command chooser
-    m_chooser.setDefaultOption("Center Auto", m_centerAuto);
-    /*m_chooser.setDefaultOption("Left Auto", m_leftAuto);
-    m_chooser.setDefaultOption("Right Auto", m_rightAuto);*/
-    //m_chooser.addOption("Side Auto", m_simpleAuto);
-    //m_chooser.addOption("Field Auto", m_complexAuto);
+    m_chooser.setDefaultOption("Straight Auto", m_StraightAuto);
+    m_chooser.addOption("Red Auto", m_redLeftAuto);
+    m_chooser.addOption("Blue Auto", m_blueRightAuto);
+    m_chooser.addOption("Center Auto", m_centerAuto);
+ 
     SmartDashboard.putData("Auto Selection", m_chooser);
-//    SmartDashboard.putData(m_launcher);
+    SmartDashboard.putData("Launcher Commands", m_launcher);
 
     // Put the chooser on the dashboard
     Shuffleboard.getTab("Autonomous").add(m_chooser);
@@ -197,54 +166,4 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return m_chooser.getSelected();
   }
-
-  
-  public Command sTurnAutoCommand() {
-    // Create config for trajectory
-    TrajectoryConfig config = new TrajectoryConfig(
-        AutoConstants.kMaxSpeedMetersPerSecond,
-        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-        // Add kinematics to ensure max speed is actually obeyed
-        .setKinematics(DriveConstants.kDriveKinematics);
-
-    // An example trajectory to follow. All units in meters.
-    edu.wpi.first.math.trajectory.Trajectory sTurnTrajectory = TrajectoryGenerator.generateTrajectory(
-        // Start at the origin facing the +X direction
-        new Pose2d(0, 0, new Rotation2d(0)),
-        // Pass through these two interior waypoints, making an 's' curve path
-        List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
-        // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(3, 0, new Rotation2d(0)),
-        config);
-
-    ProfiledPIDController thetaController = new ProfiledPIDController(
-        AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
-    thetaController.enableContinuousInput(-Math.PI, Math.PI);
-
-    PIDController xAxisController = new PIDController(AutoConstants.kPXController, 0, 0);
-    PIDController yAxisController = new PIDController(AutoConstants.kPYController, 0, 0);
-
-    SendableRegistry.setName(thetaController, "Drive Subsystem", "Turret Azimuth");
-    SendableRegistry.setName(xAxisController, "Drive Subsystem", "X Axis");
-    SendableRegistry.setName(yAxisController, "Drive Subsystem", "Y Axis");
-
-    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-    sTurnTrajectory,
-    m_robotDrive::getPose, // Functional interface to feed supplier
-    DriveConstants.kDriveKinematics,
-
-    // Position controllers
-    xAxisController,
-    yAxisController,
-    thetaController,
-    m_robotDrive::setModuleStates,
-    m_robotDrive);
-
-    // Reset odometry to the starting pose of the trajectory.
-    m_robotDrive.resetOdometry(sTurnTrajectory.getInitialPose());
-
-    // Run path following command, then stop at the end.
-    return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false, false));
-  }
-
 }

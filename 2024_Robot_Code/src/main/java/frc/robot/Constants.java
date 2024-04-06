@@ -222,6 +222,7 @@ public final class Constants {
     public static final double kDriveDeadband = 0.05;
     public static final double kTriggerButtonThreshold = 0.25;
     public static final double kInputDelayTimedOut = 25; // Cycle Counts -> 0.5 sec
+    public static final double kDriveAngleDeadband = 5; // degrees
   }
 
   public static final class AutoConstants {

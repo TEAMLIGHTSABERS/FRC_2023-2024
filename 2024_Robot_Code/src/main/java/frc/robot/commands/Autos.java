@@ -4,108 +4,106 @@
 
 package frc.robot.commands;
 
-import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LauncherSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
 
-import java.util.List;
-
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 
 public final class Autos {
-  /** Example static factory for an autonomous command. */
-  public static Command exampleAuto(ExampleSubsystem subsystem) {
-    return Commands.sequence(subsystem.exampleMethodCommand(), new ExampleCommand(subsystem));
-  }
-
-  public static Command centerAuto(DriveSubsystem drivesys, LauncherSubsystem launchsys, IntakeSubsystem intakesys, TurretSubsystem turretsys) {
-    return Commands.sequence(straightAutoCommand(drivesys, 3));
-  }
-
-  /*public static Command centerAuto(DriveSubsystem drivesys, LauncherSubsystem launchsys, IntakeSubsystem intakesys, TurretSubsystem turretsys) {
-    return Commands.sequence(
-      launchsys.launchNote(intakesys, turretsys), 
-      straightAutoCommand(drivesys, 3), 
-      intakesys.pickupNote(), 
-      straightAutoCommand(drivesys, 3),
-      launchsys.launchNote(intakesys, turretsys));
-  }*/
-
-  /*public static Command leftAuto(DriveSubsystem drivesys, LauncherSubsystem launchsys, IntakeSubsystem intakesys, TurretSubsystem turretsys) {
-    return Commands.sequence(launchsys.launchNote(intakesys, turretsys), 
-      straightAutoCommand(drivesys, 3), 
-      intakesys.pickupNote(), 
-      straightAutoCommand(drivesys, -3),
-      launchsys.launchNote(intakesys, turretsys));
-  }
-
-  public static Command rightAuto(DriveSubsystem drivesys, LauncherSubsystem launchsys, IntakeSubsystem intakesys, TurretSubsystem turretsys) {
-    return Commands.sequence(launchsys.launchNote(intakesys, turretsys), 
-      straightAutoCommand(drivesys, 3), 
-      intakesys.pickupNote(), 
-      straightAutoCommand(drivesys, -3),
-      launchsys.launchNote(intakesys, turretsys));
-  }*/
-
-  public static Command straightAutoCommand(DriveSubsystem drivesys, double xpose) {
-    // Create config for trajectory
-    TrajectoryConfig config = new TrajectoryConfig(
-        AutoConstants.kMaxSpeedMetersPerSecond,
-        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-        // Add kinematics to ensure max speed is actually obeyed
-        .setKinematics(DriveConstants.kDriveKinematics);
-
-    // An example trajectory to follow. All units in meters.
-    edu.wpi.first.math.trajectory.Trajectory sTurnTrajectory = TrajectoryGenerator.generateTrajectory(
-        // Start at the origin facing the +X direction
-        new Pose2d(0, 0, new Rotation2d(Math.toRadians(0))),
-        // Pass through these two interior waypoints, making an 's' curve path
-        List.of(new Translation2d(xpose/3, 0), new Translation2d(xpose*2/3, 0)),
-        // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(xpose, 0, new Rotation2d(Math.toRadians(0))), config);
-
-    ProfiledPIDController thetaController = new ProfiledPIDController(
-        AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
-    thetaController.enableContinuousInput(-Math.PI, Math.PI);
-
-    PIDController xAxisController = new PIDController(AutoConstants.kPXController, 0, 0);
-    PIDController yAxisController = new PIDController(AutoConstants.kPYController, 0, 0);
-
-    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-    sTurnTrajectory,
-    drivesys::getPose, // Functional interface to feed supplier
-    DriveConstants.kDriveKinematics,
-
-    // Position controllers
-    xAxisController,
-    yAxisController,
-    thetaController,
-    drivesys::setModuleStates,
-    drivesys);
-
-    // Reset odometry to the starting pose of the trajectory.
-    drivesys.resetOdometry(sTurnTrajectory.getInitialPose());
-
-    // Run path following command, then stop at the end.
-    return swerveControllerCommand.andThen(() -> drivesys.drive(0, 0, 0, false, false));
-  }
-
   private Autos() {
     throw new UnsupportedOperationException("This is a utility class!");
   }
 
+
+  // Autonoumous Command for driving from the center of the Speaker.
+  public static Command centerAuto
+  (
+    DriveSubsystem driveSys,
+    LauncherSubsystem launchSys,
+    IntakeSubsystem intakeSys,
+    TurretSubsystem turretSys
+  )
+  {
+    return Commands.sequence(
+      // This command assumes that the robot is aligned to 0 heading along +x axis pointing towards the opposing
+      // Alliance station and the Robot is rotated to 180 degrees before the team leaves the field.
+      // Starting position (0, 0, 180).
+      TurretCommands.raiseTurretCommand(turretSys, Constants.Turret.kHighShotID),   // Raise Turret to Speaker Shot Position
+      TurretCommands.timeDelay(3),                                        // Time delay prevents Turret & LaunchNote interference 
+      LaunchCommands.launchNoteAuto(launchSys, intakeSys, turretSys),               // Shoot Note into Speaker
+      TurretCommands.raiseTurretCommand(turretSys, Constants.Turret.kStartID),      // Raise Turret to Speaker Shot Position
+      DriveCommands.straightAutoCommand11(driveSys),                                // move out of Zone to position (1.0, 0) m.                
+    
+      // More Advanced CenterAuto pick up a second Note and shoots it.
+      IntakeCommands.pickupNoteAuto(intakeSys),                                     // Pickup the Note
+      DriveCommands.straightAutoCommand12(driveSys),                                // move back to speaker (0, 0 180) m.                
+      TurretCommands.raiseTurretCommand(turretSys, Constants.Turret.kHighShotID),   // Raise Turret to Speaker Shot Position
+      TurretCommands.timeDelay(3),                                        // Time delay prevents Turret & LaunchNote interference 
+      LaunchCommands.launchNoteAuto(launchSys, intakeSys, turretSys),               // Shoot Note into Speaker
+      TurretCommands.raiseTurretCommand(turretSys, Constants.Turret.kStartID),      // Raise Turret to Speaker Shot Position
+      DriveCommands.straightAutoCommand11(driveSys));                               // move out of Zone to position (1.0, 0) m.                
+  }
+
+  // Autonoumous Command for driving from the left side of the Speaker on the Red Alliance.
+  public static Command redLeftAuto
+  (
+    DriveSubsystem driveSys,
+    LauncherSubsystem launchSys,
+    IntakeSubsystem intakeSys,
+    TurretSubsystem turretSys
+  )
+  {
+    return Commands.sequence(
+      // Assumes that you align 0 heading along +x towards the opposing Alliance
+      // and Robot get rotated to -135 degrees before the team leaves the field.
+      // Starting position (0, 0, -135).
+      TurretCommands.raiseTurretCommand(turretSys, Constants.Turret.kHighShotID),  // Raise Turret to Speaker Shot Position
+      TurretCommands.timeDelay(3),                                       // Time delay prevents Turret & LaunchNote interference
+      LaunchCommands.launchNoteAuto(launchSys, intakeSys, turretSys),              // Shoot Note into Speaker
+      TurretCommands.raiseTurretCommand(turretSys, Constants.Turret.kStartID),     // Drop the Turret to the Start Position
+      DriveCommands.straightAutoCommand21(driveSys));                              // move out of Zone to position (3, 3,  -135).                
+
+      // More Advanced redLeftAuto picks up a second Note and shoots it.
+      //DriveCommands.straightAutoCommand21Alt(driveSys));                            // moves to Field Note at (2, 1, -180).                
+      //IntakeCommands.pickupNoteAuto(),                                              // Pickup the Note
+      //DriveCommands.straightAutoCommand13(driveSys),                                // move back to speaker (0, 0, -135).                
+      //TurretCommands.raiseTurretCommand(turretSys, Constants.Turret.kHighShotID),   // Raise Turret to Speaker Shot Position
+      //LaunchCommands.launchNoteAuto(launchSys, intakeSys, turretSys));              // Shoot Note into Speaker
+      //TurretCommands.raiseTurretCommand(turretSys, Constants.Turret.kStartID),      // Drop the Turret to the Start Position
+  }
+
+  // Autonoumous Command for driving from the right side of the Speaker on the Blue Alliance.
+  public static Command blueRightAuto
+  (
+    DriveSubsystem driveSys,
+    LauncherSubsystem launchSys,
+    IntakeSubsystem intakeSys,
+    TurretSubsystem turretSys
+  )
+  {
+    return Commands.sequence(
+      // This command assumes that the robot is aligned to 0 heading along +x axis pointing towards the Red
+      // Alliance station.  The Robot is rotated to 135 degrees and placed against the right side of the 
+      // Speaker before the team leaves the field.
+      // Starting position (0, 0, 135).
+
+      TurretCommands.raiseTurretCommand(turretSys, Constants.Turret.kHighShotID),   // Raise Turret to Speaker Shot Position
+      TurretCommands.timeDelay(3),                                        // Time delay prevents Turret & LaunchNote interference
+      LaunchCommands.launchNoteAuto(launchSys, intakeSys, turretSys),               // Shoot Note into Speaker
+      TurretCommands.raiseTurretCommand(turretSys, Constants.Turret.kStartID),      // Drop the Turret to the Start Position
+      DriveCommands.straightAutoCommand31(driveSys));                               // move out of Zone to position (3, -3,  135).                
+
+      // More Advanced BlueRightAuto picks up a second Note and shoots it.
+      //DriveCommands.straightAutoCommand31Alt(driveSys));                            // moves to Field Note at (2, -1, 180).                
+      //IntakeCommands.pickupNoteAuto(),                                              // Pickup the Note
+      //DriveCommands.straightAutoCommand13(driveSys),                                // move back to speaker (0, 0, 135).                
+      //TurretCommands.raiseTurretCommand(turretSys, Constants.Turret.kHighShotID),   // Raise Turret to Speaker Shot Position
+      //TurretCommands.launchNoteAuto(launchSys, intakeSys, turretSys));              // Shoot Note into Speaker
+      //TurretCommands.raiseTurretCommand(turretSys, Constants.Turret.kStartID),      // Drop the Turret to the Start Position
+  }
 
 }
