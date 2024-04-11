@@ -65,6 +65,9 @@ public class RobotContainer {
 
     SmartDashboard.putData("Launcher Wheel Test", m_launcher.testFlyWheels());
 
+    // Add a button to reset the Gyro to Zero Heading
+    SmartDashboard.putData("Reset Gyro to Zero", DriveCommands.zeroHeadingCommand(m_robotDrive));
+
     // Configure the trigger bindings
     configureButtonBindings();
 
