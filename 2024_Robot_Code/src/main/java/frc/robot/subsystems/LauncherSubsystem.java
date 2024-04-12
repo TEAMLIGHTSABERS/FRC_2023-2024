@@ -23,7 +23,7 @@ public class LauncherSubsystem extends SubsystemBase {
   private ShuffleboardTab launchTab;
 //  private GenericEntry leftCmdWheelRateEntry;
   private GenericEntry leftPwrWheelRPMEntry;
-  private GenericEntry rightCmdWheelRateEntry;
+//  private GenericEntry rightCmdWheelRateEntry;
   private GenericEntry rightPwrWheelRPMEntry;
 
   private double kMaxOutput, kMinOutput;
@@ -61,18 +61,16 @@ public class LauncherSubsystem extends SubsystemBase {
 
     // Initialize the Turret's tunable parameters to their default constants
     SmartDashboard.putNumber("Left Cmd Wheel Rate", leftCmdWheelRate);
+    SmartDashboard.putNumber("Right Cmd Wheel Rate", rightCmdWheelRate);
     launchTab = Shuffleboard.getTab("Launcher Subsystem");
     leftPwrWheelRPMEntry = launchTab
       .add("Left Power Wheel RPM", Constants.Launcher.kStartL).getEntry();
-    rightCmdWheelRateEntry = launchTab
-      .add("Right Cmd Wheel Rate", Constants.Launcher.kStartR).getEntry();
     rightPwrWheelRPMEntry = launchTab
       .add("Right Power Wheel RPM", Constants.Launcher.kStartR).getEntry();
 
     flyWheelsRunning = false;
 
     leftPwrWheelRPMEntry.setDouble(0.0);
-    rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
     rightPwrWheelRPMEntry.setDouble(0.0);
 
     // Set SparkMax motor limits
@@ -216,6 +214,7 @@ public class LauncherSubsystem extends SubsystemBase {
 
   public void SetRCWR(double _RCWR){
     rightCmdWheelRate = _RCWR;
+    SmartDashboard.putNumber("Right Cmd Wheel Rate", rightCmdWheelRate);
   }
 
   public void startFlyWheels(){
@@ -256,21 +255,21 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
               rightCmdWheelRate = Constants.Launcher.kAmpR;
 
               SmartDashboard.putNumber("Left Cmd Wheel Rate", leftCmdWheelRate);
-              rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
+              SmartDashboard.putNumber("Right Cmd Wheel Rate", rightCmdWheelRate);
             }
             else if (CurrentTurretPosition == Constants.Turret.kHighShotID) {
               leftCmdWheelRate = Constants.Launcher.kHighShotL;
               rightCmdWheelRate = Constants.Launcher.kHighShotR;
 
               SmartDashboard.putNumber("Left Cmd Wheel Rate", leftCmdWheelRate);
-              rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
+              SmartDashboard.putNumber("Right Cmd Wheel Rate", rightCmdWheelRate);
             }
             else if (CurrentTurretPosition == Constants.Turret.kStartID) {
               leftCmdWheelRate = Constants.Launcher.kStartL;
               rightCmdWheelRate = Constants.Launcher.kStartR;
 
               SmartDashboard.putNumber("Left Cmd Wheel Rate", leftCmdWheelRate);
-              rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
+              SmartDashboard.putNumber("Right Cmd Wheel Rate", rightCmdWheelRate);
             }
 
             flyWheelsRunning = true;
@@ -442,7 +441,7 @@ public Command raiseRC1000(){
       public void initialize() {
         /* Start the Launcher Wheels and the Launch timer. */
         rightCmdWheelRate += 1000; 
-        rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
+        SmartDashboard.putNumber("Right Cmd Wheel Rate", rightCmdWheelRate);
        }
 
       @Override
@@ -467,7 +466,7 @@ public Command raiseRC100(){
       public void initialize() {
         /* Start the Launcher Wheels and the Launch timer. */
         rightCmdWheelRate += 100; 
-        rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
+        SmartDashboard.putNumber("Right Cmd Wheel Rate", rightCmdWheelRate);
        }
 
       @Override
@@ -492,7 +491,7 @@ public Command downRC1000(){
       public void initialize() {
         /* Start the Launcher Wheels and the Launch timer. */
         rightCmdWheelRate -= 1000; 
-        rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
+        SmartDashboard.putNumber("Right Cmd Wheel Rate", rightCmdWheelRate);
        }
 
       @Override
@@ -517,7 +516,7 @@ public Command downRC100(){
       public void initialize() {
         /* Start the Launcher Wheels and the Launch timer. */
         rightCmdWheelRate -= 100; 
-        rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
+        SmartDashboard.putNumber("Right Cmd Wheel Rate", rightCmdWheelRate);
        }
 
       @Override
