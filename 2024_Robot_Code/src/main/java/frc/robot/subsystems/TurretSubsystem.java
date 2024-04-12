@@ -19,12 +19,7 @@ import frc.robot.Constants;
 public class TurretSubsystem extends SubsystemBase {
     // Class variables
     private ShuffleboardTab TurretTab;
-    private GenericEntry selectZeroEntry;
-    //private GenericEntry selectOneEntry;
-    private GenericEntry selectTwoEntry;
-    private GenericEntry selectThreeEntry;
-    private GenericEntry selectFFGainEntry;
-    private GenericEntry selectPGainEntry;
+//    private GenericEntry selectPGainEntry;
     private GenericEntry currSelPosEntry;
     private GenericEntry currWenchPosEntry;
 
@@ -36,8 +31,8 @@ public class TurretSubsystem extends SubsystemBase {
 
     private static double kStartDeg, kHighShotDeg, kAmpDeg;
     private static double startDeg, highShotDeg, ampDeg;
-    private static double kFFGain, fFGain, saveFFGain;
-    private static double kPGain, pGain, savePGain;
+    private static double kHighShotFFGainUp;
+    private static double kHighShotPGainUp;
 
     // Class Hardware
     private CANSparkMax elevationMotor;
@@ -50,10 +45,8 @@ public class TurretSubsystem extends SubsystemBase {
         kStartDeg = Constants.Turret.kStartPosition;
         kHighShotDeg = Constants.Turret.kHighShotPosition; //Speaker
         kAmpDeg = Constants.Turret.kAmpPosition;
-        kFFGain = Constants.Turret.kVEGainStartUp;
-        kPGain = Constants.Turret.kPEGainStartUp;
-        saveFFGain = Constants.Turret.kVEGainStartUp;
-        savePGain = Constants.Turret.kPEGainStartUp;
+        kHighShotFFGainUp = Constants.Turret.kVEGainStartUp;
+        kHighShotPGainUp = Constants.Turret.kPEGainStartUp;
 
         // Initialize operational variables
         selectedPosition = 0; // Hanging Position
@@ -61,19 +54,14 @@ public class TurretSubsystem extends SubsystemBase {
         commandedWenchPosition = currentWenchPosition;
         inputDelayCtr = 0;
     
-        // Turret status
+        // Initialize the Turret's tunable parameters to their default constants
         TurretTab = Shuffleboard.getTab("Turret Subsystem");
 
-        selectZeroEntry = TurretTab
-        .add("Sel 0 Pos", kStartDeg).getEntry();
-        selectTwoEntry = TurretTab
-        .add("Sel 2 Pos", kHighShotDeg).getEntry();
-        selectThreeEntry = TurretTab
-        .add("Sel 3 Pos", kAmpDeg).getEntry();
-        selectFFGainEntry = TurretTab
-        .add("Sel FF Gain", kFFGain).getEntry();
-        selectPGainEntry = TurretTab
-        .add("Sel P Gain", kPGain).getEntry();
+        SmartDashboard.putNumber("Sel 0 Pos", kStartDeg);
+        SmartDashboard.putNumber("Sel 2 Pos", kHighShotDeg);
+        SmartDashboard.putNumber("Sel 3 Pos", kAmpDeg);
+        SmartDashboard.putNumber("High Shot FF Gain Up", kHighShotFFGainUp);
+        SmartDashboard.putNumber("High Shot P Gain Up", kHighShotPGainUp);
 
         currSelPosEntry = TurretTab
         .add("Current Selected Position", kStartDeg).getEntry();
@@ -90,7 +78,7 @@ public class TurretSubsystem extends SubsystemBase {
         new CANSparkMax(Constants.Turret.kTurCanId, CANSparkLowLevel.MotorType.kBrushless);
 
         elevationMotor.setInverted(false );
-        elevationMotor.setSmartCurrentLimit((int) kFFGain);
+        elevationMotor.setSmartCurrentLimit((int) kHighShotFFGainUp);
         elevationMotor.setIdleMode(IdleMode.kBrake);
 
         elevationRelEncoder = elevationMotor.getEncoder();
@@ -100,10 +88,10 @@ public class TurretSubsystem extends SubsystemBase {
 
 
         elevationPIDCtrl = elevationMotor.getPIDController();
-        elevationPIDCtrl.setP(kPGain);
+        elevationPIDCtrl.setP(kHighShotPGainUp);
         elevationPIDCtrl.setI(Constants.Turret.kIEController);
         elevationPIDCtrl.setD(Constants.Turret.kDEController);
-        elevationPIDCtrl.setFF(kFFGain);
+        elevationPIDCtrl.setFF(kHighShotFFGainUp);
         elevationPIDCtrl.setFeedbackDevice(elevationRelEncoder);
         elevationPIDCtrl.setOutputRange(-1, 1); 
 
@@ -171,7 +159,7 @@ public class TurretSubsystem extends SubsystemBase {
         new Command() {
         @Override
         public void initialize() {
-            startDeg = selectZeroEntry.getDouble(kStartDeg); 
+            startDeg = SmartDashboard.getNumber("Sel 0 Pos", kStartDeg);
             kStartDeg = startDeg;
         }
 
@@ -195,7 +183,7 @@ public class TurretSubsystem extends SubsystemBase {
         new Command() {
         @Override
         public void initialize() {
-            highShotDeg = selectTwoEntry.getDouble(kHighShotDeg); 
+            highShotDeg = SmartDashboard.getNumber("Sel 2 Pos", kHighShotDeg);
             kHighShotDeg = highShotDeg;
         }
 
@@ -219,7 +207,7 @@ public class TurretSubsystem extends SubsystemBase {
         new Command() {
         @Override
         public void initialize() {
-            ampDeg = selectThreeEntry.getDouble(kAmpDeg); 
+            ampDeg = SmartDashboard.getNumber("Sel 3 Pos", kAmpDeg);
             kAmpDeg = ampDeg;
         }
 
@@ -242,9 +230,9 @@ public class TurretSubsystem extends SubsystemBase {
         new Command() {
         @Override
         public void initialize() {
-            fFGain = selectFFGainEntry.getDouble(kFFGain); 
-            kFFGain = fFGain;
-            elevationPIDCtrl.setFF(kFFGain);
+            double highShotFFGainUp = SmartDashboard.getNumber("High Shot FF Gain Up", kHighShotFFGainUp);
+            kHighShotFFGainUp = highShotFFGainUp;
+            elevationPIDCtrl.setFF(kHighShotFFGainUp);
         }
 
         @Override
@@ -266,9 +254,9 @@ public class TurretSubsystem extends SubsystemBase {
         new Command() {
         @Override
         public void initialize() {
-            pGain = selectPGainEntry.getDouble(kPGain); 
-            kPGain = pGain;
-            elevationPIDCtrl.setP(kPGain);
+            double highShotPGainUp = SmartDashboard.getNumber("High Shot P Gain Up", kHighShotPGainUp);
+            kHighShotPGainUp = highShotPGainUp;
+            elevationPIDCtrl.setP(kHighShotPGainUp);
         }
 
         @Override
@@ -338,43 +326,32 @@ public class TurretSubsystem extends SubsystemBase {
 
             switch (selectedPosition) {
                 case Constants.Turret.kHighShotID:
-                    savePGain = selectPGainEntry.getDouble(kPGain);
-                    saveFFGain = selectFFGainEntry.getDouble(kFFGain);
 
-                    kPGain = Constants.Turret.kPEGainHighShotUp;
-                    kFFGain = Constants.Turret.kVEGainHighShotUp; 
-                    elevationPIDCtrl.setP(kPGain);
-                    elevationPIDCtrl.setFF(kFFGain);
+                    double highShotPGainUp = SmartDashboard.getNumber("High Shot P Gain Up", kHighShotPGainUp);
+                    double highShotFFGainUp = SmartDashboard.getNumber("High Shot FF Gain Up", kHighShotFFGainUp);
 
-                    selectPGainEntry.setDouble(kPGain);
-                    selectFFGainEntry.setDouble(kFFGain);
+                    kHighShotPGainUp = highShotPGainUp;
+                    kHighShotFFGainUp = highShotFFGainUp; 
+                    elevationPIDCtrl.setP(kHighShotPGainUp);
+                    elevationPIDCtrl.setFF(kHighShotFFGainUp);
+
                     break;
             
                 case Constants.Turret.kAmpID:
 
                     deflServo.set(Constants.Turret.kDeflON);
 
-                    savePGain = selectPGainEntry.getDouble(kPGain);
-                    saveFFGain = selectFFGainEntry.getDouble(kFFGain);
+                    kHighShotPGainUp = Constants.Turret.kPEGainAmpUp;
+                    kHighShotFFGainUp = Constants.Turret.kVEGainAmpUp; 
+                    elevationPIDCtrl.setP(kHighShotPGainUp);
+                    elevationPIDCtrl.setFF(kHighShotFFGainUp);
 
-                    kPGain = Constants.Turret.kPEGainAmpUp;
-                    kFFGain = Constants.Turret.kVEGainAmpUp; 
-                    elevationPIDCtrl.setP(kPGain);
-                    elevationPIDCtrl.setFF(kFFGain);
-
-                    selectPGainEntry.setDouble(kPGain);
-                    selectFFGainEntry.setDouble(kFFGain);
                     break;
             
                 default:
 
-                    kPGain = savePGain;
-                    kFFGain = saveFFGain; 
-                    elevationPIDCtrl.setP(kPGain);
-                    elevationPIDCtrl.setFF(kFFGain);
+                    // Do Nothing
 
-                    selectPGainEntry.setDouble(kPGain);
-                    selectFFGainEntry.setDouble(kFFGain);
                     break;
             }
 
@@ -395,42 +372,25 @@ public class TurretSubsystem extends SubsystemBase {
 
                     deflServo.set(Constants.Turret.kDeflOff);
 
-                    savePGain = selectPGainEntry.getDouble(kPGain);
-                    saveFFGain = selectFFGainEntry.getDouble(kFFGain);
-
-                    kPGain = Constants.Turret.kPEGainHighShotDown;
-                    kFFGain = Constants.Turret.kVEGainHighShotDown; 
-                    elevationPIDCtrl.setP(kPGain);
-                    elevationPIDCtrl.setFF(kFFGain);
-
-                    selectPGainEntry.setDouble(kPGain);
-                    selectFFGainEntry.setDouble(kFFGain);
+                    kHighShotPGainUp = Constants.Turret.kPEGainHighShotDown;
+                    kHighShotFFGainUp = Constants.Turret.kVEGainHighShotDown; 
+                    elevationPIDCtrl.setP(kHighShotPGainUp);
+                    elevationPIDCtrl.setFF(kHighShotFFGainUp);
 
                     break;
             
                 case Constants.Turret.kStartID:
-                    savePGain = selectPGainEntry.getDouble(kPGain);
-                    saveFFGain = selectFFGainEntry.getDouble(kFFGain);
-
-                    kPGain = Constants.Turret.kPEGainStartDown;
-                    kFFGain = Constants.Turret.kVEGainStartDown; 
-                    elevationPIDCtrl.setP(kPGain);
-                    elevationPIDCtrl.setFF(kFFGain);
-
-                    selectPGainEntry.setDouble(kPGain);
-                    selectFFGainEntry.setDouble(kFFGain);
+                    kHighShotPGainUp = Constants.Turret.kPEGainStartDown;
+                    kHighShotFFGainUp = Constants.Turret.kVEGainStartDown; 
+                    elevationPIDCtrl.setP(kHighShotPGainUp);
+                    elevationPIDCtrl.setFF(kHighShotFFGainUp);
 
                     break;
             
                 default:
                     
-                    kPGain = savePGain;
-                    kFFGain = saveFFGain; 
-                    elevationPIDCtrl.setP(kPGain);
-                    elevationPIDCtrl.setFF(kFFGain);
+                    // Do Nothing
 
-                    selectPGainEntry.setDouble(kPGain);
-                    selectFFGainEntry.setDouble(kFFGain);
                     break;
             }
 
