@@ -7,10 +7,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Servo;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -18,14 +15,10 @@ import frc.robot.Constants;
 
 public class TurretSubsystem extends SubsystemBase {
     // Class variables
-    private ShuffleboardTab TurretTab;
-//    private GenericEntry selectPGainEntry;
-    private GenericEntry currSelPosEntry;
-    private GenericEntry currWenchPosEntry;
 
     private static int selectedPosition;
     private static double commandedWenchPosition;
-    private static double currentWenchPosition;
+    private static double currElevMotorPos;
     private SparkPIDController elevationPIDCtrl;
     private static int inputDelayCtr;
 
@@ -50,29 +43,25 @@ public class TurretSubsystem extends SubsystemBase {
 
         // Initialize operational variables
         selectedPosition = 0; // Hanging Position
-        currentWenchPosition = convertSelPosToWench(selectedPosition);
-        commandedWenchPosition = currentWenchPosition;
+        currElevMotorPos = convertSelPosToWench(selectedPosition);
+        commandedWenchPosition = currElevMotorPos;
         inputDelayCtr = 0;
     
         // Initialize the Turret's tunable parameters to their default constants
-        TurretTab = Shuffleboard.getTab("Turret Subsystem");
-
         SmartDashboard.putNumber("Sel 0 Pos", kStartDeg);
         SmartDashboard.putNumber("Sel 2 Pos", kHighShotDeg);
         SmartDashboard.putNumber("Sel 3 Pos", kAmpDeg);
         SmartDashboard.putNumber("High Shot FF Gain Up", kHighShotFFGainUp);
         SmartDashboard.putNumber("High Shot P Gain Up", kHighShotPGainUp);
 
-        currSelPosEntry = TurretTab
-        .add("Current Selected Position", kStartDeg).getEntry();
-        currWenchPosEntry = TurretTab
-        .add("Current Turrent Position", currentWenchPosition).getEntry();
+        SmartDashboard.putNumber("Curr Sel Pos", selectedPosition);
+        SmartDashboard.putNumber("Curr Elev Motor Pos", currElevMotorPos);
 
-        TurretTab.add("Accept 0th", acceptZeroSetting());
-        TurretTab.add("Accept 2nd", acceptTwoSetting());
-        TurretTab.add("Accept 3rd", acceptThreeSetting());
-        TurretTab.add("Accept FFGain", acceptFFGainSetting());
-        TurretTab.add("Accept PGain", acceptPGainSetting());
+        SmartDashboard.putData("Accept 0th", acceptZeroSetting());
+        SmartDashboard.putData("Accept 2nd", acceptTwoSetting());
+        SmartDashboard.putData("Accept 3rd", acceptThreeSetting());
+        SmartDashboard.putData("Accept FF Gain High Shot Up", acceptFFGainSetting());
+        SmartDashboard.putData("Accept P Gain High Shot Up", acceptPGainSetting());
     
         elevationMotor =
         new CANSparkMax(Constants.Turret.kTurCanId, CANSparkLowLevel.MotorType.kBrushless);
@@ -120,34 +109,6 @@ public class TurretSubsystem extends SubsystemBase {
         }
     };
 
-    /**
-    * Command to move the Turret to a specified Position.
-    *
-    * @param ChangePosTo  The position indicator from the POV.
-    *                         Up is Speaker Position,
-    *                         Right is Amp position, and
-    *                         Down is Center Stand Positon.
-    */
-/*     public Command moveTo( (int) requestedPos) {
-        Command changePosTo = new Command(){
-            int currSelPos =getSelPos();
-            while(currSelPos != RequestedPos)
-            {
-                if(currSelPos < requestedPos){
-                    advancePOS();
-                }
-            }
-        }
-        if(upCommand){
-            advancePOS();
-        } else if (downCommand){
-            if (inputDelayCtr == Constants.OIConstants.kInputDelayTimedOut){
-                reducePOS();
-                inputDelayCtr = 0;
-            }
-        }
-    };
-*/
     /**
     * Constructs a command for a button that accepts the Gear position (in deg) 
     * for the Zeroth Turret Position.
@@ -278,16 +239,15 @@ public class TurretSubsystem extends SubsystemBase {
         }
 
         commandedWenchPosition = convertSelPosToWench(selectedPosition);
-        currentWenchPosition = elevationRelEncoder.getPosition();
+        currElevMotorPos = elevationRelEncoder.getPosition();
 
-        posError = commandedWenchPosition - currentWenchPosition;
+        posError = commandedWenchPosition - currElevMotorPos;
         elevationPIDCtrl.setReference(posError, ControlType.kPosition);
 
         // Add Launcher Power Wheel Rates to the Launcher Subsystem Tab on Shuffleboard.
-        currSelPosEntry.setInteger(selectedPosition);
-        currWenchPosEntry.setDouble(currentWenchPosition);
+        SmartDashboard.putNumber("Curr Sel Pos", selectedPosition);
+        SmartDashboard.putNumber("Curr Elev Motor Pos", currElevMotorPos);
         SmartDashboard.putNumber("Commanded Wench Position", commandedWenchPosition);
-        SmartDashboard.putNumber("Current Wench Position", currentWenchPosition);
 
     }
 
@@ -355,8 +315,7 @@ public class TurretSubsystem extends SubsystemBase {
                     break;
             }
 
-            currSelPosEntry.setInteger(selectedPosition);
-            SmartDashboard.putNumber("Selected Position", selectedPosition);
+            SmartDashboard.putNumber("Curr Sel Pos", selectedPosition);
         }
     }
 
@@ -394,8 +353,7 @@ public class TurretSubsystem extends SubsystemBase {
                     break;
             }
 
-            currSelPosEntry.setInteger(selectedPosition);
-            SmartDashboard.putNumber("Selected Position", selectedPosition);
+            SmartDashboard.putNumber("Curr Sel Pos", selectedPosition); 
         }
     }
 }
