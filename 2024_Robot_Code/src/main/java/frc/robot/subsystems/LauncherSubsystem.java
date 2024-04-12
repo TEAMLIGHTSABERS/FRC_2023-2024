@@ -12,6 +12,7 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -20,7 +21,7 @@ public class LauncherSubsystem extends SubsystemBase {
 
   
   private ShuffleboardTab launchTab;
-  private GenericEntry leftCmdWheelRateEntry;
+//  private GenericEntry leftCmdWheelRateEntry;
   private GenericEntry leftPwrWheelRPMEntry;
   private GenericEntry rightCmdWheelRateEntry;
   private GenericEntry rightPwrWheelRPMEntry;
@@ -54,11 +55,13 @@ public class LauncherSubsystem extends SubsystemBase {
   /** Creates a new LauncherSubsystem. */
   public LauncherSubsystem() {
 
-    // Set private holding variables: -----------------------------------------------------|
-    // launcher status
+    // current running power
+    leftCmdWheelRate = Constants.Launcher.kStartL;
+    rightCmdWheelRate = Constants.Launcher.kStartR;
+
+    // Initialize the Turret's tunable parameters to their default constants
+    SmartDashboard.putNumber("Left Cmd Wheel Rate", leftCmdWheelRate);
     launchTab = Shuffleboard.getTab("Launcher Subsystem");
-    leftCmdWheelRateEntry = launchTab
-      .add("Left Cmd Wheel Rate", Constants.Launcher.kStartL).getEntry();
     leftPwrWheelRPMEntry = launchTab
       .add("Left Power Wheel RPM", Constants.Launcher.kStartL).getEntry();
     rightCmdWheelRateEntry = launchTab
@@ -68,11 +71,6 @@ public class LauncherSubsystem extends SubsystemBase {
 
     flyWheelsRunning = false;
 
-    // current running power
-    leftCmdWheelRate = Constants.Launcher.kStartL;
-    rightCmdWheelRate = Constants.Launcher.kStartR;
-
-    leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
     leftPwrWheelRPMEntry.setDouble(0.0);
     rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
     rightPwrWheelRPMEntry.setDouble(0.0);
@@ -213,6 +211,7 @@ public class LauncherSubsystem extends SubsystemBase {
 
   public void SetLCWR(double _LCWR){
     leftCmdWheelRate = _LCWR;
+    SmartDashboard.putNumber("Left Cmd Wheel Rate", leftCmdWheelRate);
   }
 
   public void SetRCWR(double _RCWR){
@@ -253,30 +252,24 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
             CurrentTurretPosition = _Turret.getSelPosition();
 
             if (CurrentTurretPosition == Constants.Turret.kAmpID) {
-              //saveLeftCmdRPM = leftCmdWheelRate;
-              //saveRightCmdRPM = rightCmdWheelRate;
               leftCmdWheelRate = Constants.Launcher.kAmpL;
               rightCmdWheelRate = Constants.Launcher.kAmpR;
 
-              leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
+              SmartDashboard.putNumber("Left Cmd Wheel Rate", leftCmdWheelRate);
               rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
             }
             else if (CurrentTurretPosition == Constants.Turret.kHighShotID) {
-              //saveLeftCmdRPM = leftCmdWheelRate;
-              //saveRightCmdRPM = rightCmdWheelRate;
               leftCmdWheelRate = Constants.Launcher.kHighShotL;
               rightCmdWheelRate = Constants.Launcher.kHighShotR;
 
-              leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
+              SmartDashboard.putNumber("Left Cmd Wheel Rate", leftCmdWheelRate);
               rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
             }
             else if (CurrentTurretPosition == Constants.Turret.kStartID) {
-              //saveLeftCmdRPM = leftCmdWheelRate;
-              //saveRightCmdRPM = rightCmdWheelRate;
               leftCmdWheelRate = Constants.Launcher.kStartL;
               rightCmdWheelRate = Constants.Launcher.kStartR;
 
-              leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
+              SmartDashboard.putNumber("Left Cmd Wheel Rate", leftCmdWheelRate);
               rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
             }
 
@@ -349,7 +342,7 @@ public Command raiseLCR1000(){
       public void initialize() {
         /* Start the Launcher Wheels and the Launch timer. */
         leftCmdWheelRate += 1000; 
-        leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
+        SmartDashboard.putNumber("Left Cmd Wheel Rate", leftCmdWheelRate);
       }
 
       @Override
@@ -374,7 +367,7 @@ public Command raiseLCR100(){
       public void initialize() {
         /* Start the Launcher Wheels and the Launch timer. */
         leftCmdWheelRate += 100; 
-        leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
+        SmartDashboard.putNumber("Left Cmd Wheel Rate", leftCmdWheelRate);
       }
 
       @Override
@@ -399,7 +392,7 @@ public Command downLC1000(){
       public void initialize() {
         /* Start the Launcher Wheels and the Launch timer. */
         leftCmdWheelRate -= 1000; 
-        leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
+        SmartDashboard.putNumber("Left Cmd Wheel Rate", leftCmdWheelRate);
       }
 
       @Override
@@ -424,7 +417,7 @@ public Command downLC100(){
       public void initialize() {
         /* Start the Launcher Wheels and the Launch timer. */
         leftCmdWheelRate -= 100; 
-        leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
+        SmartDashboard.putNumber("Left Cmd Wheel Rate", leftCmdWheelRate);
        }
 
       @Override
