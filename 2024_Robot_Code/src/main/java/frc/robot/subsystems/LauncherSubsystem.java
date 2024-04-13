@@ -7,25 +7,15 @@ import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkBase.IdleMode;
 
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class LauncherSubsystem extends SubsystemBase {
-
   
-  private ShuffleboardTab launchTab;
-//  private GenericEntry leftCmdWheelRateEntry;
-  private GenericEntry leftPwrWheelRPMEntry;
-//  private GenericEntry rightCmdWheelRateEntry;
-  private GenericEntry rightPwrWheelRPMEntry;
-
   private double kMaxOutput, kMinOutput;
   public boolean flyWheelsRunning;
   
@@ -62,16 +52,10 @@ public class LauncherSubsystem extends SubsystemBase {
     // Initialize the Turret's tunable parameters to their default constants
     SmartDashboard.putNumber("Left Cmd Wheel Rate", leftCmdWheelRate);
     SmartDashboard.putNumber("Right Cmd Wheel Rate", rightCmdWheelRate);
-    launchTab = Shuffleboard.getTab("Launcher Subsystem");
-    leftPwrWheelRPMEntry = launchTab
-      .add("Left Power Wheel RPM", Constants.Launcher.kStartL).getEntry();
-    rightPwrWheelRPMEntry = launchTab
-      .add("Right Power Wheel RPM", Constants.Launcher.kStartR).getEntry();
+    SmartDashboard.putNumber("Left Power Wheel RPM", 0.0);
+    SmartDashboard.putNumber("Right Power Wheel RPM", 0.0);
 
     flyWheelsRunning = false;
-
-    leftPwrWheelRPMEntry.setDouble(0.0);
-    rightPwrWheelRPMEntry.setDouble(0.0);
 
     // Set SparkMax motor limits
     kMaxOutput = 1; 
@@ -665,9 +649,9 @@ public Command testFlyWheels() {
     m_preLeftLancherPIDCtrl.setReference(preLeftSetPoint, CANSparkMax.ControlType.kVelocity);
     m_preRightLancherPIDCtrl.setReference(preRightSetPoint, CANSparkMax.ControlType.kVelocity);
     
-    // Add Launcher Power Wheel Rates to the Launcher Subsystem Tab on Shuffleboard.
-    leftPwrWheelRPMEntry.setDouble(m_leftEncoder.getVelocity());
-    rightPwrWheelRPMEntry.setDouble(m_rightEncoder.getVelocity());
+    // Update the Launcher Power Wheel Rates on the SmartDashboard.
+    SmartDashboard.putNumber("Left Power Wheel RPM", m_leftEncoder.getVelocity());
+    SmartDashboard.putNumber("Right Power Wheel RPM", m_rightEncoder.getVelocity());
   }
 
   @Override
