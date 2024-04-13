@@ -287,24 +287,6 @@ public Command launchNote(IntakeSubsystem _Intake, TurretSubsystem _Turret) {
             /* Stop both the Launcher and the Intake feeder */
             flyWheelsRunning = false;
             _Intake.stopFeeder();
-
-            /*if (
-                (CurrentTurretPosition == Constants.Turret.kAmpID)
-                ||*/
-                /*(CurrentTurretPosition == Constants.Turret.kSpeakerID)
-                ||*/
-                /*(CurrentTurretPosition == Constants.Turret.kHighShotID)
-                ||
-                (CurrentTurretPosition == Constants.Turret.kStartID)
-            )
-            {
-              leftCmdWheelRate = saveLeftCmdRPM;
-              rightCmdWheelRate = saveRightCmdRPM;
-
-              leftCmdWheelRateEntry.setDouble(leftCmdWheelRate);
-              rightCmdWheelRateEntry.setDouble(rightCmdWheelRate);
-            }*/
-
           }
         };
 
