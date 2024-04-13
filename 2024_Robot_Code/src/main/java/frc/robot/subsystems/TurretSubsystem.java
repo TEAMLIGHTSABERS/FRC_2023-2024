@@ -17,7 +17,7 @@ public class TurretSubsystem extends SubsystemBase {
     // Class variables
 
     private static int selectedPosition;
-    private static double commandedWenchPosition;
+    private static double cmdedElevMotorPos;
     private static double currElevMotorPos;
     private SparkPIDController elevationPIDCtrl;
     private static int inputDelayCtr;
@@ -44,10 +44,10 @@ public class TurretSubsystem extends SubsystemBase {
         // Initialize operational variables
         selectedPosition = 0; // Hanging Position
         currElevMotorPos = convertSelPosToWench(selectedPosition);
-        commandedWenchPosition = currElevMotorPos;
+        cmdedElevMotorPos = currElevMotorPos;
         inputDelayCtr = 0;
     
-        // Initialize the Turret's tunable parameters to their default constants
+        // Initialize the Turret's SmartDashboard parameters to their default constants
         SmartDashboard.putNumber("Sel 0 Pos", kStartDeg);
         SmartDashboard.putNumber("Sel 2 Pos", kHighShotDeg);
         SmartDashboard.putNumber("Sel 3 Pos", kAmpDeg);
@@ -56,6 +56,7 @@ public class TurretSubsystem extends SubsystemBase {
 
         SmartDashboard.putNumber("Curr Sel Pos", selectedPosition);
         SmartDashboard.putNumber("Curr Elev Motor Pos", currElevMotorPos);
+        SmartDashboard.putNumber("Cmded Elev Motor Pos", cmdedElevMotorPos);
 
         SmartDashboard.putData("Accept 0th", acceptZeroSetting());
         SmartDashboard.putData("Accept 2nd", acceptTwoSetting());
@@ -63,6 +64,7 @@ public class TurretSubsystem extends SubsystemBase {
         SmartDashboard.putData("Accept FF Gain High Shot Up", acceptFFGainSetting());
         SmartDashboard.putData("Accept P Gain High Shot Up", acceptPGainSetting());
     
+        // Initialize Hardware
         elevationMotor =
         new CANSparkMax(Constants.Turret.kTurCanId, CANSparkLowLevel.MotorType.kBrushless);
 
@@ -238,16 +240,18 @@ public class TurretSubsystem extends SubsystemBase {
             inputDelayCtr++;
         }
 
-        commandedWenchPosition = convertSelPosToWench(selectedPosition);
+        cmdedElevMotorPos = convertSelPosToWench(selectedPosition);
         currElevMotorPos = elevationRelEncoder.getPosition();
 
-        posError = commandedWenchPosition - currElevMotorPos;
+        posError = cmdedElevMotorPos - currElevMotorPos;
         elevationPIDCtrl.setReference(posError, ControlType.kPosition);
 
         // Add Launcher Power Wheel Rates to the Launcher Subsystem Tab on Shuffleboard.
         SmartDashboard.putNumber("Curr Sel Pos", selectedPosition);
         SmartDashboard.putNumber("Curr Elev Motor Pos", currElevMotorPos);
-        SmartDashboard.putNumber("Commanded Wench Position", commandedWenchPosition);
+        SmartDashboard.putNumber("Cmded Elev Motor Pos", cmdedElevMotorPos);
+
+        SmartDashboard.putNumber("Commanded Wench Position", cmdedElevMotorPos);
 
     }
 
