@@ -118,5 +118,16 @@ public final class Autos {
 
   }
 
+  public static Command straightAutoTest
+  (
+    DriveSubsystem driveSys
+  )
+  {
+    return Commands.sequence(
+      // Alliance station.  The Robot is rotated to 0 degrees.
+      // Starting position (0, 0, 0).
+      DriveCommands.straightAutoCommand1(driveSys, 2.5, 0));                               // move out of Zone to position (2.5, 0, 0).                
+
+  }
 
 }
