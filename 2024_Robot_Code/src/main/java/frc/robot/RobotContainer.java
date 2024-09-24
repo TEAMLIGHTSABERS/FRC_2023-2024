@@ -47,6 +47,9 @@ public class RobotContainer {
   // Straight Auto moves the robot directly out of the zone a distance of 2.5 m.
   private final Command m_StraightAuto = DriveCommands.straightAutoCommand1(m_robotDrive, 2.5, 0);
 
+  // Center position auto that shoots, goes to pick up another note, and then shoots again.
+  private final Command m_testAuto = Autos.testAuto(m_robotDrive);
+
    /*// A simple auto routine that drives forward a specified distance, and then stops.
   private final Command m_leftAuto = Autos.leftAuto(m_robotDrive, m_launcher, m_intake, m_turret);
 
@@ -95,6 +98,7 @@ public class RobotContainer {
     m_chooser.addOption("Red Auto", m_redLeftAuto);
     m_chooser.addOption("Blue Auto", m_blueRightAuto);
     m_chooser.addOption("Center Auto", m_centerAuto);
+    m_chooser.addOption("Test Auto", m_testAuto);
  
     SmartDashboard.putData("Auto Selection", m_chooser);
     SmartDashboard.putData("Launcher Commands", m_launcher);

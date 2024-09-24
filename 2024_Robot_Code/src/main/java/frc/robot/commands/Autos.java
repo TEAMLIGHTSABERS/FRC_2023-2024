@@ -106,4 +106,17 @@ public final class Autos {
       //TurretCommands.raiseTurretCommand(turretSys, Constants.Turret.kStartID),      // Drop the Turret to the Start Position
   }
 
+  public static Command testAuto
+  (
+    DriveSubsystem driveSys
+  )
+  {
+    return Commands.sequence(
+      // Alliance station.  The Robot is rotated to -90 degrees.
+      // Starting position (0, 0, -90).
+      DriveCommands.autoTest1(driveSys, 4, 4));                               // move out of Zone to position (4, 4, -90).                
+
+  }
+
+
 }
