@@ -14,11 +14,28 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.utils.SwerveUtils;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.util.ReplanningConfig;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+//import com.pathplanner.lib.util.*;
+//import com.pathplanner.lib.auto.*;
+//import com.pathplanner.lib.util.PIDConstants;nomicPathFollowerConfig;
+//import com.pathplanner.lib.auto.*;
+import com.pathplanner.lib.util.PIDConstants;
+
+
 public class DriveSubsystem extends SubsystemBase {
+
+  private final MAXSwerveModule[] modules;
+  private Field2d field = new Field2d();
+
   // Create MAXSwerveModules
   private final MAXSwerveModule m_frontLeft = new MAXSwerveModule(
       DriveConstants.kFrontLeftDrivingCanId,
@@ -65,6 +82,12 @@ public class DriveSubsystem extends SubsystemBase {
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
+    modules = new MAXSwerveModule[]{
+      m_frontLeft,
+      m_frontRight,
+      m_rearLeft,
+      m_rearRight
+    };
   }
 
   @Override
@@ -78,6 +101,8 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearLeft.getPosition(),
             m_rearRight.getPosition()
         });
+
+    field.setRobotPose(getPose());
   }
 
   /**
@@ -240,4 +265,82 @@ public class DriveSubsystem extends SubsystemBase {
   public double getTurnRate() {
     return m_gyro.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
   }
+
+/*
+ * Lines 17-19, 24-32, 35-38 are new, adding import and declaring methods, although there is a very serious question about the import on line 23.
+ * 
+ * Lines 85-90, & 104-105 are new, declaring the array of serve modules.
+ * 
+ * Lines 268-345 are also new, including this comment, used to configure everything needed for the autoBuilder.
+ * 
+ */
+
+  /**
+   * Returns the robot relative velocity.
+   *
+   * @return The robot relative velocity, in meters per second
+   */
+  public ChassisSpeeds getSpeeds() {
+    return DriveConstants.kDriveKinematics.toChassisSpeeds(getModuleStates());
+  }
+
+  public SwerveModuleState[] getModuleStates() {
+    SwerveModuleState[] states = new SwerveModuleState[4];
+    states[0] = m_frontLeft.getState();
+    states[1] = m_frontRight.getState();
+    states[2] = m_rearLeft.getState();
+    states[3] = m_rearRight.getState();
+
+    return states;
+  }
+
+  public void driveFieldRelative(ChassisSpeeds fieldRelativeSpeeds) {
+    driveRobotRelative(ChassisSpeeds.fromFieldRelativeSpeeds(fieldRelativeSpeeds, getPose().getRotation()));
+  }
+
+  public void driveRobotRelative(ChassisSpeeds robotRelativeSpeeds) {
+    ChassisSpeeds targetSpeeds = ChassisSpeeds.discretize(robotRelativeSpeeds, 0.02);
+
+    SwerveModuleState[] targetStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(targetSpeeds);
+    setStates(targetStates);
+  }
+
+  public void setStates(SwerveModuleState[] targetStates) {
+    SwerveDriveKinematics.desaturateWheelSpeeds(targetStates, Constants.DriveConstants.kMaxSpeedMetersPerSecond);
+
+    for (int i = 0; i < modules.length; i++) {
+      modules[i].setDesiredState(targetStates[i]);
+    }
+  }
+
+
+      // Configure AutoBuilder
+  public void BuilderConfigure(){
+    AutoBuilder.configureHolonomic(
+          this::getPose, // Robot pose supplier
+          this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
+          this::getSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+          this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+          new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+                  new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+                  new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
+                  4.5, // Max module speed, in m/s
+                  0.4, // Drive base radius in meters. Distance from robot center to furthest module.
+                  new ReplanningConfig() // Default path replanning config. See the API for the options here
+                  ),
+  
+          () -> {
+            // Boolean supplier that controls when the path will be mirrored for the red alliance
+            // This will flip the path being followed to the red side of the field.
+            // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+            var alliance = DriverStation.getAlliance();
+            if (alliance.isPresent()) {
+              return alliance.get() == DriverStation.Alliance.Red;
+            }
+            return false;
+          },
+          this // Reference to this subsystem to set requirements
+    );
+  };
 }
