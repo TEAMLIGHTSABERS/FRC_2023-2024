@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -50,9 +53,6 @@ public class RobotContainer {
   // Center position auto that shoots, goes to pick up another note, and then shoots again.
   private final Command m_testAuto = Autos.testAuto(m_robotDrive);
 
-  // Center position auto that shoots, goes to pick up another note, and then shoots again.
-  private final Command m_straightAutoTest = Autos.testAuto(m_robotDrive);
-
    /*// A simple auto routine that drives forward a specified distance, and then stops.
   private final Command m_leftAuto = Autos.leftAuto(m_robotDrive, m_launcher, m_intake, m_turret);
 
@@ -60,7 +60,8 @@ public class RobotContainer {
   private final Command m_rightAuto = Autos.rightAuto(m_robotDrive, m_launcher, m_intake, m_turret);*/
 
   // A chooser for autonomous commands
-  SendableChooser<Command> m_chooser = new SendableChooser<>();
+  //SendableChooser<Command> m_chooser = new SendableChooser<>();
+  private final SendableChooser<Command> autoChooser;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final XboxController m_driverController =
@@ -68,6 +69,9 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auto Chooser", autoChooser);
 
     SmartDashboard.putData("Launcher Wheel Test", m_launcher.testFlyWheels());
 
@@ -95,14 +99,13 @@ public class RobotContainer {
         (m_driverController).getRightBumperPressed(),
         ((m_driverController).getRightTriggerAxis() > Constants.OIConstants.kTriggerButtonThreshold)),
         m_turret));
-
+/*
     // Add commands to the autonomous command chooser
     m_chooser.setDefaultOption("Straight Auto", m_StraightAuto);
     m_chooser.addOption("Red Auto", m_redLeftAuto);
     m_chooser.addOption("Blue Auto", m_blueRightAuto);
     m_chooser.addOption("Center Auto", m_centerAuto);
     m_chooser.addOption("Test Auto", m_testAuto);
-    m_chooser.addOption("Straight Test Auto", m_straightAutoTest);
  
     SmartDashboard.putData("Auto Selection", m_chooser);
     SmartDashboard.putData("Launcher Commands", m_launcher);
@@ -115,6 +118,7 @@ public class RobotContainer {
     Shuffleboard.getTab("Intake Subsystem").add("Commands", m_intake);
     Shuffleboard.getTab("Launcher Subsystem").add("Commands", m_launcher);
     Shuffleboard.getTab("Turret Subsystem").add("Commands", m_turret);
+    */
   }
 
   /**
@@ -172,6 +176,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return m_chooser.getSelected();
+    //return m_chooser.getSelected();
+    return autoChooser.getSelected();
   }
 }
