@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.commands.FollowPathCommand;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -43,7 +45,9 @@ public class Robot extends TimedRobot {
     // Enable Test Mode and Live Window Diagnostics
     enableLiveWindowInTest(true);
 
-//    SmartDashboard.putData(CommandScheduler.getInstance());
+    // SmartDashboard.putData(CommandScheduler.getInstance());
+
+    FollowPathCommand.warmupCommand().schedule();
   }
 
   /**
