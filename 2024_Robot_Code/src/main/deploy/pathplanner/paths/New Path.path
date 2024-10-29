@@ -16,28 +16,12 @@
     },
     {
       "anchor": {
-        "x": 3.937247018573922,
-        "y": 6.0076591479859145
+        "x": 4.274144702135559,
+        "y": 5.0
       },
       "prevControl": {
-        "x": 4.156058046603919,
-        "y": 5.319961008144601
-      },
-      "nextControl": {
-        "x": 3.7184359905439237,
-        "y": 6.695357287827228
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 3.1409101334607787,
-        "y": 3.0682391749947553
-      },
-      "prevControl": {
-        "x": 2.141481041966385,
-        "y": 3.5818953748292444
+        "x": 3.257849592622263,
+        "y": 5.00254000508001
       },
       "nextControl": null,
       "isLocked": false,
@@ -49,7 +33,7 @@
   "eventMarkers": [
     {
       "name": "crossover1",
-      "waypointRelativePos": 0.4,
+      "waypointRelativePos": 0.2,
       "command": {
         "type": "sequential",
         "data": {
@@ -66,7 +50,7 @@
     },
     {
       "name": "crossover2",
-      "waypointRelativePos": 1.45,
+      "waypointRelativePos": 0.75,
       "command": {
         "type": "sequential",
         "data": {
