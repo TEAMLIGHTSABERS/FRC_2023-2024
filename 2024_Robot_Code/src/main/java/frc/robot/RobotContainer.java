@@ -127,6 +127,10 @@ public class RobotContainer {
     Shuffleboard.getTab("Launcher Subsystem").add("Commands", m_launcher);
     Shuffleboard.getTab("Turret Subsystem").add("Commands", m_turret);
     */
+
+    autoChooser.addOption("Test Auto", m_testAuto);
+    SmartDashboard.putData("Auto Selection", autoChooser);
+    SmartDashboard.putData("Launcher Commands", m_launcher);
   }
 
   /**
