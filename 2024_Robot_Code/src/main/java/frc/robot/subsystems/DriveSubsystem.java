@@ -90,6 +90,7 @@ public class DriveSubsystem extends SubsystemBase {
       m_rearLeft,
       m_rearRight
     };
+    BuilderConfigure();
   }
 
   @Override
