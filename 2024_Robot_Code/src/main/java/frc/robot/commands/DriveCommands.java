@@ -25,6 +25,29 @@ public final class DriveCommands {
     throw new UnsupportedOperationException("This is a utility class!");
   }
 
+  // This is the command funcition to reset the Gyro to zero Heading
+  // 1. Manually align the robot with the front faceing Opposing Alliance station.
+  // 2. Call this command function to reset the Gyro.
+  public static Command zeroHeadingCommand(DriveSubsystem driveSys) {
+    Command resetGyro = new Command(){
+
+      @Override
+      public void initialize() {
+        driveSys.zeroHeading();
+      }
+
+      @Override
+      public boolean isFinished() {
+        return true;
+      }
+    };
+
+    return resetGyro;
+  }
+
+
+
+
   //This is the basic command used to move the aligned robot along a stright line any direction having a +X.
   public static Command straightAutoCommand1(DriveSubsystem drivesys, double xPos, double yPos) {
     // This command assumes that the robot is aligned to 0 heading along +x axis pointing towards the opposing

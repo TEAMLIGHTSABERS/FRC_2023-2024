@@ -6,7 +6,6 @@ package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.OIConstants;
@@ -35,40 +34,33 @@ public class RobotContainer {
   private final LauncherSubsystem m_launcher = new LauncherSubsystem();
   private final TurretSubsystem m_turret = new TurretSubsystem();
 
-  // Center position auto that shoots, goes to pick up another note, and then shoots again.
+  // Autonomous Commands.
   private final Command m_centerAuto = Autos.centerAuto(m_robotDrive, m_launcher, m_intake, m_turret);
-
-  // Center position auto that shoots, goes to pick up another note, and then shoots again.
   private final Command m_redLeftAuto = Autos.redLeftAuto(m_robotDrive, m_launcher, m_intake, m_turret);
-
-  // Center position auto that shoots, goes to pick up another note, and then shoots again.
   private final Command m_blueRightAuto = Autos.blueRightAuto(m_robotDrive, m_launcher, m_intake, m_turret);
-
-  // Straight Auto moves the robot directly out of the zone a distance of 2.5 m.
   private final Command m_StraightAuto = DriveCommands.straightAutoCommand1(m_robotDrive, 2.5, 0);
-
-   /*// A simple auto routine that drives forward a specified distance, and then stops.
-  private final Command m_leftAuto = Autos.leftAuto(m_robotDrive, m_launcher, m_intake, m_turret);
-
-  // A simple auto routine that drives forward a specified distance, and then stops.
-  private final Command m_rightAuto = Autos.rightAuto(m_robotDrive, m_launcher, m_intake, m_turret);*/
 
   // A chooser for autonomous commands
   SendableChooser<Command> m_chooser = new SendableChooser<>();
 
-  // Replace with CommandPS4Controller or CommandJoystick if needed
+  // Driver Controller 
   private final XboxController m_driverController =
       new XboxController(OperatorConstants.kDriverControllerPort);
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  /** Constructor to Initialize the container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
+    // Add Buttons to the Robot dashboard
+    // Add a button to reset the Gyro to Zero Heading
+    SmartDashboard.putData("Reset Gyro to Zero", DriveCommands.zeroHeadingCommand(m_robotDrive));
+    // Add a button to reset Test the Launcher Wheels (move to Launcher Tab)
     SmartDashboard.putData("Launcher Wheel Test", m_launcher.testFlyWheels());
 
     // Configure the trigger bindings
     configureButtonBindings();
 
     // Configure default commands
+    //     Robot Drive System
     m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
         // Turning is controlled by the X axis of the right stick.
@@ -80,11 +72,13 @@ public class RobotContainer {
                 true, true),
             m_robotDrive));
 
+    //     Intake System
     m_intake.setDefaultCommand(new RunCommand(() -> m_intake.setPower(0.0, 0.0), m_intake));
 
-    // configure the launcher to stop when no other command is running
+    //     Launcher System
     m_launcher.setDefaultCommand(new RunCommand(() -> m_launcher.stopLauncher(), m_launcher));
 
+    //     Turret System System
     m_turret.setDefaultCommand(new RunCommand(() -> m_turret.driveWench(
         (m_driverController).getRightBumperPressed(),
         ((m_driverController).getRightTriggerAxis() > Constants.OIConstants.kTriggerButtonThreshold)),
@@ -96,17 +90,17 @@ public class RobotContainer {
     m_chooser.addOption("Blue Auto", m_blueRightAuto);
     m_chooser.addOption("Center Auto", m_centerAuto);
  
+    // Add Autonomous Selector to the dashboard
     SmartDashboard.putData("Auto Selection", m_chooser);
+    // Add Commands for the Launcher to the dashboard (move to Launcher Tab)
     SmartDashboard.putData("Launcher Commands", m_launcher);
+    // Add Commands for the Intake to the dashboard (move to Intake Tab)
+    SmartDashboard.putData("Intake Commands", m_intake);
+    // Add Commands for the Turret to the dashboard (move to Turret Tab)
+    SmartDashboard.putData("Turret Commands", m_turret);
+    // Add Commands for the Drive System to the dashboard (move to Drive Tab)
+    SmartDashboard.putData("Drive Commands", m_robotDrive);
 
-    // Put the chooser on the dashboard
-    Shuffleboard.getTab("Autonomous").add(m_chooser);
-
-    // Put subsystems to dashboard.
-    Shuffleboard.getTab("Drivetrain").add("Commands", m_robotDrive);
-    Shuffleboard.getTab("Intake Subsystem").add("Commands", m_intake);
-    Shuffleboard.getTab("Launcher Subsystem").add("Commands", m_launcher);
-    Shuffleboard.getTab("Turret Subsystem").add("Commands", m_turret);
   }
 
   /**
@@ -122,17 +116,6 @@ public class RobotContainer {
     // button to put swerve modules in an "x" configuration to hold position
     new JoystickButton(m_driverController, XboxController.Button.kLeftStick.value)
         .whileTrue(new RunCommand(() -> m_robotDrive.setX(), m_robotDrive));
-
-    // Turret Controls ----------------------------------------------------------
-    // Right Trigger will Raise the Launcher elevation.    
-//    new Trigger(
-//            () -> ((XboxController) m_driverController).getRightTriggerAxis()
-//            > Constants.OIConstants.kTriggerButtonThreshold)
-///        .onTrue(new RunCommand(() -> m_turret.reducePOS()));
-
-    // Right Bumper will Lower the Launcher elevation
-//    new JoystickButton(m_driverController, XboxController.Button.kRightBumper.value)
-//        .onTrue(new RunCommand(() -> m_turret.advancePOS()));
 
     // Intake Controls ----------------------------------------------------------
     // Left Trigger will start the Intake and pickup a Note
