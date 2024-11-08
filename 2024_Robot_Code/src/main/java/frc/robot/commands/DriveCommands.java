@@ -110,7 +110,7 @@ public final class DriveCommands {
 
     // create local parameters for the trajectory and robot angles
     edu.wpi.first.math.trajectory.Trajectory straightTrajectory;
-    double xPos = 1.5;
+    double xPos = 1.4;
     double yPos = 0.0; 
 
     // Create config for trajectory
