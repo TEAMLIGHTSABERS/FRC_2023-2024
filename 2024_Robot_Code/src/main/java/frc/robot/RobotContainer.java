@@ -7,7 +7,7 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.PathPlannerPath; //Only needed for on-the-fly pathplanning
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -54,7 +54,7 @@ public class RobotContainer {
   // Straight Auto moves the robot directly out of the zone a distance of 2.5 m.
   private final Command m_StraightAuto = DriveCommands.straightAutoCommand1(m_robotDrive, 2.5, 0);
 
-  // Center position auto that shoots, goes to pick up another note, and then shoots again.
+  // Test auto for Pathplanner; drives straight
   private final Command m_testAuto = Autos.testAuto(m_robotDrive);
 
    /*// A simple auto routine that drives forward a specified distance, and then stops.
@@ -127,10 +127,11 @@ public class RobotContainer {
     Shuffleboard.getTab("Launcher Subsystem").add("Commands", m_launcher);
     Shuffleboard.getTab("Turret Subsystem").add("Commands", m_turret);
     */
-
+/*
     autoChooser.addOption("Test Auto", m_testAuto);
     SmartDashboard.putData("Auto Selection", autoChooser);
     SmartDashboard.putData("Launcher Commands", m_launcher);
+    */
   }
 
   /**
@@ -180,6 +181,8 @@ public class RobotContainer {
     // "X" Button will run the Launcher Flywheels for 5 seconds
     new JoystickButton(m_driverController, XboxController.Button.kX.value)
         .onTrue(m_launcher.testFlyWheels());
+
+    SmartDashboard.putData("New Auto", new PathPlannerAuto("New Auto"));
   }
 
  /**
@@ -189,7 +192,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     //return m_chooser.getSelected();
-    try{
+/*    try{
         // Load the path you want to follow using its name in the GUI
         PathPlannerPath path = PathPlannerPath.fromPathFile("New Path");
 
@@ -199,5 +202,9 @@ public class RobotContainer {
         DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
         return Commands.none();
     }
+    Commented out because it is part of 2025 year update. (Updated library not released at time of editing)
+*/
+
+    return autoChooser.getSelected();
   }
 }
