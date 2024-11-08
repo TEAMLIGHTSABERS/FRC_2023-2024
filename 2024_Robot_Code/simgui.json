@@ -7,13 +7,15 @@
       "/Shuffleboard/Intake Subsystem/Commands": "Subsystem",
       "/Shuffleboard/Launch Subsystem/Accept LCWR": "Command",
       "/Shuffleboard/Launcher Subsystem/Commands": "Subsystem",
-      "/Shuffleboard/Turret Subsystem/Accept 0th": "Command",
-      "/Shuffleboard/Turret Subsystem/Accept 2nd": "Command",
-      "/Shuffleboard/Turret Subsystem/Accept 3rd": "Command",
-      "/Shuffleboard/Turret Subsystem/Accept FFGain": "Command",
-      "/Shuffleboard/Turret Subsystem/Accept PGain": "Command",
-      "/Shuffleboard/Turret Subsystem/Commands": "Subsystem",
+
+      "/SmartDashboard/Accept 0th": "Command",
+      "/SmartDashboard/Accept 2nd": "Command",
+      "/SmartDashboard/Accept 3rd": "Command",
+      "/SmartDashboard/Accept FF Gain High Shot Up": "Command",
+      "/SmartDashboard/Accept P Gain High Shot Up": "Command",
       "/SmartDashboard/Auto Selection": "String Chooser",
+      "/SmartDashboard/Drive Commands": "Subsystem",
+      "/SmartDashboard/Intake Commands": "Subsystem",
       "/SmartDashboard/LDn-100": "Command",
       "/SmartDashboard/LDn-1000": "Command",
       "/SmartDashboard/LUp-100": "Command",
@@ -24,7 +26,8 @@
       "/SmartDashboard/RDn-1000": "Command",
       "/SmartDashboard/RUp-100": "Command",
       "/SmartDashboard/RUp-1000": "Command",
-      "/SmartDashboard/Reset Gyro to Zero": "Command"
+      "/SmartDashboard/Reset Gyro to Zero": "Command",
+      "/SmartDashboard/Turret Commands": "Subsystem"
     }
   },
   "NetworkTables Info": {
