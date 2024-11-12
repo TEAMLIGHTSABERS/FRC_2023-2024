@@ -41,7 +41,7 @@ public class RobotContainer {
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final LauncherSubsystem m_launcher = new LauncherSubsystem();
   private final TurretSubsystem m_turret = new TurretSubsystem();
-
+/*
   // Center position auto that shoots, goes to pick up another note, and then shoots again.
   private final Command m_centerAuto = Autos.centerAuto(m_robotDrive, m_launcher, m_intake, m_turret);
 
@@ -57,7 +57,7 @@ public class RobotContainer {
   // Test auto for Pathplanner; drives straight
   private final Command m_testAuto = Autos.testAuto(m_robotDrive);
 
-   /*// A simple auto routine that drives forward a specified distance, and then stops.
+   // A simple auto routine that drives forward a specified distance, and then stops.
   private final Command m_leftAuto = Autos.leftAuto(m_robotDrive, m_launcher, m_intake, m_turret);
 
   // A simple auto routine that drives forward a specified distance, and then stops.

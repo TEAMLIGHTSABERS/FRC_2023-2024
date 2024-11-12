@@ -17,7 +17,7 @@ public final class Autos {
   private Autos() {
     throw new UnsupportedOperationException("This is a utility class!");
   }
-
+/*
 
   // Autonoumous Command for driving from the center of the Speaker.
   public static Command centerAuto
@@ -129,5 +129,5 @@ public final class Autos {
       DriveCommands.straightAutoCommand1(driveSys, 2.5, 0));                               // move out of Zone to position (2.5, 0, 0).                
 
   }
-
+*/
 }
